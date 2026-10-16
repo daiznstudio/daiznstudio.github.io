@@ -568,10 +568,10 @@ svg{display:block}
 /* works: plain captions (no panel, no year); text colour follows the image behind it */
 .wgrid .wk-cap{left:16px;right:16px;bottom:14px;padding:0;border-radius:0;background:none;-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:none}
 .wgrid .wk[data-size="B"] .wk-cap{left:24px;right:24px;bottom:22px;padding:0}
-.wgrid .wk-cap .wk-t{text-shadow:0 1px 14px rgba(0,0,0,.45)}
-.wgrid .wk-cap .wk-c{opacity:.8;text-shadow:0 1px 10px rgba(0,0,0,.45)}
+.wgrid .wk-cap .wk-t{text-shadow:0 1px 3px rgba(0,0,0,.35),0 1px 16px rgba(0,0,0,.5)}
+.wgrid .wk-cap .wk-c{opacity:.85;text-shadow:0 1px 3px rgba(0,0,0,.35),0 1px 12px rgba(0,0,0,.5)}
 .wgrid .wk[data-tone="d"] .wk-cap{color:var(--ink)}
-.wgrid .wk[data-tone="d"] .wk-cap .wk-t{color:var(--ink)!important;text-shadow:0 1px 12px rgba(255,255,255,.55)}
+.wgrid .wk[data-tone="d"] .wk-cap .wk-t{color:var(--ink)!important;text-shadow:0 1px 10px rgba(255,255,255,.3)}
 .wgrid .wk[data-tone="d"] .wk-cap .wk-c{text-shadow:none;opacity:.65}
 @media (max-width:760px){.wgrid .wk-cap,.wgrid .wk[data-size="B"] .wk-cap{left:11px;right:11px;bottom:10px;padding:0}}
 
@@ -625,7 +625,9 @@ dialog.modal.mxd[open]{animation:mxIn .6s cubic-bezier(.2,.8,.2,1)}
 }
 @media (prefers-reduced-motion:reduce){dialog.modal.mxd[open]{animation:none}.mx-view>img{transition:none}}
 
-.wgrid .wk[data-tone="l"] .wk-media::before{content:"";position:absolute;left:0;right:0;bottom:0;height:58%;z-index:1;pointer-events:none;background:linear-gradient(180deg,rgba(10,10,12,0),rgba(10,10,12,.34) 45%,rgba(10,10,12,.7))}
+/* works: rows of cards that keep each design's shape (P.layoutWorks sets every card's width and height) */
+.wgrid{display:flex;flex-wrap:wrap;align-items:flex-start}
+.wgrid .wk,.wgrid .wk[data-size]{flex:none;grid-area:auto}
 .mx-info{padding-top:74px}
 
 /* works: cards fade and slide up from below as they scroll in */
@@ -1161,68 +1163,48 @@ window.PF = (function () {
     return `<section class="sec ${dark ? "dark" : ""}" id="works" data-nav="works"><div class="wrap">
       <div class="w-head">${P.heading(W.title)}<div class="w-lead"><p class="lead">${esc(W.lead)}</p>
       <div class="filters">${["All"].concat(W.filters).map((f, i) => `<button class="chip${i ? "" : " on"}" data-f="${esc(f)}">${esc(f)}<sup>${i ? W.items.filter(x => x.cat === f).length : W.items.length}</sup></button>`).join("")}</div></div></div>
-      <ul class="wgrid" id="rows">${W.items.map((p, i) => `<li class="wk" tabindex="0" role="button" aria-label="Open ${esc(p.t)}" data-open="${i}" data-cat="${esc(p.cat)}" data-cursor="View" data-tile="${esc(p.tile || "s")}" data-ink="${esc(p.ink || "lll")}" style="view-transition-name:wk${i}"${p.gallery && p.gallery.length > 1 ? ` data-gal="${esc(JSON.stringify(p.gallery.slice(0, 5).map(g => g[0])))}"` : ""}>
-        <span class="wk-media">${p.cover ? `<img data-sq="${esc(p.cover.replace(/thumb\.webp$/, "thumb-sq.webp"))}" data-wd="${esc(p.cover.replace(/thumb\.webp$/, "thumb-wd.webp"))}" data-tl="${esc(p.cover.replace(/thumb\.webp$/, "thumb-tl.webp"))}" alt="" loading="lazy">` : P.art(p.kind, p.tone == null ? i : p.tone, i)}${p.gallery && p.gallery.length > 1 ? `<span class="wk-ct">${stack}${p.gallery.length}</span>` : ""}<span class="wk-glare"></span><span class="wk-ring"></span>${p.gallery && p.gallery.length > 1 ? `<span class="wk-bars">${p.gallery.slice(0, 5).map(() => "<i></i>").join("")}</span>` : ""}
+      <ul class="wgrid" id="rows">${W.items.map((p, i) => `<li class="wk" tabindex="0" role="button" aria-label="Open ${esc(p.t)}" data-open="${i}" data-cat="${esc(p.cat)}" data-cursor="View" data-tile="${esc(p.tile || "s")}" data-ink="${esc(p.ink || "lll")}" data-ar="${P.aspect(p)}" style="view-transition-name:wk${i}"${p.gallery && p.gallery.length > 1 ? ` data-gal="${esc(JSON.stringify(p.gallery.slice(0, 5).map(g => g[0])))}"` : ""}>
+        <span class="wk-media">${p.cover ? `<img data-md="${esc(p.cover)}" data-sq="${esc(p.cover.replace(/thumb\.webp$/, "thumb-sq.webp"))}" data-wd="${esc(p.cover.replace(/thumb\.webp$/, "thumb-wd.webp"))}" data-tl="${esc(p.cover.replace(/thumb\.webp$/, "thumb-tl.webp"))}" alt="" loading="lazy">` : P.art(p.kind, p.tone == null ? i : p.tone, i)}${p.gallery && p.gallery.length > 1 ? `<span class="wk-ct">${stack}${p.gallery.length}</span>` : ""}<span class="wk-glare"></span><span class="wk-ring"></span>${p.gallery && p.gallery.length > 1 ? `<span class="wk-bars">${p.gallery.slice(0, 5).map(() => "<i></i>").join("")}</span>` : ""}
         <span class="wk-cap"><span><span class="wk-t">${esc(p.t)}</span><span class="wk-c">${esc(p.cat)}</span></span></span></span></li>`).join("")}</ul></div></section>`;
   };
 
-  /* bento packing: every project asks for a tile that suits its artwork (s small, w wide, t tall, B large);
-     tiles are placed first-fit, then any gap is closed by stretching a neighbouring tile */
-  const DIM = { s: [1, 1], w: [2, 1], t: [1, 2], B: [2, 2] }, SIZE = { "1x1": "s", "2x1": "w", "1x2": "t", "2x2": "B" };
-  function pack(prefs, C) {
-    const grid = [], at = (r, c) => (grid[r] || [])[c], put = (r, c, v) => { (grid[r] = grid[r] || [])[c] = v; };
-    const free = (r, c, w, h) => { if (c < 0 || c + w > C || r < 0) return false; for (let y = r; y < r + h; y++) for (let x = c; x < c + w; x++) if (at(y, x) !== undefined) return false; return true; };
-    const fill = (p, i) => { for (let y = p.r; y < p.r + p.h; y++) for (let x = p.c; x < p.c + p.w; x++) put(y, x, i); };
-    const out = prefs.map((sz, i) => {
-      const w = Math.min(DIM[sz][0], C), h = DIM[sz][1];
-      for (let r = 0; ; r++) for (let c = 0; c < C; c++) if (free(r, c, w, h)) { const p = { r, c, w, h }; fill(p, i); return p; }
-    });
-    const rows = Math.max(0, ...out.map(p => p.r + p.h));
-    const grow = (i, p2) => {   // p2: the stretched rect; it may only add empty cells and must stay a valid tile
-      if (i === undefined || p2.w > 2 || p2.h > 2 || p2.c < 0 || p2.c + p2.w > C) return false;
-      const p = out[i];
-      for (let y = p2.r; y < p2.r + p2.h; y++) for (let x = p2.c; x < p2.c + p2.w; x++) { const v = at(y, x); if (v !== undefined && v !== i) return false; }
-      out[i] = p2; fill(p2, i); return true;
-    };
-    for (let changed = true; changed;) {
-      changed = false;
-      for (let r = 0; r < rows && !changed; r++) for (let c = 0; c < C && !changed; c++) {
-        if (at(r, c) !== undefined) continue;
-        const L = at(r, c - 1), R = at(r, c + 1), U = at(r - 1, c), D = at(r + 1, c), o = i => out[i];
-        changed =
-          (L !== undefined && o(L).c + o(L).w === c && o(L).r === r && grow(L, { ...o(L), w: o(L).w + 1 })) ||
-          (R !== undefined && o(R).c === c + 1 && o(R).r === r && grow(R, { ...o(R), c, w: o(R).w + 1 })) ||
-          (U !== undefined && o(U).r + o(U).h === r && o(U).c === c && grow(U, { ...o(U), h: o(U).h + 1 })) ||
-          (D !== undefined && o(D).r === r + 1 && o(D).c === c && grow(D, { ...o(D), r, h: o(D).h + 1 })) ||
-          (L !== undefined && o(L).c + o(L).w === c && o(L).r + o(L).h - 1 === r && grow(L, { ...o(L), w: o(L).w + 1 })) ||
-          (U !== undefined && o(U).r + o(U).h === r && o(U).c + o(U).w - 1 === c && grow(U, { ...o(U), h: o(U).h + 1 }));
-      }
-    }
-    return out;
-  }
-  /* if a gap is left, try swapping pairs of tiles and keep the gap-free arrangement closest to the original order */
-  function packBest(prefs, C) {
-    const n = prefs.length, idx = prefs.map((_, i) => i);
-    const gaps = r => { const rows = Math.max(0, ...r.map(p => p.r + p.h)); return rows * C - r.reduce((a, p) => a + p.w * p.h, 0); };
-    let best = null;
-    const attempt = (order, cost) => { const r = pack(order.map(i => prefs[i]), C), score = gaps(r) * 1000 + cost; if (!best || score < best.score) best = { score, order, r }; };
-    attempt(idx, 0);
-    if (best.score) for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) { const o = idx.slice(); [o[i], o[j]] = [o[j], o[i]]; attempt(o, j - i); }
-    const out = []; best.order.forEach((orig, k) => { out[orig] = best.r[k]; }); return out;
-  }
+  /* the shape of a project's designs (width / height): the middle value of its gallery images, kept
+     between 9:16 and 16:9; logo animations are shown 16:9, anything else without images 4:3 */
+  P.aspect = p => {
+    const a = (p.gallery || []).map(g => g[1] / g[2]).sort((x, y) => x - y), m = a.length >> 1;
+    const r = a.length ? (a.length % 2 ? a[m] : (a[m - 1] + a[m]) / 2) : p.motion ? 16 / 9 : 4 / 3;
+    return Math.min(16 / 9, Math.max(9 / 16, r)).toFixed(3);
+  };
+
+  /* all projects: justified rows. Every card keeps the shape of its designs (data-ar) and each row is
+     scaled to fill the full width, so square work shows square, wide work wide and tall work tall */
   P.layoutWorks = () => {
     const g = $("#rows"); if (!g) return;
     const vis = $$(".wk", g).filter(c => !c.hidden);
-    const cs = getComputedStyle(g), C = cs.gridTemplateColumns.split(" ").length, gap = parseFloat(cs.columnGap) || 0;
-    const rects = packBest(vis.map(c => DIM[c.dataset.tile] ? c.dataset.tile : "s"), C);
-    vis.forEach((c, i) => {
-      const p = rects[i], size = SIZE[p.w + "x" + p.h] || "s";
-      c.dataset.tone = (c.dataset.ink || "lll")[size === "w" ? 1 : size === "t" ? 2 : 0]; c.dataset.size = size; c.style.gridArea = `${p.r + 1} / ${p.c + 1} / span ${p.h} / span ${p.w}`;
-      c.style.setProperty("--dl", p.c * 90 + "ms");
-      const im = $(".wk-media>img", c);
-      if (im && im.dataset.sq) { const src = size === "w" ? im.dataset.wd : size === "t" ? im.dataset.tl : im.dataset.sq; if (im.getAttribute("src") !== src) im.src = src; }
+    const W = g.clientWidth, gap = parseFloat(getComputedStyle(g).columnGap) || 0;
+    const target = W / (W > 1000 ? 3.4 : W > 640 ? 2.5 : 1.6);   // aim for rows about this tall
+    const fit = (n, sum) => (W - gap * (n - 1)) / sum;           // row height that fills the width
+    const place = (row, h) => row.forEach(({ c, a }, k) => {
+      const w = a * h, im = $(".wk-media>img", c);
+      const v = a < .87 ? 2 : a < 1.15 ? 0 : a < 1.65 ? 3 : 1;   // cover crop: 0 square, 1 wide, 2 tall, 3 standard
+      c.style.width = w.toFixed(1) + "px"; c.style.height = h.toFixed(1) + "px"; c.style.setProperty("--dl", k * 90 + "ms");
+      c.dataset.size = w > W * .45 ? "B" : v === 1 ? "w" : v === 2 ? "t" : "s";
+      const ink = c.dataset.ink || "lll"; c.dataset.tone = ink[v] || ink[0];
+      if (im && im.dataset.sq) { const src = [im.dataset.sq, im.dataset.wd, im.dataset.tl, im.dataset.md][v]; if (im.getAttribute("src") !== src) im.src = src; }
     });
-    g.style.setProperty("--row", ((g.clientWidth - gap * (C - 1)) / C * .82).toFixed(1) + "px");
+    let row = [], sum = 0;
+    vis.forEach(c => {
+      const a = +c.dataset.ar || 4 / 3;
+      // once this card would make the row shorter than the target, close the row with or without it,
+      // whichever lands nearer the target height
+      if (row.length && fit(row.length + 1, sum + a) < target) {
+        const hIn = fit(row.length + 1, sum + a), hOut = fit(row.length, sum);
+        if (Math.abs(hIn - target) < Math.abs(hOut - target)) { row.push({ c, a }); place(row, hIn); row = []; sum = 0; return; }
+        place(row, hOut); row = []; sum = 0;
+      }
+      row.push({ c, a }); sum += a;
+    });
+    if (row.length) place(row, Math.min(target, fit(row.length, sum)));
   };
 
   /* cards: tilt, glare and image drift toward the cursor, a slideshow of the project on hover, and a section spotlight */
@@ -1238,6 +1220,23 @@ window.PF = (function () {
     const fit = () => { const r = box.getBoundingClientRect(), a = fg.naturalWidth / fg.naturalHeight; s.classList.toggle("fit", !!a && Math.abs(Math.log(a / (r.width / r.height))) > .05); };
     return (fg.decode ? fg.decode() : Promise.resolve()).then(fit, fit);
   };
+  /* how bright an image is where the caption sits (bottom left), 0 to 1; null when it can't be read */
+  const SHADE = new Map(), shadeCv = document.createElement("canvas");
+  P.shade = img => {
+    if (SHADE.has(img.src)) return SHADE.get(img.src);
+    if (!img.complete || !img.naturalWidth) return null;   // not loaded yet: measure later, don't remember
+    let v = null;
+    try {
+      const w = img.naturalWidth, h = img.naturalHeight, x = shadeCv.getContext("2d", { willReadFrequently: true });
+      shadeCv.width = shadeCv.height = 24;
+      x.drawImage(img, 0, h * .7, w * .7, h * .3, 0, 0, 24, 24);
+      const d = x.getImageData(0, 0, 24, 24).data; let s = 0;
+      for (let i = 0; i < d.length; i += 4) s += .2126 * d[i] + .7152 * d[i + 1] + .0722 * d[i + 2];
+      v = s / (d.length / 4) / 255;
+      SHADE.set(img.src, v);
+    } catch (e) {}
+    return v;
+  };
   const SLIDE = 1500;
   function slideshow(card) {
     const media = $(".wk-media", card), urls = JSON.parse(card.dataset.gal), bars = $$(".wk-bars i", card);
@@ -1248,6 +1247,14 @@ window.PF = (function () {
       const on = () => {
         if (!timer) return;
         layers.forEach(l => l.classList.toggle("on", l === im));
+        // caption colour follows the slide: dark text on bright images, white on dark ones (a slide shown
+        // whole sits over a dimmed copy of itself, so it counts a little darker)
+        const fg = im.lastElementChild, tone = () => {
+          const v = P.shade(fg);
+          if (v != null) card.dataset.tone = v * (im.classList.contains("fit") ? .92 : 1) > .6 ? "d" : "l";
+          return v;
+        };
+        if (tone() == null) fg.addEventListener("load", () => { if (timer && im.classList.contains("on")) tone(); }, { once: true });
         bars.forEach((b, j) => { b.classList.toggle("done", j < idx); b.classList.remove("run"); });
         if (bars[idx]) { void bars[idx].offsetWidth; bars[idx].classList.add("run"); }
       };
@@ -1256,10 +1263,12 @@ window.PF = (function () {
     card.addEventListener("pointerenter", () => {
       if (timer) return;
       if (!layers) layers = [0, 1].map(() => { const im = P.slide("wk-slide"); media.insertBefore(im, $(".wk-glare", media)); return im; });
+      card.dataset.tone0 = card.dataset.tone || "";
       timer = setInterval(show, SLIDE); show();
     });
     card.addEventListener("pointerleave", () => {
       clearInterval(timer); timer = 0; k = -1;
+      if (card.dataset.tone0) card.dataset.tone = card.dataset.tone0;   // back to the cover's caption colour
       if (layers) layers.forEach(l => l.classList.remove("on"));
       bars.forEach(b => b.classList.remove("run", "done"));
     });
@@ -1705,7 +1714,7 @@ const DATA = {
     filters: ["Full-stack apps", "Personal projects"],
     items: [
       { t: "BUTT KARAHI", cat: "Full-stack apps", year: "2026", kind: "shop", s: "Online ordering website and admin dashboard for a Lahore restaurant.", tags: ["HTML", "CSS", "JavaScript", "Supabase", "GSAP"], feats: ["Customer ordering flow with cash-on-delivery checkout", "Owner dashboard to add, edit and remove menu items and track orders", "Postgres schema with Supabase Auth protecting admin-only actions", "Animation-driven frontend that stays fast and mobile-friendly"], live: "https://daizn-studio.github.io/butt-karahi/", liveLabel: "Visit live site", cover: "assets/work/butt-karahi/thumb.webp", gallery: [["assets/work/butt-karahi/01.webp", 1440, 900], ["assets/work/butt-karahi/02.webp", 1440, 900], ["assets/work/butt-karahi/03.webp", 1440, 900], ["assets/work/butt-karahi/04.webp", 1440, 900], ["assets/work/butt-karahi/05.webp", 1440, 900], ["assets/work/butt-karahi/06.webp", 600, 1298]] },
-      { t: "SPARK CLEAN", cat: "Full-stack apps", year: "2026", kind: "dash", s: "Booking platform for a residential and commercial cleaning service in Melbourne, Australia.", tags: ["Supabase", "Edge Functions", "Vercel", "GitHub Actions", "Resend"], feats: ["Serverless booking workflow: availability, payments and job photos", "Admin dashboard for bookings, subcontractor assignment and job status", "Automated email reminders on a scheduled GitHub Actions cron job", "Deployed on Vercel with a private GitHub repository"], live: "https://daizn-studio.github.io/spark-clean/", liveLabel: "Visit live site", cover: "assets/work/spark-clean/thumb.webp", gallery: [["assets/work/spark-clean/01.webp", 1440, 900], ["assets/work/spark-clean/02.webp", 1440, 900], ["assets/work/spark-clean/03.webp", 1440, 900], ["assets/work/spark-clean/04.webp", 1440, 900], ["assets/work/spark-clean/05.webp", 1440, 900], ["assets/work/spark-clean/06.webp", 600, 1298]] },
+      { t: "SPARK CLEAN", cat: "Full-stack apps", year: "2026", kind: "dash", s: "Booking platform for a residential and commercial cleaning service in Melbourne, Australia.", tags: ["Supabase", "Edge Functions", "Vercel", "GitHub Actions", "Resend"], feats: ["Serverless booking workflow: availability, payments and job photos", "Admin dashboard for bookings, subcontractor assignment and job status", "Automated email reminders on a scheduled GitHub Actions cron job", "Deployed on Vercel with a private GitHub repository"], live: "https://daizn-studio.github.io/spark-clean/", liveLabel: "Visit live site", ink: "lldl", cover: "assets/work/spark-clean/thumb.webp", gallery: [["assets/work/spark-clean/01.webp", 1440, 900], ["assets/work/spark-clean/02.webp", 1440, 900], ["assets/work/spark-clean/03.webp", 1440, 900], ["assets/work/spark-clean/04.webp", 1440, 900], ["assets/work/spark-clean/05.webp", 1440, 900], ["assets/work/spark-clean/06.webp", 600, 1298]] },
       { t: "SAFE-HER", cat: "Personal projects", year: "2025", kind: "mobile", s: "Personal-safety mobile app for women travelling alone, built as a team project with React Native and Expo.", tags: ["React Native", "Expo", "Firebase", "Gemini AI", "Google Maps"], feats: ["One-tap SOS by tap, shake or voice, sending guardians an SMS with live location", "Live travel monitoring and an AI route safety score grounded in Google Maps data", "Evidence recording with a stealth black-screen mode, uploaded to the cloud", "Guardian pairing, plus a community danger heatmap built from incident reports"], live: "https://safeher-app-demo.netlify.app", liveLabel: "Watch app demo", cover: "assets/work/safe-her/thumb.webp", gallery: [["assets/work/safe-her/01.webp", 1440, 810], ["assets/work/safe-her/02.webp", 1440, 810], ["assets/work/safe-her/03.webp", 1440, 810], ["assets/work/safe-her/04.webp", 1440, 810], ["assets/work/safe-her/05.webp", 1440, 810], ["assets/work/safe-her/06.webp", 1440, 810], ["assets/work/safe-her/07.webp", 1440, 810], ["assets/work/safe-her/08.webp", 1440, 810]] },
       { t: "Hospital database system", cat: "Personal projects", year: "2024", kind: "code", s: "MySQL database for patient, staff and record management.", tags: ["MySQL", "Database design"], feats: ["Patient, staff and record management", "Relational schema with data integrity"] }
     ]
