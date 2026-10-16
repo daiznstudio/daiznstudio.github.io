@@ -860,6 +860,13 @@ dialog.modal[open]{animation:mIn .5s cubic-bezier(.2,.8,.2,1)}
 .br-c img{display:block;flex:none;width:auto;height:calc(var(--h) * 1px * var(--bs,.6));filter:brightness(0)}
 @media (max-width:720px){.br-c{height:72px}.br-c img{--bs:.5}}
 @media (prefers-reduced-motion:reduce){.br-rail .track{animation-duration:140s}}
+/* hover slideshow: slides are never cropped or stretched (see P.fillSlide) */
+.wk-media>.wk-slide{inset:0;width:100%;height:100%;translate:none;scale:1;overflow:hidden}
+.fp-media .fp-slide{overflow:hidden}
+.sl-bg,.sl-fg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.sl-bg{display:none;filter:blur(22px) saturate(1.15) brightness(.85);scale:1.45}
+.fit>.sl-bg{display:block}
+.fit>.sl-fg{object-fit:contain}
 </style>
 <link rel="stylesheet" href="assets/footer.css">
 </head>
@@ -1219,6 +1226,18 @@ window.PF = (function () {
   };
 
   /* cards: tilt, glare and image drift toward the cursor, a slideshow of the project on hover, and a section spotlight */
+  /* hover slideshow slides: an image close to the card's shape fills it; any other shape is shown whole
+     over a blurred copy of itself, so nothing is cropped or stretched */
+  P.slide = cls => {
+    const s = document.createElement("span"); s.className = cls;
+    s.innerHTML = '<img class="sl-bg" alt=""><img class="sl-fg" alt="">';
+    return s;
+  };
+  P.fillSlide = (s, src, box) => {
+    const [bg, fg] = s.children; bg.src = fg.src = src;
+    const fit = () => { const r = box.getBoundingClientRect(), a = fg.naturalWidth / fg.naturalHeight; s.classList.toggle("fit", !!a && Math.abs(Math.log(a / (r.width / r.height))) > .05); };
+    return (fg.decode ? fg.decode() : Promise.resolve()).then(fit, fit);
+  };
   const SLIDE = 1500;
   function slideshow(card) {
     const media = $(".wk-media", card), urls = JSON.parse(card.dataset.gal), bars = $$(".wk-bars i", card);
@@ -1232,12 +1251,11 @@ window.PF = (function () {
         bars.forEach((b, j) => { b.classList.toggle("done", j < idx); b.classList.remove("run"); });
         if (bars[idx]) { void bars[idx].offsetWidth; bars[idx].classList.add("run"); }
       };
-      im.src = urls[idx];
-      if (im.decode) im.decode().then(on, on); else on();
+      P.fillSlide(im, urls[idx], media).then(on, on);
     };
     card.addEventListener("pointerenter", () => {
       if (timer) return;
-      if (!layers) layers = [0, 1].map(() => { const im = document.createElement("img"); im.className = "wk-slide"; im.alt = ""; media.insertBefore(im, $(".wk-glare", media)); return im; });
+      if (!layers) layers = [0, 1].map(() => { const im = P.slide("wk-slide"); media.insertBefore(im, $(".wk-glare", media)); return im; });
       timer = setInterval(show, SLIDE); show();
     });
     card.addEventListener("pointerleave", () => {

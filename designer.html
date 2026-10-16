@@ -873,8 +873,17 @@ dialog.modal[open]{animation:mIn .5s cubic-bezier(.2,.8,.2,1)}
 .ab-fact::after{content:"";position:absolute;right:-46px;top:-46px;width:150px;aspect-ratio:1;border-radius:50%;border:1px solid currentColor;opacity:.2;box-shadow:0 0 0 22px rgba(240,240,240,.04);pointer-events:none}
 .ab-fact.f1::after{border-color:var(--tint);opacity:.35}
 .ab-card.in:hover{box-shadow:0 26px 50px -26px rgba(72,46,116,.6)}
+/* hover slideshow: slides are never cropped or stretched (see P.fillSlide) */
+.wk-media>.wk-slide{inset:0;width:100%;height:100%;translate:none;scale:1;overflow:hidden}
+.fp-media .fp-slide{overflow:hidden}
+.sl-bg,.sl-fg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.sl-bg{display:none;filter:blur(22px) saturate(1.15) brightness(.85);scale:1.45}
+.fit>.sl-bg{display:block}
+.fit>.sl-fg{object-fit:contain}
 </style>
 <link rel="stylesheet" href="assets/footer.css">
+<link rel="stylesheet" href="assets/covers.css">
+<script src="assets/covers.js"></script>
 </head>
 <body>
 <div class="loader" aria-hidden="true"><div class="ld"><svg class="ld-m" viewBox="0 0 100 160" aria-hidden="true"><defs><clipPath id="ldClip"><rect width="100" height="108" rx="46"/><path d="M0 160A50 48 0 0 1 100 160Z"/></clipPath></defs><g clip-path="url(#ldClip)"><rect class="s" width="100" height="108" rx="46" pathLength="100"/><path class="s s2" d="M0 160A50 48 0 0 1 100 160Z" pathLength="100"/></g></svg><div class="ld-w"><i class="t" style="--k:0">d</i><i style="--k:1">a</i><i style="--k:2">i</i><i class="b" style="--k:3">z</i><i class="b" style="--k:4">n</i></div></div></div>
@@ -1168,7 +1177,7 @@ window.PF = (function () {
       <div class="w-head">${P.heading(W.title)}<div class="w-lead"><p class="lead">${esc(W.lead)}</p>
       <div class="filters">${["All"].concat(W.filters).map((f, i) => `<button class="chip${i ? "" : " on"}" data-f="${esc(f)}">${esc(f)}<sup>${i ? W.items.filter(x => x.cat === f).length : W.items.length}</sup></button>`).join("")}</div></div></div>
       <ul class="wgrid" id="rows">${W.items.map((p, i) => `<li class="wk" tabindex="0" role="button" aria-label="Open ${esc(p.t)}" data-open="${i}" data-cat="${esc(p.cat)}" data-cursor="View" data-tile="${esc(p.tile || "s")}" data-ink="${esc(p.ink || "lll")}" style="view-transition-name:wk${i}"${p.gallery && p.gallery.length > 1 ? ` data-gal="${esc(JSON.stringify(p.gallery.slice(0, 5).map(g => g[0])))}"` : ""}>
-        <span class="wk-media">${p.cover ? `<img data-sq="${esc(p.cover.replace(/thumb\.webp$/, "thumb-sq.webp"))}" data-wd="${esc(p.cover.replace(/thumb\.webp$/, "thumb-wd.webp"))}" data-tl="${esc(p.cover.replace(/thumb\.webp$/, "thumb-tl.webp"))}" alt="" loading="lazy">` : P.art(p.kind, p.tone == null ? i : p.tone, i)}${p.gallery && p.gallery.length > 1 ? `<span class="wk-ct">${stack}${p.gallery.length}</span>` : ""}<span class="wk-glare"></span><span class="wk-ring"></span>${p.gallery && p.gallery.length > 1 ? `<span class="wk-bars">${p.gallery.slice(0, 5).map(() => "<i></i>").join("")}</span>` : ""}
+        <span class="wk-media">${p.motion && window.COVERS && COVERS.has(p.motion) ? COVERS.html(p.motion) : p.cover ? `<img data-sq="${esc(p.cover.replace(/thumb\.webp$/, "thumb-sq.webp"))}" data-wd="${esc(p.cover.replace(/thumb\.webp$/, "thumb-wd.webp"))}" data-tl="${esc(p.cover.replace(/thumb\.webp$/, "thumb-tl.webp"))}" alt="" loading="lazy">` : P.art(p.kind, p.tone == null ? i : p.tone, i)}${p.gallery && p.gallery.length > 1 ? `<span class="wk-ct">${stack}${p.gallery.length}</span>` : ""}<span class="wk-glare"></span><span class="wk-ring"></span>${p.gallery && p.gallery.length > 1 ? `<span class="wk-bars">${p.gallery.slice(0, 5).map(() => "<i></i>").join("")}</span>` : ""}
         <span class="wk-cap"><span><span class="wk-t">${esc(p.t)}</span><span class="wk-c">${esc(p.cat)}</span></span></span></span></li>`).join("")}</ul></div></section>`;
   };
 
@@ -1232,6 +1241,18 @@ window.PF = (function () {
   };
 
   /* cards: tilt, glare and image drift toward the cursor, a slideshow of the project on hover, and a section spotlight */
+  /* hover slideshow slides: an image close to the card's shape fills it; any other shape is shown whole
+     over a blurred copy of itself, so nothing is cropped or stretched */
+  P.slide = cls => {
+    const s = document.createElement("span"); s.className = cls;
+    s.innerHTML = '<img class="sl-bg" alt=""><img class="sl-fg" alt="">';
+    return s;
+  };
+  P.fillSlide = (s, src, box) => {
+    const [bg, fg] = s.children; bg.src = fg.src = src;
+    const fit = () => { const r = box.getBoundingClientRect(), a = fg.naturalWidth / fg.naturalHeight; s.classList.toggle("fit", !!a && Math.abs(Math.log(a / (r.width / r.height))) > .05); };
+    return (fg.decode ? fg.decode() : Promise.resolve()).then(fit, fit);
+  };
   const SLIDE = 1500;
   function slideshow(card) {
     const media = $(".wk-media", card), urls = JSON.parse(card.dataset.gal), bars = $$(".wk-bars i", card);
@@ -1245,12 +1266,11 @@ window.PF = (function () {
         bars.forEach((b, j) => { b.classList.toggle("done", j < idx); b.classList.remove("run"); });
         if (bars[idx]) { void bars[idx].offsetWidth; bars[idx].classList.add("run"); }
       };
-      im.src = urls[idx];
-      if (im.decode) im.decode().then(on, on); else on();
+      P.fillSlide(im, urls[idx], media).then(on, on);
     };
     card.addEventListener("pointerenter", () => {
       if (timer) return;
-      if (!layers) layers = [0, 1].map(() => { const im = document.createElement("img"); im.className = "wk-slide"; im.alt = ""; media.insertBefore(im, $(".wk-glare", media)); return im; });
+      if (!layers) layers = [0, 1].map(() => { const im = P.slide("wk-slide"); media.insertBefore(im, $(".wk-glare", media)); return im; });
       timer = setInterval(show, SLIDE); show();
     });
     card.addEventListener("pointerleave", () => {
@@ -1260,6 +1280,7 @@ window.PF = (function () {
     });
   }
   P.worksFx = () => {
+    if (window.COVERS) COVERS.watch();
     P.layoutWorks();
     let rz; addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(P.layoutWorks, 100); });
     if (!fine || reduce) return;
@@ -1389,12 +1410,13 @@ window.PF = (function () {
     if (typeof m.showModal === "function") m.showModal(); else m.setAttribute("open", "");
     P.fitTitle($(".mx-info h3", m));
     P.bindViewer(m);
+    if (window.COVERS) COVERS.watch(m);
   };
   P.modalHTML = (p, i, buttons) => {
     const G = p.gallery || [], two = n => String(n).padStart(2, "0"), chev = d => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${d}"/></svg>`;
     return `<div class="mx dark">
       <div class="mx-stage">
-        <div class="mx-view">${G.length ? `<img src="${esc(G[0][0])}" alt="${esc(p.t)}, image 1 of ${G.length}">` : P.art(p.kind, p.tone == null ? i : p.tone, i, "meet")}</div>
+        <div class="mx-view">${G.length ? `<img src="${esc(G[0][0])}" alt="${esc(p.t)}, image 1 of ${G.length}">` : p.motion && window.COVERS && COVERS.has(p.motion) ? COVERS.html(p.motion) : P.art(p.kind, p.tone == null ? i : p.tone, i, "meet")}</div>
         ${G.length > 1 ? `<div class="mx-count"><b>01</b> / ${two(G.length)}</div>
         <button class="mx-nav prev" aria-label="Previous image">${chev("M15 5l-7 7 7 7")}</button><button class="mx-nav next" aria-label="Next image">${chev("M9 5l7 7-7 7")}</button>
         <div class="mx-strip">${G.map((g, k) => `<button class="mx-th${k ? "" : " on"}" data-src="${esc(g[0])}" aria-label="Show image ${k + 1}"><img src="${esc(g[0])}" alt="" loading="lazy"></button>`).join("")}</div>` : ""}
@@ -1709,13 +1731,15 @@ const DATA = {
   marquee: ["Marketing ads design", "Ecommerce assets", "Merch design", "Artwork design", "Web assets design", "Branding", "YouTube thumbnails", "Graphic design"],
   works: {
     title: "Works", lead: "Discover my projects",
-    filters: ["Branding and packaging", "Ads and social media", "YouTube thumbnails", "Book design", "Artwork"],
+    filters: ["Branding and packaging", "Ads and social media", "YouTube thumbnails", "Book design", "Artwork", "Motion graphics"],
     items: [
       { t: "Complete eBook Layout", cat: "Book design", year: "2026", kind: "poster", s: "Cover and full interior layout for a business playbook eBook, from the 3D cover mockup to every chapter spread.", tags: ["Photoshop", "Book design"], feats: ["Cover design and 3D book mockup", "Chapter openers and interior page layouts", "One consistent type and colour system across the book"], live: "https://www.behance.net/gallery/254783385/Complete-Book-Design-Layout", liveLabel: "View on Behance", cover: "assets/work/ebook-layout/thumb.webp", tile: "s", ink: "ddd", cols: 1, gallery: [["assets/work/ebook-layout/01.webp", 1400, 933], ["assets/work/ebook-layout/02.webp", 1400, 933], ["assets/work/ebook-layout/03.webp", 1400, 933], ["assets/work/ebook-layout/04.webp", 1400, 933], ["assets/work/ebook-layout/05.webp", 1400, 933], ["assets/work/ebook-layout/06.webp", 1400, 933], ["assets/work/ebook-layout/07.webp", 1400, 933]] },
-      { t: "WeeGummies", cat: "Branding and packaging", year: "2025", kind: "poster", s: "Logo, jar packaging and product mockups for a kids' night-time gummy brand.", tags: ["Photoshop", "Canva", "Branding and packaging"], feats: ["Logo design in two colourways", "Jar label and packaging design", "Product mockups and styled scenes"], live: "https://www.behance.net/gallery/221927895/WEEGUMMIES-BRANDING", liveLabel: "View on Behance", cover: "assets/work/weegummies/thumb.webp", tile: "B", ink: "lll", cols: 1, gallery: [["assets/work/weegummies/01.webp", 1400, 933], ["assets/work/weegummies/02.webp", 1400, 933], ["assets/work/weegummies/03.webp", 1400, 933], ["assets/work/weegummies/04.webp", 1080, 1080], ["assets/work/weegummies/05.webp", 1080, 1080]] },
+      { t: "WeeGummies", cat: "Branding and packaging", year: "2025", kind: "poster", s: "Logo, jar packaging and product mockups for a kids' night-time gummy brand.", tags: ["Photoshop", "Canva", "Branding and packaging"], feats: ["Logo design in two colourways", "Jar label and packaging design", "Product mockups and styled scenes"], live: "https://www.behance.net/gallery/221927895/WEEGUMMIES-BRANDING", liveLabel: "View on Behance", cover: "assets/work/weegummies/thumb.webp", motion: "weegummies", tile: "B", ink: "lll", cols: 1, gallery: [["assets/work/weegummies/01.webp", 1400, 933], ["assets/work/weegummies/02.webp", 1400, 933], ["assets/work/weegummies/03.webp", 1400, 933], ["assets/work/weegummies/04.webp", 1080, 1080], ["assets/work/weegummies/05.webp", 1080, 1080]] },
       { t: "NatureDrops", cat: "Branding and packaging", year: "2026", kind: "poster", s: "Logo and dropper-bottle packaging for a soursop (graviola) supplement.", tags: ["Photoshop", "Branding and packaging"], feats: ["Logo design", "Dropper bottle label and packaging", "Product images"], live: "https://www.behance.net/gallery/254779535/NatureDrops-Product-Packaging-Design", liveLabel: "View on Behance", cover: "assets/work/naturedrops/thumb.webp", tile: "s", ink: "ddd", cols: 1, gallery: [["assets/work/naturedrops/01.webp", 500, 500], ["assets/work/naturedrops/02.webp", 1080, 1080], ["assets/work/naturedrops/03.webp", 1400, 934]] },
       { t: "Amor Fati (Love Your Fate)", cat: "Artwork", year: "2023", kind: "poster", s: "A premium, refined take on brutalism for a streetwear clothing brand.", tags: ["Photoshop", "Illustrator", "Artwork"], feats: ["Brutalist poster and apparel artwork", "Custom typography", "Made for merchandise and brand use"], live: "https://www.behance.net/gallery/179330865/Amor-Fati-%28Love-Your-Fate%29", liveLabel: "View on Behance", cover: "assets/work/amor-fati/thumb.webp", tile: "t", ink: "lll", cols: 1, gallery: [["assets/work/amor-fati/01.webp", 1400, 1700]] },
-      { t: "Somniaa", cat: "Branding and packaging", year: "2026", kind: "poster", s: "Logo, box packaging and product listing images for an anti-snoring mouthguard.", tags: ["Photoshop", "Canva", "Branding and packaging"], feats: ["Logo design", "Box packaging design", "Product images that explain benefits and fitting steps"], live: "https://www.behance.net/gallery/254777335/Somniaa-Packaging-Design-Product-Images", liveLabel: "View on Behance", cover: "assets/work/somniaa/thumb.webp", tile: "s", ink: "ddd", cols: 1, gallery: [["assets/work/somniaa/01.webp", 500, 500], ["assets/work/somniaa/02.webp", 1400, 1999], ["assets/work/somniaa/03.webp", 1080, 1080], ["assets/work/somniaa/04.webp", 1080, 1080], ["assets/work/somniaa/05.webp", 1080, 1080], ["assets/work/somniaa/06.webp", 1080, 1080], ["assets/work/somniaa/07.webp", 1080, 1080], ["assets/work/somniaa/08.webp", 1080, 1080], ["assets/work/somniaa/09.webp", 1080, 1080], ["assets/work/somniaa/10.webp", 1080, 1080]] },
+      { t: "Somniaa", cat: "Branding and packaging", year: "2026", kind: "poster", s: "Logo, box packaging and product listing images for an anti-snoring mouthguard.", tags: ["Photoshop", "Canva", "Branding and packaging"], feats: ["Logo design", "Box packaging design", "Product images that explain benefits and fitting steps"], live: "https://www.behance.net/gallery/254777335/Somniaa-Packaging-Design-Product-Images", liveLabel: "View on Behance", cover: "assets/work/somniaa/thumb.webp", motion: "somniaa", tile: "s", ink: "lll", cols: 1, gallery: [["assets/work/somniaa/01.webp", 1400, 1400], ["assets/work/somniaa/02.webp", 1400, 1999], ["assets/work/somniaa/03.webp", 1080, 1080], ["assets/work/somniaa/04.webp", 1080, 1080], ["assets/work/somniaa/05.webp", 1080, 1080], ["assets/work/somniaa/06.webp", 1080, 1080], ["assets/work/somniaa/07.webp", 1080, 1080], ["assets/work/somniaa/08.webp", 1080, 1080], ["assets/work/somniaa/09.webp", 1080, 1080], ["assets/work/somniaa/10.webp", 1080, 1080]] },
+      { t: "Somniaa Logo Animation", cat: "Motion graphics", year: "2026", kind: "poster", s: "An animated intro for the Somniaa logo, made for a sleep and wellness brand.", tags: ["SVG", "CSS animation", "Motion graphics"], feats: ["The crescent moon draws itself, then fills with moonlight", "The moon glides into the wordmark as the letters drift up", "A calm night-sky loop with breathing moonlight and twinkling stars"], motion: "somniaa", tile: "w", ink: "lll" },
+      { t: "WeeGummies Logo Animation", cat: "Motion graphics", year: "2026", kind: "poster", s: "A playful animated intro for the WeeGummies logo, made for a kids' gummy brand.", tags: ["SVG", "CSS animation", "Motion graphics"], feats: ["Opens on a close-up of the gummy bear mascot's googly eyes", "The camera pulls back and the bear gives a happy smile", "The wordmark waves in under it, in the brand's lime and dark green"], motion: "weegummies", tile: "w", ink: "lll" },
       { t: "Business Marketing Ads", cat: "Ads and social media", year: "2026", kind: "social", s: "Social media ad set for a business acquisition and e-commerce consulting agency.", tags: ["Photoshop", "Canva", "Ads and social media"], feats: ["Feed and square ad formats", "Bold, headline-led layouts", "One brand style across the whole set"], live: "https://www.behance.net/gallery/254781013/Business-Marketing-Ads-Design", liveLabel: "View on Behance", cover: "assets/work/business-ads/thumb.webp", tile: "s", ink: "lll", cols: 2, gallery: [["assets/work/business-ads/01.webp", 1080, 1350], ["assets/work/business-ads/02.webp", 1080, 1080], ["assets/work/business-ads/03.webp", 1080, 1350], ["assets/work/business-ads/04.webp", 1080, 1350], ["assets/work/business-ads/05.webp", 1080, 1080], ["assets/work/business-ads/06.webp", 1080, 1080], ["assets/work/business-ads/07.webp", 1080, 1080], ["assets/work/business-ads/08.webp", 1080, 1080], ["assets/work/business-ads/09.webp", 1080, 1350]] },
       { t: "YouTube Thumbnails", cat: "YouTube thumbnails", year: "2026", kind: "social", s: "Thumbnails designed for several YouTube channels.", tags: ["Photoshop", "YouTube thumbnails"], feats: ["28 thumbnails across different channels", "High-contrast layouts made to be clicked", "Face cut-outs, bold type and effects"], live: "https://www.behance.net/gallery/254782889/Youtube-Thumbnail-Design", liveLabel: "View on Behance", cover: "assets/work/youtube-thumbnails/thumb.webp", tile: "w", ink: "lll", cols: 2, gallery: [["assets/work/youtube-thumbnails/01.webp", 1200, 675], ["assets/work/youtube-thumbnails/02.webp", 1200, 675], ["assets/work/youtube-thumbnails/03.webp", 1200, 675], ["assets/work/youtube-thumbnails/04.webp", 1200, 675], ["assets/work/youtube-thumbnails/05.webp", 1200, 675], ["assets/work/youtube-thumbnails/06.webp", 1200, 675], ["assets/work/youtube-thumbnails/07.webp", 1200, 675], ["assets/work/youtube-thumbnails/08.webp", 1200, 675], ["assets/work/youtube-thumbnails/09.webp", 1200, 675], ["assets/work/youtube-thumbnails/10.webp", 1200, 675], ["assets/work/youtube-thumbnails/11.webp", 1200, 675], ["assets/work/youtube-thumbnails/12.webp", 1200, 675], ["assets/work/youtube-thumbnails/13.webp", 1200, 675], ["assets/work/youtube-thumbnails/14.webp", 1200, 675], ["assets/work/youtube-thumbnails/15.webp", 1200, 675], ["assets/work/youtube-thumbnails/16.webp", 1200, 675], ["assets/work/youtube-thumbnails/17.webp", 1200, 675], ["assets/work/youtube-thumbnails/18.webp", 1200, 675], ["assets/work/youtube-thumbnails/19.webp", 1200, 675], ["assets/work/youtube-thumbnails/20.webp", 1200, 675], ["assets/work/youtube-thumbnails/21.webp", 1200, 675], ["assets/work/youtube-thumbnails/22.webp", 1200, 675], ["assets/work/youtube-thumbnails/23.webp", 1200, 675], ["assets/work/youtube-thumbnails/24.webp", 1200, 675], ["assets/work/youtube-thumbnails/25.webp", 1200, 675], ["assets/work/youtube-thumbnails/26.webp", 1200, 675], ["assets/work/youtube-thumbnails/27.webp", 1200, 675], ["assets/work/youtube-thumbnails/28.webp", 1200, 675]] },
       { t: "Skinfusion", cat: "Branding and packaging", year: "2026", kind: "poster", s: "Logo, tube packaging and online-store product images for an overnight skincare mask.", tags: ["Photoshop", "Canva", "Branding and packaging"], feats: ["Logo design", "Tube packaging design", "Product and benefit images for an online store"], live: "https://www.behance.net/gallery/254778329/Skinfusion-Packaging-Product-Image-Design", liveLabel: "View on Behance", cover: "assets/work/skinfusion/thumb.webp", tile: "B", ink: "lld", cols: 1, gallery: [["assets/work/skinfusion/01.webp", 500, 500], ["assets/work/skinfusion/02.webp", 1400, 996], ["assets/work/skinfusion/03.webp", 1400, 2100], ["assets/work/skinfusion/04.webp", 1400, 933], ["assets/work/skinfusion/05.webp", 1080, 1080], ["assets/work/skinfusion/06.webp", 1080, 1080], ["assets/work/skinfusion/07.webp", 1080, 1080], ["assets/work/skinfusion/08.webp", 1080, 1080], ["assets/work/skinfusion/09.webp", 1400, 1400]] },
