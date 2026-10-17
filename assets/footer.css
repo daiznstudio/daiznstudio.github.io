@@ -56,8 +56,7 @@
 
 @media (max-width:991px){
   .sf-in{grid-template-columns:repeat(6,minmax(0,1fr));grid-template-rows:none;min-height:0;gap:3rem 1rem}
-  .sf-cards{flex-direction:column}
-  .sf-card{gap:10rem}
+  .sf-card{gap:6rem}
   .sf-nav{grid-column:1/4;grid-row:auto}
   .sf-soc{grid-column:4/7;grid-row:auto}
   .sf-leg{grid-column:1/4;grid-row:auto}
@@ -67,6 +66,7 @@
 }
 @media (max-width:640px){
   .sf-in{padding:1rem;gap:2.5rem 1rem}
+  .sf-cards{flex-direction:column}
   .sf-card{gap:4rem}
   .sf-ic{width:2rem;height:2rem}
   .sf-leg,.sf-con{grid-column:1/-1}
@@ -113,6 +113,14 @@
 .lc-form .field:focus-within{border-color:var(--paper)}
 .lc-form .field ::placeholder{color:currentColor;opacity:.45}
 .lc-form .lc-btn{margin-top:1.75rem;align-self:flex-start}
+/* send state: a hidden spam trap, the button while sending, a field the visitor got wrong, and the result line */
+.lc-hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none}
+.lc-btn:disabled{cursor:wait;opacity:.6}
+.lc-form .field:has(:user-invalid){border-color:#ff9a9a}
+.lc-status{margin:1rem 0 0;min-height:1.4em;font-size:.95rem;line-height:1.45}
+.lc-status:empty{margin:0;min-height:0}
+.lc-status[data-kind="ok"]{color:var(--tint)}
+.lc-status[data-kind="err"]{color:#ff9a9a}
 
 @media (min-width:992px){
   .lc[data-pin]{z-index:0;height:350vh;margin-top:-100vh}
@@ -137,4 +145,11 @@
 @media (prefers-reduced-motion:reduce){
   .lc-btn-t,.lc-btn-i,.lc-btn-i svg{transition:none}
   .lc-art svg{animation:none}
+}
+/* touch screens: the footer links are short lines of text, so give each an invisible hit area of about
+   44px without moving anything; the contact buttons grow to the same height */
+@media (pointer:coarse){
+  .sf-col a,.sf-copy a{position:relative}
+  .sf-col a::after,.sf-copy a::after{content:"";position:absolute;inset:-11px -12px}
+  .lc-btn-t{min-height:44px}
 }

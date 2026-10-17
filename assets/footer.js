@@ -1,3 +1,47 @@
+/* =====================================================================
+   CONTACT FORM KEY. Paste the access key from web3forms.com between the quotes and every
+   "Send a message" form on the site delivers straight to the studio inbox. Left empty, the form
+   opens the visitor's own email app instead (the old behaviour).
+   ===================================================================== */
+const FORM_KEY = "c492e714-a3d7-417f-8dca-ae6232dffa34";
+
+/* "Send a message" form: checks the fields (the browser's own required / email checks), then sends
+   through Web3Forms and reports back inside the form. A hidden checkbox catches spam bots. */
+(() => {
+  const form = document.getElementById("cform");
+  if (!form) return;
+  const status = form.querySelector(".lc-status"), btn = form.querySelector('button[type="submit"]'), label = btn.querySelector(".lc-btn-t");
+  const mailLink = document.querySelector('.lc-btn[href^="mailto:"], [data-sf-copy]');
+  const email = mailLink ? (mailLink.dataset.sfCopy || mailLink.getAttribute("href").replace(/^mailto:/, "")) : "daiznstudio@gmail.com";
+  const say = (text, kind) => { status.textContent = text; status.dataset.kind = kind || ""; };
+  form.addEventListener("input", () => { if (status.dataset.kind === "err") say(""); });
+
+  form.addEventListener("submit", e => {
+    e.preventDefault();
+    if (form.botcheck && form.botcheck.checked) return;   // only bots tick the hidden box
+    const name = form.fname.value.trim(), from = form.email.value.trim(), msg = form.msg.value.trim();
+
+    if (!FORM_KEY) {
+      const a = document.createElement("a");
+      a.href = `mailto:${email}?subject=${encodeURIComponent("Message from " + name)}&body=${encodeURIComponent(`${msg}\n\n${name} (${from})`)}`;
+      a.click();
+      say("Your email app should open with the message filled in. If nothing happens, email us at " + email + ".", "ok");
+      return;
+    }
+
+    btn.disabled = true; label.textContent = "Sending…"; say("");
+    fetch("https://api.web3forms.com/submit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({ access_key: FORM_KEY, subject: `New message from ${name} (daizn studio website)`, from_name: "daizn studio website", name, email: from, message: msg, page: location.href })
+    })
+      .then(r => r.json().catch(() => ({})).then(j => { if (!r.ok || j.success === false) throw new Error(j.message || r.status); }))
+      .then(() => { form.reset(); say(`Thanks ${name}, your message has been sent. We'll reply by email soon.`, "ok"); },
+            () => say(`Sorry, your message didn't send. Please try again, or email us at ${email}.`, "err"))
+      .finally(() => { btn.disabled = false; label.textContent = "Submit message"; });
+  });
+})();
+
 /* site footer: the "Prefer mail?" card copies the address, with the caption confirming it */
 (() => {
   const foot = document.querySelector("[data-sf]");

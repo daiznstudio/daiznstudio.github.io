@@ -1,6 +1,6 @@
 /* shared styles for the legal and error pages; matches the main site's tokens */
-@font-face{font-family:"Timun";font-weight:700;font-style:normal;font-display:swap;src:url(fonts/timun-700.otf) format("opentype")}
-@font-face{font-family:"Timun";font-weight:300;font-style:normal;font-display:swap;src:url(fonts/timun-300.otf) format("opentype")}
+@font-face{font-family:"Timun";font-weight:700;font-style:normal;font-display:swap;src:url(fonts/timun-700.woff2) format("woff2"),url(fonts/timun-700.otf) format("opentype")}
+@font-face{font-family:"Timun";font-weight:300;font-style:normal;font-display:swap;src:url(fonts/timun-300.woff2) format("woff2"),url(fonts/timun-300.otf) format("opentype")}
 :root{
   --ink:#101010;--paper:#f0f0f0;--page:#f2f2f2;--card:#fff;--purple:#482e74;--purple-2:#5d3f95;--tint:#b9a5ea;
   --line:rgba(16,16,16,.18);--line-d:rgba(240,240,240,.2);--muted:#55525c;
@@ -99,3 +99,13 @@ p,ul{margin:0}
 }
 @media (max-width:480px){.back .bl{display:none}}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* touch screens: tap targets of about 44px and labels no smaller than about 12px */
+@media (pointer:coarse){
+  .logo{position:relative}
+  .logo::after{content:"";position:absolute;inset:-9px -6px}
+  .back{min-height:44px;font-size:.75rem}
+  .toc a{padding-top:.65em;padding-bottom:.65em}
+  .kick,.toc h2{font-size:.75rem}
+  .nf .go a{display:inline-flex;align-items:center;min-height:44px}
+}

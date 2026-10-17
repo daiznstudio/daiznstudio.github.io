@@ -1,0 +1,11 @@
+{
+  "name": "daizn-site-tools",
+  "private": true,
+  "description": "Publishing helpers for the daizn studio site (not published to the website)",
+  "scripts": {
+    "prerender": "node prerender.js"
+  },
+  "dependencies": {
+    "puppeteer-core": "23.11.1"
+  }
+}
