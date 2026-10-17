@@ -117,6 +117,25 @@ svg{display:block}
 .nav{--fg:var(--ink);--bg:var(--paper);--bar:var(--card);position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:calc(env(safe-area-inset-top,0px) + 14px) var(--pad) 14px;background:var(--bar);color:var(--fg);transition:color .3s,background .3s}
 .nav.inv{--fg:var(--paper);--bg:var(--ink);--bar:var(--ink)}
 .nav.vio{--bar:var(--purple)}
+/* the bar is frosted glass, like the hero folder: milky white over light sections, smoked over dark ones */
+.nav{top:calc(env(safe-area-inset-top,0px) + 10px);left:10px;right:10px;padding:10px clamp(12px,2vw,22px);border:1px solid rgba(255,255,255,.75);border-radius:22px;background:linear-gradient(160deg,rgba(255,255,255,.62),rgba(255,255,255,.3));-webkit-backdrop-filter:blur(20px) saturate(1.5);backdrop-filter:blur(20px) saturate(1.5);box-shadow:0 18px 40px -22px rgba(72,46,116,.45),inset 0 1px 0 rgba(255,255,255,.9),inset 0 -1px 0 rgba(72,46,116,.06);transition:color .3s,border-color .3s,box-shadow .3s}
+.nav.inv,.nav.vio{border-color:rgba(255,255,255,.2);background:linear-gradient(160deg,rgba(255,255,255,.14),rgba(255,255,255,.04));box-shadow:0 18px 40px -22px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.22)}
+/* the links pill and menu button sit raised on the bar as thicker glass */
+.nav{display:grid;grid-template-columns:1fr auto 1fr}
+.nav .logo{grid-column:1;justify-self:start}.nav .links{grid-column:2}.nav .nav-r{grid-column:3;justify-self:end}
+.nav .links,.nav .menu-btn{border-color:rgba(255,255,255,.95);background:linear-gradient(180deg,rgba(255,255,255,.82),rgba(255,255,255,.5));box-shadow:0 0 0 1px rgba(72,46,116,.09),0 6px 14px -6px rgba(72,46,116,.3),0 16px 30px -18px rgba(72,46,116,.4),inset 0 1px 0 #fff,inset 0 -1px 0 rgba(72,46,116,.08)}
+.nav.inv .links,.nav.vio .links,.nav.inv .menu-btn,.nav.vio .menu-btn{border-color:rgba(255,255,255,.3);background:linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,.06));box-shadow:0 0 0 1px rgba(0,0,0,.25),0 8px 20px -8px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.3)}
+/* hover and the current section get a lilac glass bubble instead of a solid fill */
+.nav .nav-ind{background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(214,201,247,.78));box-shadow:0 0 0 1px rgba(138,99,216,.28),0 6px 16px -6px rgba(72,46,116,.5),0 0 20px rgba(185,165,234,.55),inset 0 1px 0 #fff,inset 0 -3px 8px rgba(138,99,216,.2)}
+.nav .links.js a.on{color:var(--purple)}
+.nav .links:not(.js) a.active{background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(214,201,247,.78));color:var(--purple);box-shadow:0 0 0 1px rgba(138,99,216,.28),inset 0 1px 0 #fff}
+.nav.inv .nav-ind,.nav.vio .nav-ind{background:linear-gradient(180deg,rgba(255,255,255,.34),rgba(185,165,234,.18));-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:0 0 0 1px rgba(255,255,255,.3),0 6px 16px -6px rgba(0,0,0,.5),0 0 18px rgba(185,165,234,.35),inset 0 1px 0 rgba(255,255,255,.55)}
+.nav.inv .links.js a.on,.nav.vio .links.js a.on{color:var(--paper)}
+.nav .menu-btn{--sw:rgba(138,99,216,.45);--swt:var(--purple)}
+.nav .menu-btn::before{background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(214,201,247,.8))}
+.nav.inv .menu-btn,.nav.vio .menu-btn{--sw:rgba(255,255,255,.4);--swt:var(--paper)}
+.nav.inv .menu-btn::before,.nav.vio .menu-btn::before{background:linear-gradient(180deg,rgba(255,255,255,.3),rgba(185,165,234,.16))}
+.nav .menu-btn[aria-expanded="true"],.nav .menu-btn:hover,.nav .menu-btn:focus-visible{box-shadow:0 0 0 1px rgba(138,99,216,.3),0 10px 24px -10px rgba(72,46,116,.55),0 0 20px rgba(185,165,234,.5),inset 0 1px 0 #fff}
 .logo{display:flex;align-items:center;gap:10px}
 .logo svg{height:26px;width:auto;fill:currentColor}
 .wm{display:inline-flex;align-items:baseline;line-height:1;letter-spacing:-.02em;font-family:var(--font)}
@@ -157,7 +176,7 @@ svg{display:block}
 .menu-btn[aria-expanded="true"] .mi-c{animation:mbSpin .5s cubic-bezier(.2,.8,.2,1)}
 @media (hover:hover){.menu-btn:hover,.menu-btn:focus-visible{color:var(--swt);border-color:var(--sw);box-shadow:0 12px 26px -8px rgba(72,46,116,.6);transform:translateY(-2px)}.menu-btn:hover::before,.menu-btn:focus-visible::before{transform:translateY(0)}.menu-btn:hover::after{animation:none;opacity:0}.menu-btn:hover .mi-o{transform:scaleX(.78)}}
 .nav.inv .menu-btn,.nav.vio .menu-btn{--sw:var(--paper);--swt:var(--ink)}
-.nav.inv .menu-btn::before,.nav.vio .menu-btn::before,.nav.inv .nbtn::before,.nav.vio .nbtn::before{background:var(--paper)}
+.nav.inv .nbtn::before,.nav.vio .nbtn::before{background:var(--paper)}
 @keyframes mbSpin{from{rotate:-90deg;scale:.4}}
 @media (prefers-reduced-motion:reduce){.menu-btn,.menu-btn::before,.menu-btn svg{transition:none}.menu-btn::after{animation:none;display:none}.menu-btn .mi-c{animation:none!important}}
 .menu-btn .mt-c,.menu-btn .mi-c,.menu-btn[aria-expanded="true"] .mt-o,.menu-btn[aria-expanded="true"] .mi-o{display:none}
@@ -247,7 +266,6 @@ svg{display:block}
 @media (prefers-reduced-motion:reduce){.hl .w i{translate:0 0}}
 
 /* ---------- company hero (static, photo slot) ---------- */
-.nav.top{background:transparent}
 .h3{position:relative;height:100svh;min-height:640px;overflow:hidden;background:var(--page);color:var(--ink)}
 .h3-text{position:absolute;z-index:2;left:clamp(24px,8vw,130px);top:50%;translate:0 -50%;max-width:min(46%,640px);padding-top:30px}
 .h3-text h1{margin:0;font-family:var(--font);font-size:clamp(1.6rem,3.5vw,3.5rem);line-height:1.16;font-weight:300;letter-spacing:-.02em}
@@ -703,12 +721,12 @@ dialog.modal.gal{width:min(1240px,calc(100vw - 24px))}
    on hover a lilac fill sweeps up, the label rolls and the arrow badge turns */
 @property --tk{syntax:"<angle>";inherits:false;initial-value:0deg}
 @keyframes tkSpin{to{--tk:360deg}}
-.nav .nbtn.talk,.nav.inv .nbtn.talk,.nav.vio .nbtn.talk{gap:.8em;padding:.38em .38em .38em 1.3em;border:1.5px solid transparent;color:var(--paper);
+.nbtn.talk{gap:.8em;padding:.38em .38em .38em 1.3em;border:1.5px solid transparent;color:var(--paper);
   background:linear-gradient(#141018,#141018) padding-box,conic-gradient(from var(--tk),#b9a5ea,#6d49ad,#482e74,#e6dcff,#b9a5ea) border-box;
   box-shadow:0 10px 28px -10px rgba(109,73,173,.85),0 0 0 4px rgba(185,165,234,.08);animation:tkSpin 4.5s linear infinite}
-.nav .nbtn.talk::before{inset:0;background:linear-gradient(135deg,#d9cdfa,#b9a5ea 55%,#9c82dc)}
-.nav .nbtn.talk::after{background:linear-gradient(100deg,transparent,rgba(185,165,234,.25),transparent)}
-.nav .nbtn.talk:hover,.nav .nbtn.talk:focus-visible{color:var(--ink);transform:translateY(-2px);box-shadow:0 18px 40px -12px rgba(185,165,234,.85),0 0 0 5px rgba(185,165,234,.16)}
+.nbtn.talk::before{inset:0;background:linear-gradient(135deg,#d9cdfa,#b9a5ea 55%,#9c82dc)}
+.nbtn.talk::after{background:linear-gradient(100deg,transparent,rgba(185,165,234,.25),transparent)}
+.nbtn.talk:hover,.nbtn.talk:focus-visible{color:var(--ink);transform:translateY(-2px);box-shadow:0 18px 40px -12px rgba(185,165,234,.85),0 0 0 5px rgba(185,165,234,.16)}
 .tk-tx{position:relative;display:block;overflow:hidden;height:1.25em;line-height:1.25em}
 .tk-tx span{display:block;padding-top:.18em;transition:transform .55s cubic-bezier(.7,0,.2,1)}
 .tk-tx span::after{content:attr(data-t);position:absolute;left:0;top:100%;padding-top:.18em}
@@ -716,7 +734,7 @@ dialog.modal.gal{width:min(1240px,calc(100vw - 24px))}
 .tk-ic{flex:none;width:2.45em;height:2.45em;border-radius:50%;background:var(--tint);color:var(--ink);display:grid;place-items:center;transition:transform .55s cubic-bezier(.2,.8,.2,1),background .35s,color .35s}
 .nbtn.talk .tk-ic .na{width:1.15em;height:1.15em;transform:none!important}
 .nbtn.talk:hover .tk-ic,.nbtn.talk:focus-visible .tk-ic{transform:rotate(45deg);background:var(--ink);color:var(--tint)}
-@media (prefers-reduced-motion:reduce){.nav .nbtn.talk{animation:none}.tk-tx span,.tk-ic{transition:none}}
+@media (prefers-reduced-motion:reduce){.nbtn.talk{animation:none}.tk-tx span,.tk-ic{transition:none}}
 /* how we work: icon centred in the card with an orbiting ring */
 .hw-mid{flex:1;display:grid;place-items:center;min-height:120px}
 .hw-mid .hw-ic{position:relative;width:clamp(84px,7.6vw,112px)}
@@ -882,32 +900,76 @@ dialog.modal[open]{animation:mIn .5s cubic-bezier(.2,.8,.2,1)}
 @media (max-width:1020px){.rv-grid{--per:2}}
 @media (max-width:720px){.rv-grid>.rv-card{flex-basis:86%}.rv-nav button{width:42px;height:42px}}
 @media (prefers-reduced-motion:reduce){.rv-card{opacity:1;translate:0 0;transition:none}.rv-grid{scroll-behavior:auto}}
-/* ---------- company hero: aurora + glass mark ---------- */
-.h3.h3a{background:#140a24;color:var(--paper)}
-.h3-au{position:absolute;inset:0;z-index:0;overflow:hidden}
-.h3-au .bl{position:absolute;border-radius:50%;filter:blur(70px)}
-.h3-au .b1{width:46vw;aspect-ratio:1;left:2%;top:-12%;background:var(--purple-2);opacity:.95;animation:auM1 13s ease-in-out infinite alternate}
-.h3-au .b2{width:38vw;aspect-ratio:1;right:4%;top:28%;background:var(--tint);opacity:.6;animation:auM2 15s ease-in-out infinite alternate}
-.h3-au .b3{width:40vw;aspect-ratio:1;left:30%;bottom:-30%;background:#7b4fd6;opacity:.85;animation:auM1 11s ease-in-out infinite alternate-reverse}
-.h3-au .b4{width:30vw;aspect-ratio:1;right:24%;top:-18%;background:var(--purple);opacity:.9;animation:auM2 17s ease-in-out infinite alternate-reverse}
-@keyframes auM1{to{translate:24% 18%;scale:1.18}}
-@keyframes auM2{to{translate:-28% -16%;scale:.86}}
-.h3-au .glass{position:absolute;left:50%;top:50%;translate:-50% -46%;height:min(78%,640px);aspect-ratio:100/160;background:linear-gradient(160deg,rgba(255,255,255,.2),rgba(255,255,255,.03) 70%);-webkit-backdrop-filter:blur(28px) saturate(1.4);backdrop-filter:blur(28px) saturate(1.4);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 160'%3E%3Crect width='100' height='108' rx='46'/%3E%3Cpath d='M0 160A50 48 0 0 1 100 160Z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 160'%3E%3Crect width='100' height='108' rx='46'/%3E%3Cpath d='M0 160A50 48 0 0 1 100 160Z'/%3E%3C/svg%3E") center/contain no-repeat;animation:auFl 7s ease-in-out infinite alternate}
-@keyframes auFl{to{translate:-50% calc(-46% - 18px)}}
-.h3-au .grain{position:absolute;inset:0;opacity:.2;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
-.h3-au::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 50%,transparent 55%,rgba(10,4,20,.55))}
-.h3a .h3-text{left:50%;top:50%;translate:-50% -50%;width:min(92%,940px);max-width:none;padding-top:30px;text-align:center}
-.h3a .h3-text h1{font-size:clamp(1.8rem,4.3vw,4.4rem);line-height:1.12;text-wrap:balance;text-shadow:0 2px 30px rgba(10,4,20,.35)}
-.h3a .h3-text h1 b{color:#fff;text-shadow:none;padding:.02em .1em .07em;border-radius:3px;background:linear-gradient(#5b3aa3,#5b3aa3) no-repeat 0 0/0% 100%;-webkit-box-decoration-break:clone;box-decoration-break:clone;animation:selLoop 7s cubic-bezier(.65,0,.25,1) 1.9s infinite}
-@keyframes selLoop{0%{background-size:0% 100%;background-position:0 0}16%,84%{background-size:100% 100%;background-position:0 0}84.01%{background-position:100% 0}96%,100%{background-size:0% 100%;background-position:100% 0}}
-/* blinking text caret after the selection */
-.sel-cur{position:relative;display:inline-block;width:0;height:1em;vertical-align:-.1em}
-.sel-cur::before{content:"";position:absolute;left:.04em;top:-.1em;width:max(2px,.05em);height:1.14em;border-radius:2px;background:#fff;opacity:0;animation:selOn .01s 2.95s forwards,selBlink 1.05s steps(1) 3s infinite}
-@keyframes selOn{to{opacity:1}}
-@keyframes selBlink{50%{opacity:0}}
-@media (prefers-reduced-motion:reduce){.h3a .h3-text h1 b{animation:none;background-size:100% 100%}.sel-cur::before{animation:none;opacity:1}}
-@media (max-width:760px){.h3-au .b1{width:110vw;left:-30%;top:-5%}.h3-au .b2{width:90vw;right:-30%;top:40%}.h3-au .b3{width:100vw;left:0;bottom:-20%}.h3-au .b4{width:80vw;right:-20%;top:-10%}.h3a .h3-text{top:46%;translate:-50% -50%}.h3a .h3-text h1{font-size:clamp(1.6rem,7.4vw,2.4rem)}.h3-au .glass{height:58%}}
-@media (prefers-reduced-motion:reduce){.h3-au .bl,.h3-au .glass{animation:none}}
+/* ---------- company hero: frosted white glass with faint purple glows behind it, one glass folder holding the covers ---------- */
+.h3.h3a{--ease:cubic-bezier(.2,.8,.2,1);--px:0;--py:0;--p0:#12081f;--p1:#2a1747;--p4:#8a63d8;--p6:#e4dafa;background:#f6f4fa;color:var(--ink);isolation:isolate;display:flex;flex-direction:column;align-items:center;justify-content:center;height:auto;min-height:max(100svh,760px);gap:clamp(120px,17svh,170px);padding:calc(env(safe-area-inset-top,0px) + clamp(150px,21svh,210px)) var(--pad) clamp(20px,4svh,48px)}
+.h3-au{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+/* faint purple glows drifting behind a milky glass pane */
+.h3-au .b1{--d:-40px;width:42vw;aspect-ratio:1;left:-10%;top:-16%;background:var(--purple-2);opacity:.34}
+.h3-au .b2{--d:50px;width:36vw;aspect-ratio:1;right:-8%;top:22%;background:var(--p4);opacity:.32}
+.h3-au .b3{--d:70px;width:30vw;aspect-ratio:1;left:35%;top:48%;background:var(--tint);opacity:.5}
+.h3-au .b4{--d:-30px;width:34vw;aspect-ratio:1;left:4%;bottom:-32%;background:var(--purple);opacity:.2}
+.h3-au .bl{position:absolute;border-radius:50%;filter:blur(100px);translate:calc(var(--px) * var(--d,30px)) calc(var(--py) * var(--d,30px))}
+.h3-au .bl i{position:absolute;inset:0;border-radius:inherit;background:inherit;animation:auM1 14s ease-in-out infinite alternate}
+@keyframes auM1{to{translate:-14% 12%;scale:1.14}}
+@keyframes auM2{to{translate:-20% -14%;scale:.86}}
+.h3-gl{position:absolute;inset:0;background:linear-gradient(115deg,transparent 28%,rgba(255,255,255,.45) 44%,transparent 58%),linear-gradient(160deg,rgba(255,255,255,.6),rgba(255,255,255,.34) 50%,rgba(255,255,255,.55))}
+.h3-au .grain{position:absolute;inset:0;z-index:1;opacity:.1;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.h3a .h3-text{position:relative;z-index:2;left:auto;top:auto;translate:none;width:min(100%,1100px);max-width:none;padding:0;text-align:center}
+.h3a .h3-text h1{font-size:clamp(1.5rem,2.6vw,2.6rem);line-height:1.24;text-wrap:balance}
+/* Let's talk in the hero: smoked dark glass; on hover a lilac glow wakes up inside it and around the rim */
+.h3-cta{margin-top:clamp(22px,3.4svh,36px);font-size:.78rem}
+.nbtn.talk.h3-cta{border:1px solid rgba(255,255,255,.22);color:#fff;animation:none;background:radial-gradient(90% 130% at 18% 0%,rgba(255,255,255,.08),transparent 60%),linear-gradient(180deg,rgba(16,16,18,.97),rgba(4,4,6,.98));-webkit-backdrop-filter:blur(14px) saturate(1.4);backdrop-filter:blur(14px) saturate(1.4);box-shadow:0 18px 34px -16px rgba(18,8,31,.6),inset 0 1px 0 rgba(255,255,255,.25),inset 0 -1px 0 rgba(0,0,0,.3);transition:color .35s,border-color .45s,box-shadow .45s,transform .45s cubic-bezier(.2,.8,.2,1)}
+.nbtn.talk.h3-cta::before{transform:none;opacity:0;background:radial-gradient(120% 160% at 50% 120%,rgba(185,165,234,.55),rgba(138,99,216,.18) 55%,transparent 75%);transition:opacity .45s}
+.nbtn.talk.h3-cta::after{background:linear-gradient(100deg,transparent,rgba(255,255,255,.22),transparent)}
+.nbtn.talk.h3-cta:hover,.nbtn.talk.h3-cta:focus-visible{color:#fff;transform:translateY(-3px);border-color:rgba(185,165,234,.7);box-shadow:0 24px 44px -18px rgba(42,23,71,.7),0 0 0 4px rgba(185,165,234,.14),0 0 34px rgba(138,99,216,.45),inset 0 1px 0 rgba(255,255,255,.35),inset 0 -1px 0 rgba(0,0,0,.3)}
+.nbtn.talk.h3-cta:hover::before,.nbtn.talk.h3-cta:focus-visible::before{opacity:1}
+.nbtn.talk.h3-cta .tk-ic{background:rgba(255,255,255,.12);color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.28),inset 0 1px 0 rgba(255,255,255,.3)}
+.nbtn.talk.h3-cta:hover .tk-ic,.nbtn.talk.h3-cta:focus-visible .tk-ic{background:radial-gradient(circle at 35% 30%,#fff,var(--p6) 50%,var(--tint));color:var(--purple);box-shadow:0 0 20px rgba(185,165,234,.9),inset 0 1px 0 #fff}
+.h3a .h3-text h1 b{color:var(--ink)}
+/* the folder: every cover stacked inside; the front one rises out, then slips to the back (P.heroFolder) */
+.h3-fd{position:relative;z-index:3;flex:none;width:clamp(280px,min(46svh,40vw),560px);aspect-ratio:100/80;container-type:inline-size;color:#fff;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.h3-fd:focus-visible{outline-offset:10px;border-radius:4cqi}
+.fd-in{position:absolute;inset:0;perspective:800px;animation:pkBob 6s ease-in-out infinite}
+@keyframes pkBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.fd-bk{position:absolute;inset:0;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 40px 50px rgba(72,46,116,.32)) drop-shadow(0 0 40px rgba(138,99,216,.3))}
+.fd-card,.fd-blur{position:absolute;left:21%;top:9%;width:58%;aspect-ratio:1;border-radius:3cqi}
+.fd-card{overflow:hidden;background:var(--p1);box-shadow:0 0 0 1px rgba(228,218,250,.3),0 14px 26px -12px rgba(42,23,71,.55);transform:var(--t);z-index:var(--zi,1);opacity:var(--o,1);transition:transform .9s var(--ease),opacity .6s}
+.fd-card img{width:100%;height:100%;object-fit:cover;display:block}
+.fd-card[data-s="0"]{--t:translate(0,-44%);--zi:6}
+.fd-card[data-s="1"]{--t:translate(-9%,-4%) rotate(-7deg);--zi:5}
+.fd-card[data-s="2"]{--t:translate(9%,-8%) rotate(6deg);--zi:4}
+.fd-card[data-s="3"]{--t:translate(-3%,-12%) rotate(-2deg);--zi:3}
+.fd-card[data-s="x"]{--t:translate(0,-10%) scale(.94);--o:0}
+/* the front flap is frosted glass: a blurred copy of the risen cover sits right behind it */
+.fd-fr{position:absolute;inset:0;z-index:10;transform-origin:50% 100%;-webkit-backdrop-filter:blur(14px) saturate(1.3);backdrop-filter:blur(14px) saturate(1.3);transition:transform .7s var(--ease);-webkit-mask:var(--fdm) 0 0/100% 100% no-repeat;mask:var(--fdm) 0 0/100% 100% no-repeat}
+.h3a{--fdm:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 80' preserveAspectRatio='none'%3E%3Cpath d='M0 31Q0 23 8 23H39Q43 23 45.4 26.2L47.6 29Q49.4 31.6 53 31.6H92Q100 31.6 100 39.6V72Q100 80 92 80H8Q0 80 0 72Z'/%3E%3C/svg%3E")}
+.fd-blur{object-fit:cover;transform:translate(0,-44%);filter:blur(4cqi) saturate(1.4);opacity:.85;transition:transform .9s var(--ease)}
+.fd-fr::before{content:"";position:absolute;inset:0;z-index:1;background:radial-gradient(90% 60% at 18% 30%,rgba(228,218,250,.45),transparent 70%),linear-gradient(180deg,rgba(185,165,234,.4),rgba(93,63,149,.72) 70%,rgba(72,46,116,.88))}
+.fd-rim{position:absolute;inset:0;z-index:2;width:100%;height:100%;fill:none;stroke:rgba(228,218,250,.8);stroke-width:2}
+.fd-lb{position:absolute;z-index:3;left:7cqi;right:7cqi;bottom:6.5cqi;display:flex;align-items:center;gap:3cqi;font:700 5.4cqi/1.1 var(--font);letter-spacing:-.01em;text-shadow:0 1px 10px rgba(42,23,71,.6)}
+.fd-lb i{flex:none;display:grid;place-items:center;width:11cqi;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 35% 30%,var(--p6),var(--tint) 45%,var(--purple-2));box-shadow:0 0 18px rgba(185,165,234,.8),inset 0 1px 0 rgba(255,255,255,.7)}
+.fd-lb i svg{width:52%;fill:var(--purple)}
+.fd-lb b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fd-n{flex:none;font:500 3.4cqi/1 "Chivo Mono",monospace;letter-spacing:.04em;opacity:.8}
+.fd-ptr{position:absolute;z-index:12;right:-13%;bottom:4%;width:22cqi;pointer-events:none}
+.fd-ptr svg{width:100%;height:auto;overflow:visible;filter:drop-shadow(0 12px 16px rgba(42,23,71,.35)) drop-shadow(0 0 16px rgba(138,99,216,.45));animation:ptrF 5s ease-in-out infinite}
+@keyframes ptrF{0%,100%{transform:translate(0,0) rotate(0deg)}50%{transform:translate(-8px,-10px) rotate(-6deg)}}
+@media (hover:hover){
+  .h3-fd:hover .fd-fr{transform:rotateX(-22deg)}
+  .h3-fd:hover .fd-card[data-s="0"]{--t:translate(0,-56%) scale(1.04)}
+  .h3-fd:hover .fd-blur{transform:translate(0,-56%) scale(1.04)}
+  .h3-fd:hover .fd-card[data-s="1"]{--t:translate(-30%,-14%) rotate(-15deg)}
+  .h3-fd:hover .fd-card[data-s="2"]{--t:translate(30%,-16%) rotate(14deg)}
+  .h3-fd:hover .fd-card[data-s="3"]{--t:translate(0,-24%) rotate(-1deg)}
+}
+@media (max-width:760px){
+  .h3.h3a{gap:clamp(110px,15svh,140px)}
+  .h3-au .b1{width:90vw;left:-40%;top:-10%}.h3-au .b2{width:70vw;right:-30%;top:34%}.h3-au .b3{width:60vw;left:20%;top:56%}.h3-au .b4{width:70vw;left:-20%}
+  .h3a .h3-text h1{font-size:clamp(1.4rem,6.4vw,2.1rem)}
+  .h3-br{display:none}
+  .h3-fd{width:min(88vw,400px)}
+}
+@media (prefers-reduced-motion:reduce){.h3-au .bl i,.fd-in,.fd-ptr svg{animation:none}.fd-card,.fd-blur,.fd-fr{transition:none}}
 /* hover slideshow: slides are never cropped or stretched (see P.fillSlide) */
 .wk-media>.wk-slide{inset:0;width:100%;height:100%;translate:none;scale:1;overflow:hidden}
 .fp-media .fp-slide{overflow:hidden}
@@ -920,7 +982,7 @@ dialog.modal[open]{animation:mIn .5s cubic-bezier(.2,.8,.2,1)}
 @media (pointer:coarse){
   .logo{position:relative}
   .logo::after{content:"";position:absolute;inset:-9px -6px}
-  .btn,.fp-btn,.nav .nbtn.talk{min-height:44px}
+  .btn,.fp-btn,.nbtn.talk{min-height:44px}
   .chip,.pk-sw button{display:inline-flex;align-items:center;min-height:40px}
   .chip{font-size:.74rem}
   .pk-sw button{font-size:.72rem}
@@ -952,7 +1014,7 @@ dialog.modal[open]{animation:mIn .5s cubic-bezier(.2,.8,.2,1)}
 <header class="nav">
   <a class="logo" id="logo" href="#home" aria-label="daizn studio"><svg viewBox="0 0 100 160" aria-hidden="true"><rect width="100" height="108" rx="46"/><path d="M0 160A50 48 0 0 1 100 160Z"/></svg><span class="wm"><span class="th">dai</span><span class="bd">zn</span></span></a>
   <nav class="links" aria-label="Sections"><a href="#about" data-nav="about">About</a><a href="#services" data-nav="services">Services</a><a href="projects.html">Projects</a><a href="#contact" data-nav="contact">Contact</a></nav>
-  <div class="nav-r"><a class="nbtn talk hide-s" href="#contact" aria-label="Let's talk"><span class="tk-tx" aria-hidden="true"><span data-t="Let's talk">Let's talk</span></span><span class="tk-ic" aria-hidden="true"><svg class="na" viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></svg></span></a><button class="menu-btn" id="menuBtn" aria-label="Menu" aria-expanded="false"><span class="mt-o">Menu</span><span class="mt-c">Close</span><svg class="mi-o" viewBox="0 0 24 24"><path d="M4 8h16M4 16h16"/></svg><svg class="mi-c" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div class="nav-r"><button class="menu-btn" id="menuBtn" aria-label="Menu" aria-expanded="false"><span class="mt-o">Menu</span><span class="mt-c">Close</span><svg class="mi-o" viewBox="0 0 24 24"><path d="M4 8h16M4 16h16"/></svg><svg class="mi-c" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
 </header>
 <div class="menu" id="menu"><a href="#about">About</a><a href="#services">Services</a><a href="projects.html">Projects</a><a href="team.html">Team</a><a href="#contact">Contact</a><button class="sub" data-share>Share this page</button></div>
 <main id="app"><!--pre:start--><div class="pre"><style>.pre{max-width:72ch;margin:0 auto;padding:120px 20px 64px}.pre img{display:block;max-width:100%;max-height:260px;width:auto;height:auto;margin:12px 0}.pre img[src*="/brands/"]{display:inline-block;height:26px;margin:8px 16px 8px 0;filter:brightness(0)}.pre ul{padding-left:1.2em}.pre h2,.pre h3{margin:1.6em 0 .4em}</style><section> <div><h1>We are a creative design and software studio for <b>ambitious brands</b> in business.</h1></div> </section><section><p>Brands we've worked with</p> <div><div><img src="assets/brands/trendhijacking.png" alt="TrendHijacking" loading="lazy" decoding="async"> <img src="assets/brands/weegummies.png" alt="WeeGummies" loading="lazy" decoding="async"> <img src="assets/brands/naturedrops.png" alt="NatureDrops" loading="lazy" decoding="async"> <img src="assets/brands/somniaa.png" alt="Somniaa" loading="lazy" decoding="async"> <img src="assets/brands/skinfusion.png" alt="Skinfusion" loading="lazy" decoding="async"> <img src="assets/brands/maximus.png" alt="Maximus" loading="lazy" decoding="async"> <img src="assets/brands/bebedrops.png" alt="BebeDrops" loading="lazy" decoding="async"> <img src="assets/brands/buttkarahi.png" alt="Butt Karahi" loading="lazy" decoding="async"> <img src="assets/brands/sparkclean.png" alt="Spark Clean" loading="lazy" decoding="async"> <img src="assets/brands/safeher.png" alt="SafeHer AI" loading="lazy" decoding="async"> </div></div></section><section><div><p>We design brands, run campaigns and build software, all under one roof. One studio, one brief, no hand-off gaps. Our work speaks louder than words. </p></div></section><section><div><div> <article><div><h3>One studio, every step</h3><p>Brand, campaign and product, built to fit together.</p></div> </article> <article><div><b>40+</b>Projects delivered </div> </article> <article> <div><b>25+</b>Clients served </div></article> <article> <div><b>5+</b>Years of experience </div></article> </div></div></section><section><div><h2>What clients say</h2> <div><p>Straight from the people we've worked with.</p></div> <ul><li> <blockquote>Daniyal worked with us at Trendhijacking for over three years as our Head of Design. He was always highly professional, diligent, and technically proficient in managing all graphic design operations and visual assets. He is an efficient professional to work with, and I wouldn’t hesitate to hire him again.</blockquote> <div> <div><b>Dolapo Adedayo</b>CEO, Trend Hijacking </div></div></li><li> <blockquote>I came to Daniyal with a pretty rough idea for the Amor Fati piece and he turned it into something way better than what I had in my head. It's brutalist but still feels clean and premium, which is exactly what I wanted for Unanswered Prayers. The files were print-ready, my printer had zero issues, and people still ask me about that shirt.</blockquote> <div> <div><b>Zachary</b>Founder, Unanswered Prayers </div></div></li><li> <blockquote>We needed a batch of story ads for BebeDrops and honestly didn't expect them to come back this polished. They got that parents need to trust what they're looking at, so everything felt soft and clean without being boring. Quick turnaround, easy to talk to, and they threw in a few extra variations for us to test.</blockquote> <div> <div><b>Ryan Mitchell</b>Founder, BebeDrops </div></div></li><li> <blockquote>The team did our logo, the bottle and box, and all the product images for Maximus. The before-and-after images made a real difference on our listing. They took feedback well, never made me feel like I was asking for too much, and kept everything consistent across the brand.</blockquote> <div> <div><b>Marcus Bell</b>Owner, Maximus </div></div></li><li> <blockquote>An anti-snoring mouthguard isn't the easiest product to make look good, but these guys pulled it off. The box looks premium and the listing images explain how it fits better than our old copy ever did. Customers actually understand the product now before they buy it.</blockquote> <div> <div><b>Daniel Hartley</b>Founder, Somniaa </div></div></li><li> <blockquote>Working with daizn on Skinfusion was really easy. They handled the logo, the tube packaging and the store images, and every round of changes came back fast. The whole thing looks calm and high-end, exactly the feel we wanted for an overnight mask. I'd happily work with them again.</blockquote> <div> <div><b>Olivia Grant</b>Founder, Skinfusion </div></div></li></ul> </div></section><section><div><h2>What we do</h2> <div><article>01 <div><h3>Brand and design</h3><ul><li>Branding</li><li>Posters</li><li>Motion graphics</li></ul><p>Logos, brand kits, posters and motion graphics that make a business easy to recognise.</p><div><a href="#contact">Start a project </a></div></div> </article><article>02 <div><h3>Social media ads and marketing</h3><ul><li>Social media</li><li>Campaigns</li><li>SEO and analytics</li></ul><p>Content and reporting that connect creative work to real goals.</p><div><a href="#contact">Plan your ads with us </a></div></div> </article><article>03 <div><h3>Web and app development</h3><ul><li>Websites</li><li>Web apps</li><li>APIs</li></ul><p>Websites, web apps and APIs, built from first sketch to deployment and ready to grow.</p><div><a href="#contact">Start a project </a></div></div> </article></div></div></section><section><div> <div><h2>Featured Projects</h2></div> <ul><li> <a href="#works"> <b>Somniaa</b>Logo, box packaging and product listing images for an anti-snoring mouthguard. Logo Packaging Listing images </a></li><li> <a href="#works"> <b>WeeGummies</b>Logo, jar packaging and product mockups for a kids' night-time gummy brand. Logo Packaging Product mockups </a></li><li> <a href="#works"> <img src="assets/work/spark-clean/thumb.webp" alt="SPARK CLEAN" loading="lazy" decoding="async"> <b>SPARK CLEAN</b>Booking platform for a cleaning service in Melbourne. Website Booking platform Admin dashboard </a></li><li> <a href="#works"> <img src="assets/work/maximus/thumb.webp" alt="Maximus" loading="lazy" decoding="async"> <b>Maximus</b>Logo, bottle and box packaging and product images for a batana oil hair serum. Logo Packaging Product images </a></li><li> <a href="#works"> <img src="assets/work/butt-karahi/thumb.webp" alt="BUTT KARAHI" loading="lazy" decoding="async"> <b>BUTT KARAHI</b>Online ordering site and admin dashboard for a Lahore restaurant. Website Online ordering Admin dashboard </a></li><li> <a href="#works"> <img src="assets/work/skinfusion/thumb.webp" alt="Skinfusion" loading="lazy" decoding="async"> <b>Skinfusion</b>Logo, tube packaging and online-store product images for an overnight skincare mask. Logo Packaging Product images </a></li><li> <a href="#works"> <img src="assets/work/bebedrops-ads/thumb.webp" alt="BebeDrops Ads" loading="lazy" decoding="async"> <b>BebeDrops Ads</b>Social media ads for an organic children's multivitamin drops brand. Social media ads Story ads </a></li></ul> <div><a href="projects.html">View all projects </a></div></div></section> <section><div><h2>How we work</h2> <div><p>Four clear steps from the first call to launch day, with one team the whole way through.</p> </div> <ol><li> <h3>Discover</h3><p>We learn your goals, your audience and what success looks like.</p> <div><ul><li>Kick-off call</li><li>Audience research</li><li>Clear brief</li></ul></div> </li><li> <h3>Design</h3><p>Brand, layouts and prototypes you can react to before anything is built.</p> <div><ul><li>Moodboards</li><li>Brand and layouts</li><li>Prototypes</li></ul></div> </li><li> <h3>Build</h3><p>Clean, tested code and finished creative, made to fit together.</p> <div><ul><li>Final artwork</li><li>Tested code</li><li>Review rounds</li></ul></div> </li><li> <h3>Launch</h3><p>We deploy, check everything works live, then keep improving from real feedback.</p> <div><ul><li>Go live</li><li>Launch checks</li><li>Ongoing support</li></ul></div> </li></ol></div></section><div><section><div> <div><p>/ contact us</p><h2>Let's create</h2></div> <div><p>Tell us about your project and we'll bring in the right specialist.</p> <a href="mailto:daiznstudio@gmail.com">Contact us </a></div> </div></section></div> <footer><div> <div> <a href="mailto:daiznstudio@gmail.com"><div><p>/ Copy mail</p><p>Prefer mail?</p></div> <div>daiznstudio@<wbr>gmail.com </div></a> <a href="team.html"><div><p>/ Navigation</p><p>Go to next page</p></div> <div>Meet the team </div></a></div> <div><p>Navigation</p><ul><li><a href="#about">About</a></li><li><a href="#services">Services</a></li><li><a href="#works">Works</a></li><li><a href="team.html">Team</a></li><li><a href="#contact">Contact</a></li></ul></div> <div><p>Socials</p><ul><li><a href="https://www.linkedin.com/company/daizn-studio">LinkedIn</a></li><li><a href="https://www.instagram.com/daiznstudio/">Instagram</a></li><li><a href="https://x.com/daiznstudio">X</a></li></ul></div> <div><p>Legal</p><ul><li><a href="legal.html">Legal</a></li><li><a href="privacy.html">Privacy policy</a></li><li><a href="terms.html">Terms and conditions</a></li></ul></div> <div><p>Connect</p><ul><li><a href="mailto:daiznstudio@gmail.com">daiznstudio@<wbr>gmail.com</a></li></ul></div> <a href="index.html"> daizn </a> <div><p>©2026 daizn studio, all rights reserved</p><a href="#home">Back to top</a></div> </div></footer></div><!--pre:end--></main>
@@ -1111,12 +1173,89 @@ window.PF = (function () {
       </svg></a>`;
   };
 
+  /* glossy 3D shape (the folder's pointer) from flat layers: each layer is extruded by stacking darker copies down-right, then gets a
+     gradient face, a top gloss and a lit rim. Shapes live in a 100x100 box */
+  P.ico3d = (layers, id) => {
+    const defs = layers.map((L, j) => `<path id="${id}${j}" fill-rule="evenodd" d="${L.d}"/>`).join("");
+    const body = layers.map((L, j) => {
+      const h = `#${id}${j}`, n = L.depth || 6;
+      let side = "";
+      for (let k = n; k >= 1; k--) side += `<use href="${h}" x="${(k * .5).toFixed(1)}" y="${(k * .8).toFixed(1)}" fill="url(#gS)"/>`;
+      return `${side}<use href="${h}" fill="url(#g${L.f || "A"})"/><use href="${h}" fill="url(#gHi)"/><use href="${h}" fill="none" stroke="url(#gRim)" stroke-width="1.1"/>`;
+    }).join("");
+    return `<svg viewBox="-4 -4 110 112" aria-hidden="true"><defs>${defs}</defs>${body}</svg>`;
+  };
+  P.ICO = {
+    ptr: [{ d: "M15 8.7L89 41Q97.7 45 88.7 48.7L60 59Q55.3 60.7 53.7 65.3L42.7 92.7Q39 100.7 35.7 92.3L7.7 17.7Q4.7 4.3 15 8.7Z", f: "C", depth: 6 }]
+  };
+
   P.heroCo3 = D => {
-    const T = D.heroText;
-    return `<section class="h3 h3a dark" id="home" data-nav="home">
-      <div class="h3-au" aria-hidden="true"><i class="bl b1"></i><i class="bl b4"></i><i class="bl b2"></i><i class="bl b3"></i><div class="glass"></div><i class="grain"></i></div>
-      <div class="h3-text"><h1>${esc(T.before)}<b>${esc(T.bold)}</b><span class="sel-cur" aria-hidden="true"></span>${esc(T.after)}</h1></div>
+    const T = D.heroText, C = D.heroCovers || [], W = (D.works && D.works.items) || [];
+    // every cover goes in the one folder; covers with a project on this page open its popup, the rest go to the projects page
+    const card = (src, k) => {
+      const i = W.findIndex(p => (p.cover || "").includes(`/${src}/`)), name = i > -1 ? W[i].t : src.split("-").map(w => w[0].toUpperCase() + w.slice(1)).join(" ");
+      return `<span class="fd-card" data-s="${k < 4 ? k : "x"}" data-name="${esc(name)}"${i > -1 ? ` data-i="${i}"` : ""}><img src="assets/work/${esc(src)}/thumb-sq.webp" alt="" decoding="async"></span>`;
+    };
+    const mark = `<svg viewBox="0 0 100 100"><rect x="34" y="16" width="32" height="36" rx="15"/><path d="M34 80A16 15 0 0 1 66 80Z"/></svg>`;
+    return `<section class="h3 h3a" id="home" data-nav="home">
+      <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+        <linearGradient id="gC" x1="0" y1="0" x2=".7" y2="1"><stop offset="0" stop-color="#fff"/><stop offset=".5" stop-color="#e4dafa"/><stop offset="1" stop-color="#b9a5ea"/></linearGradient>
+        <linearGradient id="gS" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3a2263"/><stop offset="1" stop-color="#1c0f33"/></linearGradient>
+        <linearGradient id="gHi" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/></linearGradient>
+        <linearGradient id="gRim" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset=".6" stop-color="#fff" stop-opacity=".12"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+        <linearGradient id="fdG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a68ae6"/><stop offset=".45" stop-color="#7b55c9"/><stop offset="1" stop-color="#482e74"/></linearGradient>
+        <path id="fdB" vector-effect="non-scaling-stroke" d="M4 16Q4 8 12 8H58Q61.5 8 63.4 5L65 2.6Q66.8 0 70 0H88Q96 0 96 8V72Q96 80 88 80H12Q4 80 4 72Z"/>
+        <path id="fdF" vector-effect="non-scaling-stroke" d="M0 31Q0 23 8 23H39Q43 23 45.4 26.2L47.6 29Q49.4 31.6 53 31.6H92Q100 31.6 100 39.6V72Q100 80 92 80H8Q0 80 0 72Z"/>
+      </defs></svg>
+      <div class="h3-au" aria-hidden="true"><i class="bl b1"><i></i></i><i class="bl b4"><i></i></i><i class="bl b2"><i></i></i><i class="bl b3"><i></i></i><i class="h3-gl"></i><i class="grain"></i></div>
+      <div class="h3-text"><h1>${esc(T.before)}<br class="h3-br"> ${esc(T.lead || "")}<b>${esc(T.bold)}</b>${esc(T.after)}</h1>
+        <a class="nbtn talk h3-cta" href="#contact" aria-label="Let's talk"><span class="tk-tx" aria-hidden="true"><span data-t="Let's talk">Let's talk</span></span><span class="tk-ic" aria-hidden="true"><svg class="na" viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></svg></span></a></div>
+      ${C.length ? `<div class="h3-fd" role="button" tabindex="0" data-cursor="Open"><div class="fd-in">
+        <svg class="fd-bk" viewBox="0 0 100 80" preserveAspectRatio="none" aria-hidden="true"><use href="#fdB" fill="url(#fdG)" stroke="rgba(228,218,250,.6)" stroke-width="1.2"/></svg>
+        ${C.map(card).join("")}
+        <span class="fd-fr" aria-hidden="true"><img class="fd-blur" src="assets/work/${esc(C[0])}/thumb-sq.webp" alt=""><svg class="fd-rim" viewBox="0 0 100 80" preserveAspectRatio="none"><use href="#fdF"/></svg><span class="fd-lb"><i>${mark}</i><b></b><span class="fd-n"></span></span></span>
+        <span class="fd-ptr" aria-hidden="true">${P.ico3d(P.ICO.ptr, "ptr-")}</span>
+      </div></div>` : ""}
       </section>`;
+  };
+
+  /* the hero folder shuffles its covers: the front one rises out for a moment, then slips to the back of the stack.
+     Hovering opens the flap and fans the stack and holds the shuffle; a click opens the risen project.
+     The cursor also nudges the glows and icons for depth */
+  P.heroFolder = () => {
+    const host = $(".h3a"), fd = host && $(".h3-fd", host); if (!fd) return;
+    const cards = $$(".fd-card", fd), blur = $(".fd-blur", fd), nm = $(".fd-lb b", fd), ct = $(".fd-n", fd), N = cards.length;
+    const pad = n => String(n).padStart(2, "0"), order = cards.map((_, i) => i);
+    let hold = false;
+    const paint = () => {
+      order.forEach((c, s) => cards[c].dataset.s = s < 4 ? s : "x");
+      const c = cards[order[0]];
+      blur.src = c.querySelector("img").src;
+      nm.textContent = c.dataset.name; ct.textContent = `${pad(order[0] + 1)}/${pad(N)}`;
+      fd.setAttribute("aria-label", "Open " + c.dataset.name);
+    };
+    paint();
+    const open = () => { const c = cards[order[0]]; if (c.dataset.i != null) P.onOpen(c.dataset.i); else location.href = "projects.html"; };
+    fd.addEventListener("click", open);
+    fd.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(); } });
+    if (reduce) return;
+    const next = () => {
+      order.push(order.shift()); paint();
+      nm.animate([{ opacity: 0, transform: "translateY(6px)" }, { opacity: 1, transform: "none" }], { duration: 450, easing: "ease-out" });
+    };
+    const tick = () => setTimeout(() => { if (!hold && !document.hidden && scrollY < host.offsetHeight) next(); tick(); }, 2600);
+    tick();
+    fd.addEventListener("pointerenter", e => { if (e.pointerType !== "touch") hold = true; });
+    fd.addEventListener("pointerleave", () => hold = false);
+    let tx = 0, ty = 0, px = 0, py = 0, raf = 0;
+    const step = () => {
+      px += (tx - px) * .06; py += (ty - py) * .06;
+      host.style.setProperty("--px", px.toFixed(3)); host.style.setProperty("--py", py.toFixed(3));
+      raf = Math.abs(tx - px) + Math.abs(ty - py) > .002 ? requestAnimationFrame(step) : 0;
+    };
+    const aim = (x, y) => { tx = x; ty = y; if (!raf) raf = requestAnimationFrame(step); };
+    host.addEventListener("pointermove", e => { if (e.pointerType === "touch") return; const r = host.getBoundingClientRect(); aim((e.clientX - r.left) / r.width - .5, (e.clientY - r.top) / r.height - .5); });
+    host.addEventListener("pointerleave", () => aim(0, 0));
   };
 
   /* burst + drifting dots + giant word behaviour for the company hero */
@@ -1917,8 +2056,10 @@ const DATA = {
   email: "daiznstudio@gmail.com",
   phone: "",
   links: { company: "index.html" },
-  heroText: { before: "We are a creative design and software studio for ", bold: "ambitious brands", after: " in business." },
+  heroText: { before: "We are a creative design and software studio", lead: "for ", bold: "ambitious brands", after: " in business." },
   heroImage: "",
+  // covers stacked in the hero's glass folder (folders in assets/work with a thumb-sq.webp)
+  heroCovers: ["weegummies", "ghosted", "somniaa", "on-my-mind", "maximus", "love-letter", "skinfusion", "travis-scott", "naturedrops", "amor-fati", "bebedrops-ads", "rough-freestyle", "hii-club-logo", "laare"],
   tag: "A design, social media and software studio.",
   tag2: "Portfolio " + new Date().getFullYear(),
   scrollNote: "Scroll to explore",
@@ -2013,6 +2154,7 @@ const DATA = {
     P.showModal(P.modalHTML(p, +i, be));
   };
   P.init(D);
+  P.heroFolder();
 })();
 
 </script>
