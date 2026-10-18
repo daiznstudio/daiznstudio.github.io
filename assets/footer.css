@@ -72,7 +72,7 @@ html.end-dark{background:#000}
 .sf-copy{grid-column:7/13;grid-row:4;align-self:end;display:flex;justify-content:space-between;align-items:flex-end;gap:1rem;flex-wrap:wrap}
 /* the copyright line sits alone, small and centred, below everything; "Back to top" stays at the end of the logo row */
 .sf-copy{display:contents}
-.sf-copy p{grid-column:1/-1;grid-row:5;order:1;justify-self:center;margin-top:-2rem;text-align:center;font-size:.6rem;letter-spacing:.08em}
+.sf-copy p{grid-column:1/-1;grid-row:5;order:1;justify-self:center;align-self:end;margin:-2rem 0 -1.35rem;text-align:center;font-size:.6rem;letter-spacing:.08em}
 .sf-copy a{grid-column:7/13;grid-row:4;justify-self:end;align-self:end}
 
 @media (max-width:991px){
@@ -94,6 +94,7 @@ html.end-dark{background:#000}
   .sf-leg,.sf-con{grid-column:1/-1}
   .sf-con a{font-size:clamp(1.1rem,5.4vw,1.6rem)}
   .sf-copy a{justify-self:center}
+  .sf-copy p{margin-bottom:-.5rem}
 }
 @media (prefers-reduced-motion:reduce){
   .sf-card,.sf-ic,.sf-line{transition:none}
