@@ -4,7 +4,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Chivo+Mono:wght@400;500&display=swap");
 
 :root{--sf-mono:"Chivo Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
-.sf{position:relative;z-index:1;background:#000;color:var(--paper);
+.sf{position:relative;z-index:1;background:#000;color:var(--paper);padding-bottom:env(safe-area-inset-bottom,0px);
   font-family:var(--font-body);font-weight:500}
 .sf a{color:inherit;text-decoration:none}
 .sf p,.sf h2,.sf h3{margin:0}
