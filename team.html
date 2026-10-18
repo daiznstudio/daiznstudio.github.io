@@ -38,6 +38,7 @@
   box-sizing:border-box;
 }
 html{scroll-behavior:smooth;overscroll-behavior-y:none;background:var(--page);scroll-padding-top:calc(env(safe-area-inset-top,0px) + 76px)}
+html.ld-on{background:var(--ink)}
 *,*::before,*::after{box-sizing:border-box}
 body{margin:0;background:var(--page);color:var(--ink);font:400 clamp(.95rem,1.05vw,1.06rem)/1.65 var(--font-body);overflow-x:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 body.lock{overflow:hidden}
@@ -71,7 +72,8 @@ svg{display:block}
 @keyframes fu{to{opacity:1;translate:0 0}}
 
 /* ---------- loader ---------- */
-.loader{position:fixed;inset:0;z-index:200;background:var(--ink);color:var(--paper);display:grid;place-items:center;pointer-events:none;overflow:hidden;
+/* the loader overhangs the screen top and bottom so a phone's sliding or see-through toolbars never show the page behind it */
+.loader{position:fixed;inset:-120px 0;z-index:200;background:var(--ink);color:var(--paper);display:grid;place-items:center;pointer-events:none;overflow:hidden;
   animation:ldCut 2s step-end both,ldOut .7s cubic-bezier(.7,0,.2,1) 2s forwards}
 @keyframes ldOut{to{translate:0 -100%;visibility:hidden}}
 /* hard colour cuts through the brand palette while the logo holds still */
@@ -123,8 +125,9 @@ svg{display:block}
 .nav .links,.nav .menu-btn{border-color:rgba(255,255,255,.95);background:linear-gradient(180deg,rgba(255,255,255,.82),rgba(255,255,255,.5));box-shadow:0 0 0 1px rgba(72,46,116,.09),0 6px 14px -6px rgba(72,46,116,.3),0 16px 30px -18px rgba(72,46,116,.4),inset 0 1px 0 #fff,inset 0 -1px 0 rgba(72,46,116,.08)}
 .nav.inv .links,.nav.vio .links,.nav.inv .menu-btn,.nav.vio .menu-btn{border-color:rgba(255,255,255,.3);background:linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,.06));box-shadow:0 0 0 1px rgba(0,0,0,.25),0 8px 20px -8px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.3)}
 /* hover and the current section get a lilac glass bubble instead of a solid fill */
-.nav .nav-ind{background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(214,201,247,.78));box-shadow:0 0 0 1px rgba(138,99,216,.28),0 6px 16px -6px rgba(72,46,116,.5),0 0 20px rgba(185,165,234,.55),inset 0 1px 0 #fff,inset 0 -3px 8px rgba(138,99,216,.2)}
-.nav .links.js a.on{color:var(--purple)}
+/* violet glass, like the footer card: see-through violet, a diagonal sheen and a bright top edge */
+.nav .nav-ind{background:linear-gradient(135deg,rgba(255,255,255,.34),rgba(255,255,255,0) 45%),linear-gradient(180deg,rgba(90,51,168,.62),rgba(63,28,140,.72));-webkit-backdrop-filter:blur(10px) saturate(1.6);backdrop-filter:blur(10px) saturate(1.6);box-shadow:0 0 0 1px rgba(63,28,140,.3),0 6px 16px -6px rgba(63,28,140,.55),0 0 20px rgba(185,165,234,.45),inset 0 1px 0 rgba(255,255,255,.55),inset 0 0 0 1px rgba(255,255,255,.18),inset 0 -3px 8px rgba(0,0,0,.12)}
+.nav .links.js a.on{color:#fff}
 .nav .links:not(.js) a.active{background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(214,201,247,.78));color:var(--purple);box-shadow:0 0 0 1px rgba(138,99,216,.28),inset 0 1px 0 #fff}
 .nav.inv .nav-ind,.nav.vio .nav-ind{background:linear-gradient(180deg,rgba(255,255,255,.34),rgba(185,165,234,.18));-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:0 0 0 1px rgba(255,255,255,.3),0 6px 16px -6px rgba(0,0,0,.5),0 0 18px rgba(185,165,234,.35),inset 0 1px 0 rgba(255,255,255,.55)}
 .nav.inv .links.js a.on,.nav.vio .links.js a.on{color:var(--paper)}
@@ -913,6 +916,10 @@ dialog.modal[open]{animation:mIn .5s cubic-bezier(.2,.8,.2,1)}
   (function () {
     var l = document.querySelector(".loader"), m = l && l.querySelector(".ld-m"), d = l && l.querySelector(".ld");
     if (!l) return;
+    // phones colour their toolbars from the page background, so it matches the black intro until the loader leaves
+    var r = document.documentElement, off = function () { r.classList.remove("ld-on"); };
+    if (getComputedStyle(l).display !== "none") { r.classList.add("ld-on"); setTimeout(off, 3000); }
+    l.addEventListener("animationstart", function (e) { if (e.animationName === "ldOut") off(); });
     try { if (sessionStorage.getItem("dzIntro")) l.classList.add("quick"); else sessionStorage.setItem("dzIntro", "1"); } catch (e) { }
     var a = d.getBoundingClientRect(), b = m.getBoundingClientRect();
     m.style.setProperty("--dx", (a.left + a.width / 2 - (b.left + b.width / 2)) + "px");

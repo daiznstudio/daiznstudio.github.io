@@ -26,6 +26,7 @@
   box-sizing:border-box;
 }
 html{scroll-behavior:smooth;overscroll-behavior-y:none;background:var(--page);scroll-padding-top:calc(env(safe-area-inset-top,0px) + 76px)}
+html.ld-on{background:var(--ink)}
 *,*::before,*::after{box-sizing:border-box}
 body{margin:0;background:var(--page);color:var(--ink);font:400 clamp(.95rem,1.05vw,1.06rem)/1.65 var(--font-body);overflow-x:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 body.lock{overflow:hidden}
@@ -59,7 +60,8 @@ svg{display:block}
 @keyframes fu{to{opacity:1;translate:0 0}}
 
 /* ---------- loader ---------- */
-.loader{position:fixed;inset:0;z-index:200;background:var(--ink);color:var(--paper);display:grid;place-items:center;pointer-events:none;overflow:hidden;
+/* the loader overhangs the screen top and bottom so a phone's sliding or see-through toolbars never show the page behind it */
+.loader{position:fixed;inset:-120px 0;z-index:200;background:var(--ink);color:var(--paper);display:grid;place-items:center;pointer-events:none;overflow:hidden;
   animation:ldCut 2s step-end both,ldOut .7s cubic-bezier(.7,0,.2,1) 2s forwards}
 @keyframes ldOut{to{translate:0 -100%;visibility:hidden}}
 /* hard colour cuts through the brand palette while the logo holds still */
@@ -841,6 +843,10 @@ dialog.modal[open]{animation:mIn .5s cubic-bezier(.2,.8,.2,1)}
   (function () {
     var l = document.querySelector(".loader"), m = l && l.querySelector(".ld-m"), d = l && l.querySelector(".ld");
     if (!l) return;
+    // phones colour their toolbars from the page background, so it matches the black intro until the loader leaves
+    var r = document.documentElement, off = function () { r.classList.remove("ld-on"); };
+    if (getComputedStyle(l).display !== "none") { r.classList.add("ld-on"); setTimeout(off, 3000); }
+    l.addEventListener("animationstart", function (e) { if (e.animationName === "ldOut") off(); });
     try { if (sessionStorage.getItem("dzIntro")) l.classList.add("quick"); else sessionStorage.setItem("dzIntro", "1"); } catch (e) { }
     var a = d.getBoundingClientRect(), b = m.getBoundingClientRect();
     m.style.setProperty("--dx", (a.left + a.width / 2 - (b.left + b.width / 2)) + "px");

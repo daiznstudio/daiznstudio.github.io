@@ -154,8 +154,49 @@ const CALENDLY = "https://calendly.com/daiznstudio/30min";
     const a = e.target.closest && e.target.closest("[data-cal]");
     if (!a) return;
     e.preventDefault();
-    ready().then(() => Calendly.initPopupWidget({ url })).catch(() => { location.href = a.href; });
+    ready().then(() => { Calendly.initPopupWidget({ url }); dress(); }).catch(() => { location.href = a.href; });
   });
+
+  /* the popup gets the footer card's glass look (styles in assets/footer.css): a header with its own close button
+     takes the place of Calendly's, a soft light follows the pointer, and closing waits for the drop-away animation */
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const X = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+  let shutting = false;
+  const shut = () => {
+    const o = document.querySelector(".calendly-overlay");
+    if (!o || shutting) return;
+    if (reduce) return Calendly.closePopupWidget();
+    shutting = true;
+    const done = () => { shutting = false; Calendly.closePopupWidget(); };
+    const t = setTimeout(done, 600);
+    o.addEventListener("animationend", e => { if (e.animationName === "calOut") { clearTimeout(t); done(); } });
+    o.classList.add("dz-out");
+  };
+  const dress = () => {
+    const o = document.querySelector(".calendly-overlay"), pop = o && o.querySelector(".calendly-popup");
+    if (!pop || pop.querySelector(".cal-head")) return;
+    const head = document.createElement("div");
+    head.className = "cal-head";
+    head.innerHTML = `<div class="cal-top"><p class="sf-cap">/ Book a meeting</p><p class="cal-big">Pick a time</p></div><button type="button" class="cal-x" aria-label="Close">${X}</button>`;
+    pop.prepend(head);
+    head.querySelector(".cal-x").addEventListener("click", shut);
+    if (matchMedia("(hover: hover)").matches) {
+      let q = 0, ev;
+      o.addEventListener("pointermove", e => {
+        ev = e;
+        if (!q) q = requestAnimationFrame(() => {
+          q = 0;
+          const r = pop.getBoundingClientRect();
+          pop.style.setProperty("--lx", ev.clientX - r.left + "px"); pop.style.setProperty("--ly", ev.clientY - r.top + "px");
+        });
+      });
+    }
+  };
+  // Calendly closes on a click outside the card: catch it first so it animates out the same way; Esc too
+  document.addEventListener("click", e => {
+    if (e.target.closest && e.target.closest(".calendly-close-overlay, .calendly-popup-close")) { e.stopPropagation(); e.preventDefault(); shut(); }
+  }, true);
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && document.querySelector(".calendly-overlay")) shut(); });
 
   const form = document.getElementById("cform");
   if (!form) return;
@@ -199,4 +240,71 @@ const CALENDLY = "https://calendly.com/daiznstudio/30min";
     e.preventDefault();
     show(true); toContact();
   });
+})();
+
+/* phones tint their status bar and toolbar from the page background, which is light grey. Once the black contact
+   card or footer reaches the bottom of the screen, the background behind everything turns black so the bars match */
+(() => {
+  const root = document.documentElement;
+  let q = 0;
+  // looked up on each check: pages build their contact card and footer after this script loads
+  const check = () => {
+    q = 0;
+    root.classList.toggle("end-dark", [...document.querySelectorAll(".lc, .sf")].some(e => e.getBoundingClientRect().top < innerHeight * .9));
+  };
+  addEventListener("scroll", () => { if (!q) q = requestAnimationFrame(check); }, { passive: true });
+  addEventListener("resize", check);
+  check();
+})();
+
+/* the footer logo in the hero folder's frosted glass, kept clear (styles in assets/footer.css): the mark and word are redrawn as
+   one SVG, 200 units to the em, laid out like the original (mark .74em tall on the baseline, .14em gap, word at
+   1em). The glass is pure white, kept clear: a brighter top and highlight over a faint wash. An SVG filter adds a soft
+   frost on the face, a faint white halo outside and a bright white rim. It stays still */
+(() => {
+  const NS = "http://www.w3.org/2000/svg", P = 48;
+  const build = a => {
+    a.dataset.glass = "1";
+    const s = document.createElementNS(NS, "svg");
+    s.setAttribute("class", "sf-glass"); s.setAttribute("aria-hidden", "true");
+    // drawn twice (the wash, then the highlight over it)
+    const shape = `<rect y="-148" width="92.5" height="99.9" rx="42.55"/><path d="M0 0A46.25 44.4 0 0 1 92.5 0Z"/><text x="120.5" y="0"><tspan class="th">dai</tspan><tspan class="bd">zn</tspan></text>`;
+    s.innerHTML = `<defs>
+      <linearGradient id="sfg-wash" gradientUnits="userSpaceOnUse" x1="0" y1="-150" x2="0" y2="0">
+        <stop offset="0" stop-color="#fff" stop-opacity=".5"/><stop offset=".45" stop-color="#fff" stop-opacity=".26"/>
+        <stop offset=".8" stop-color="#fff" stop-opacity=".2"/><stop offset="1" stop-color="#fff" stop-opacity=".34"/></linearGradient>
+      <radialGradient id="sfg-hi" gradientUnits="userSpaceOnUse" cx="0" cy="-130" r="520" gradientTransform="translate(0 -130) scale(1 .3) translate(0 130)">
+        <stop offset="0" stop-color="#fff" stop-opacity=".3"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+      <filter id="sfg-frost" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+        <feGaussianBlur in="SourceAlpha" stdDeviation="16" result="hb"/>
+        <feFlood flood-color="#fff" flood-opacity=".12"/><feComposite in2="hb" operator="in"/><feComposite in2="SourceAlpha" operator="out" result="halo"/>
+        <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4" result="n"/>
+        <feColorMatrix in="n" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .05 0"/><feComposite in2="SourceAlpha" operator="in" result="grain"/>
+        <feGaussianBlur in="SourceAlpha" stdDeviation="5" result="soft"/><feComposite in="SourceAlpha" in2="soft" operator="out" result="inner"/>
+        <feFlood flood-color="#fff" flood-opacity=".4"/><feComposite in2="inner" operator="in" result="glow"/>
+        <feMorphology in="SourceAlpha" operator="erode" radius="1.6" result="er"/><feComposite in="SourceAlpha" in2="er" operator="out" result="ring"/>
+        <feFlood flood-color="#fff" flood-opacity=".9"/><feComposite in2="ring" operator="in" result="rim"/>
+        <feMerge><feMergeNode in="halo"/><feMergeNode in="SourceGraphic"/><feMergeNode in="grain"/><feMergeNode in="glow"/><feMergeNode in="rim"/></feMerge>
+      </filter>
+      </defs><g filter="url(#sfg-frost)"><g fill="url(#sfg-wash)">${shape}</g><g fill="url(#sfg-hi)">${shape}</g></g>`;
+    a.append(s); a.classList.add("is-glass");
+    const text = s.querySelector("text"), f = s.querySelector("filter");
+    // the view box hugs the drawing plus room for the halo; the same room comes off as negative margin
+    const fit = () => {
+      const t = text.getBBox(), top = Math.min(t.y, -148), w = t.x + t.width, h = -top, box = [-P, top - P, w + 2 * P, h + 2 * P];
+      s.setAttribute("viewBox", box.join(" "));
+      ["x", "y", "width", "height"].forEach((k, n) => f.setAttribute(k, box[n]));
+      s.style.setProperty("--h", box[3] / 200 + "em");
+      s.style.setProperty("--m", -P / 200 + "em");
+    };
+    fit();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+  };
+  const scan = () => document.querySelectorAll(".sf-logo:not([data-glass])").forEach(build);
+  scan();
+  // most pages build their footer after this script runs
+  if (!document.querySelector(".sf-logo[data-glass]")) {
+    const mo = new MutationObserver(() => { scan(); if (document.querySelector(".sf-logo[data-glass]")) mo.disconnect(); });
+    mo.observe(document.body, { childList: true, subtree: true });
+  }
 })();

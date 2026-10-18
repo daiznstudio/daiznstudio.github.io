@@ -80,9 +80,45 @@
     requestAnimationFrame(step);
   }
 
+  // closing waits for the drop-away animation (mxOut in assets/viewer.css); Esc goes the same way
+  const close0 = m.close && m.close.bind(m);
+  let stop = null;
+  if (close0 && !reduce) {
+    m.close = v => {
+      if (!m.open || !m.classList.contains("mxd")) return close0(v);
+      if (stop) return;
+      const end = e => { if (e.target === m && e.animationName === "mxOut") done(); };
+      const t = setTimeout(() => done(), 600);
+      stop = () => { clearTimeout(t); m.removeEventListener("animationend", end); m.classList.remove("mx-out"); stop = null; };
+      const done = () => { stop(); close0(v); };
+      m.addEventListener("animationend", end);
+      m.classList.add("mx-out");
+    };
+    m.addEventListener("cancel", e => { if (m.classList.contains("mxd")) { e.preventDefault(); m.close(); } });
+  }
+
+  // the glass catches a soft light where the pointer is
+  if (matchMedia("(hover: hover)").matches) {
+    let q = 0, ev;
+    m.addEventListener("pointermove", e => {
+      ev = e;
+      if (q) return;
+      q = requestAnimationFrame(() => {
+        q = 0;
+        const r = m.getBoundingClientRect(), info = m.querySelector(".mx-info");
+        m.style.setProperty("--gx", ev.clientX - r.left + "px"); m.style.setProperty("--gy", ev.clientY - r.top + "px");
+        if (!info) return;
+        const b = info.getBoundingClientRect();
+        info.style.setProperty("--lx", ev.clientX - b.left + "px"); info.style.setProperty("--ly", ev.clientY - b.top + "px");
+      });
+    });
+  }
+
   function run() {
     const info = m.querySelector(".mx-info"); if (!info || info.dataset.fx) return;
     info.dataset.fx = "1";
+    if (stop) stop();
+    m.querySelectorAll(".mx-th").forEach((t, k) => t.style.setProperty("--k", Math.min(k, 12)));
     colour(m.querySelector(".mx"));
     // highlights fold away under a "What we did" toggle
     const feats = info.querySelector(".mx-feats");

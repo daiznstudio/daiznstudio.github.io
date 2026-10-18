@@ -39,6 +39,7 @@
   box-sizing:border-box;
 }
 html{scroll-behavior:smooth;overscroll-behavior-y:none;background:var(--page);scroll-padding-top:calc(env(safe-area-inset-top,0px) + 76px)}
+html.ld-on{background:var(--ink)}
 *,*::before,*::after{box-sizing:border-box}
 body{margin:0;background:var(--page);color:var(--ink);font:400 clamp(.95rem,1.05vw,1.06rem)/1.65 var(--font-body);overflow-x:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 body.lock{overflow:hidden}
@@ -72,7 +73,8 @@ svg{display:block}
 @keyframes fu{to{opacity:1;translate:0 0}}
 
 /* ---------- loader ---------- */
-.loader{position:fixed;inset:0;z-index:200;background:var(--ink);color:var(--paper);display:grid;place-items:center;pointer-events:none;overflow:hidden;
+/* the loader overhangs the screen top and bottom so a phone's sliding or see-through toolbars never show the page behind it */
+.loader{position:fixed;inset:-120px 0;z-index:200;background:var(--ink);color:var(--paper);display:grid;place-items:center;pointer-events:none;overflow:hidden;
   animation:ldCut 2s step-end both,ldOut .7s cubic-bezier(.7,0,.2,1) 2s forwards}
 @keyframes ldOut{to{translate:0 -100%;visibility:hidden}}
 /* hard colour cuts through the brand palette while the logo holds still */
@@ -124,8 +126,9 @@ svg{display:block}
 .nav .links,.nav .menu-btn{border-color:rgba(255,255,255,.95);background:linear-gradient(180deg,rgba(255,255,255,.82),rgba(255,255,255,.5));box-shadow:0 0 0 1px rgba(72,46,116,.09),0 6px 14px -6px rgba(72,46,116,.3),0 16px 30px -18px rgba(72,46,116,.4),inset 0 1px 0 #fff,inset 0 -1px 0 rgba(72,46,116,.08)}
 .nav.inv .links,.nav.vio .links,.nav.inv .menu-btn,.nav.vio .menu-btn{border-color:rgba(255,255,255,.3);background:linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,.06));box-shadow:0 0 0 1px rgba(0,0,0,.25),0 8px 20px -8px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.3)}
 /* hover and the current section get a lilac glass bubble instead of a solid fill */
-.nav .nav-ind{background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(214,201,247,.78));box-shadow:0 0 0 1px rgba(138,99,216,.28),0 6px 16px -6px rgba(72,46,116,.5),0 0 20px rgba(185,165,234,.55),inset 0 1px 0 #fff,inset 0 -3px 8px rgba(138,99,216,.2)}
-.nav .links.js a.on{color:var(--purple)}
+/* violet glass, like the footer card: see-through violet, a diagonal sheen and a bright top edge */
+.nav .nav-ind{background:linear-gradient(135deg,rgba(255,255,255,.34),rgba(255,255,255,0) 45%),linear-gradient(180deg,rgba(90,51,168,.62),rgba(63,28,140,.72));-webkit-backdrop-filter:blur(10px) saturate(1.6);backdrop-filter:blur(10px) saturate(1.6);box-shadow:0 0 0 1px rgba(63,28,140,.3),0 6px 16px -6px rgba(63,28,140,.55),0 0 20px rgba(185,165,234,.45),inset 0 1px 0 rgba(255,255,255,.55),inset 0 0 0 1px rgba(255,255,255,.18),inset 0 -3px 8px rgba(0,0,0,.12)}
+.nav .links.js a.on{color:#fff}
 .nav .links:not(.js) a.active{background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(214,201,247,.78));color:var(--purple);box-shadow:0 0 0 1px rgba(138,99,216,.28),inset 0 1px 0 #fff}
 .nav.inv .nav-ind,.nav.vio .nav-ind{background:linear-gradient(180deg,rgba(255,255,255,.34),rgba(185,165,234,.18));-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:0 0 0 1px rgba(255,255,255,.3),0 6px 16px -6px rgba(0,0,0,.5),0 0 18px rgba(185,165,234,.35),inset 0 1px 0 rgba(255,255,255,.55)}
 .nav.inv .links.js a.on,.nav.vio .links.js a.on{color:var(--paper)}
@@ -341,7 +344,8 @@ svg{display:block}
   background:radial-gradient(circle clamp(160px,22vw,320px) at var(--mx) var(--my),rgba(185,165,234,.38),transparent 70%)}
 @media (hover:hover){.arc:hover::after{opacity:1}}
 .arc svg{position:relative;z-index:1;display:block;width:100%;height:clamp(180px,21vw,360px)}
-.arc text{fill:var(--paper);font-family:var(--font);font-size:110px;letter-spacing:-.04em}
+/* no letter-spacing: Safari ignores it on curved text, so the monograms (placed from measured widths) would drift into the words */
+.arc text{fill:var(--paper);font-family:var(--font);font-size:110px;white-space:pre}
 .arc .th{font-weight:300}.arc .bd{font-weight:700}
 .arc .a-mono{fill:var(--tint)}
 @media (prefers-reduced-motion:reduce){.arc.violet{animation:none}.arc::after{display:none}}
@@ -1093,6 +1097,10 @@ dialog.modal[open]{animation:mIn .5s cubic-bezier(.2,.8,.2,1)}
   (function () {
     var l = document.querySelector(".loader"), m = l && l.querySelector(".ld-m"), d = l && l.querySelector(".ld");
     if (!l) return;
+    // phones colour their toolbars from the page background, so it matches the black intro until the loader leaves
+    var r = document.documentElement, off = function () { r.classList.remove("ld-on"); };
+    if (getComputedStyle(l).display !== "none") { r.classList.add("ld-on"); setTimeout(off, 3000); }
+    l.addEventListener("animationstart", function (e) { if (e.animationName === "ldOut") off(); });
     try { if (sessionStorage.getItem("dzIntro")) l.classList.add("quick"); else sessionStorage.setItem("dzIntro", "1"); } catch (e) { }
     var a = d.getBoundingClientRect(), b = m.getBoundingClientRect();
     m.style.setProperty("--dx", (a.left + a.width / 2 - (b.left + b.width / 2)) + "px");
@@ -1460,6 +1468,7 @@ window.PF = (function () {
     return `<section class="arc dark" aria-hidden="true" data-arc><svg viewBox="0 0 1728 360" preserveAspectRatio="xMidYMid slice">
     <defs><symbol id="arc-mono" viewBox="0 0 100 160"><rect width="100" height="108" rx="46"/><path d="M0 160A50 48 0 0 1 100 160Z"/></symbol></defs>
     <path id="arc-f" d="M-200 ${ARC_Y}Q864 ${ARC_TOP} 1928 ${ARC_Y}" fill="none"/>
+    <text class="a-ms" visibility="hidden">${unit}</text>
     <g class="a-g"><text><textPath href="#arc-f">${unit.repeat(ARC_REPS)}</textPath></text>
     ${'<use class="a-mono" href="#arc-mono" width="48" height="77"/>'.repeat(items.length * ARC_REPS)}</g></svg></section>`;
   };
@@ -1468,11 +1477,13 @@ window.PF = (function () {
     if (!band) return;
     const BASE = 60; // svg units per second at rest
     const path = $("#arc-f", band), tp = $("textPath", band), monos = $$(".a-mono", band), g = $(".a-g", band);
-    const phs = $$(".a-ph", band), n = monos.length / ARC_REPS;
+    // phrases are measured on a hidden straight copy: Safari mismeasures text laid on a curve (some phrases come
+    // back as 0 wide), which dropped the monograms into the middle of words
+    const ms = $(".a-ms", band), phs = $$(".a-ph", ms), n = monos.length / ARC_REPS;
     let stops = [], unit = 0, x = 0;
     // where each monogram sits along the text: the middle of the gap after each phrase
     const measure = () => {
-      const gap = $(".a-gap", band).getComputedTextLength();
+      const gap = $(".a-gap", ms).getComputedTextLength();
       let at = 0; stops = [];
       for (let i = 0; i < n; i++) { at += phs[i].getComputedTextLength(); stops.push(at + gap / 2); at += gap; }
       unit = at;

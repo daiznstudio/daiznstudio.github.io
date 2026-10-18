@@ -1,10 +1,42 @@
 /* Project viewer popup, shared by every page that opens a project. Loaded after each page's own styles.
    The stage takes its glow from the image on show (a blurred copy behind it), so every project gets its
    own colour instead of one fixed tint. */
-dialog.modal.mxd{width:min(1320px,calc(100vw - 32px));height:min(860px,calc(100dvh - 32px));max-height:none;padding:0;border:0;background:#0d0d0f;color:var(--paper);border-radius:26px;overflow:hidden;box-shadow:0 50px 160px -20px rgba(0,0,0,.75),0 0 0 1px rgba(255,255,255,.07)}
-dialog.modal.mxd::backdrop{background:rgba(8,8,10,.8);-webkit-backdrop-filter:blur(14px) saturate(.8);backdrop-filter:blur(14px) saturate(.8)}
-dialog.modal.mxd[open]{animation:mxIn .8s cubic-bezier(.16,1,.3,1)}
-@keyframes mxIn{from{opacity:0;clip-path:inset(5% 4% 5% 4% round 44px);translate:0 22px}to{opacity:1;clip-path:inset(0 round 26px);translate:0 0}}
+/* the popup is a sheet of smoked glass, finished like the footer's "Meet the team" card: a diagonal sheen, a
+   bright top edge and a fine inner ring, plus a soft light that follows the pointer (--gx/--gy, set by
+   assets/viewer.js). The page shows through, blurred, behind a lighter backdrop */
+dialog.modal.mxd{--mr:26px;width:min(1320px,calc(100vw - 32px));height:min(860px,calc(100dvh - 32px));max-height:none;padding:0;border:0;color:var(--paper);border-radius:var(--mr);overflow:hidden;
+  background-color:rgba(13,13,15,.5);
+  background-image:radial-gradient(circle 460px at var(--gx,82%) var(--gy,0%),rgba(255,255,255,.08),transparent 70%),linear-gradient(135deg,rgba(255,255,255,.13),rgba(255,255,255,0) 42%),linear-gradient(315deg,rgba(255,255,255,.05),rgba(255,255,255,0) 30%);
+  -webkit-backdrop-filter:blur(32px) saturate(1.5);backdrop-filter:blur(32px) saturate(1.5);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.24),inset 0 0 0 1px rgba(255,255,255,.1),0 50px 160px -20px rgba(0,0,0,.7)}
+dialog.modal.mxd::backdrop{background:rgba(8,8,10,.45);-webkit-backdrop-filter:blur(8px) saturate(.9);backdrop-filter:blur(8px) saturate(.9)}
+/* opening: the sheet tips up out of the page and sharpens, a shine sweeps across it, then the image, panel,
+   arrows, thumbnails and close button land one after another. Closing (assets/viewer.js holds the close
+   until it ends) drops it back down */
+dialog.modal.mxd[open]{animation:mxIn 1s cubic-bezier(.16,1,.3,1)}
+dialog.modal.mxd[open]::backdrop{animation:mxFade .6s ease}
+@keyframes mxIn{
+  0%{opacity:0;transform:perspective(1400px) translateY(70px) rotateX(14deg) scale(.9);filter:blur(14px);clip-path:inset(6% 5% 6% 5% round 48px)}
+  45%{opacity:1;filter:blur(0)}
+  100%{opacity:1;transform:none;filter:none;clip-path:inset(0 round var(--mr))}}
+@keyframes mxFade{from{opacity:0}}
+dialog.modal.mxd.mx-out{animation:mxOut .42s cubic-bezier(.5,0,.75,0) forwards}
+dialog.modal.mxd.mx-out::backdrop{animation:mxGone .42s ease forwards}
+@keyframes mxOut{to{opacity:0;transform:perspective(1400px) translateY(40px) rotateX(-6deg) scale(.94);filter:blur(10px)}}
+@keyframes mxGone{to{opacity:0}}
+dialog.modal.mxd::after{content:"";position:absolute;inset:0;z-index:6;pointer-events:none;border-radius:inherit;opacity:0;
+  background:linear-gradient(105deg,transparent 38%,rgba(255,255,255,.07) 46%,rgba(255,255,255,.17) 50%,rgba(255,255,255,.07) 54%,transparent 62%) 0 0/260% 100% no-repeat}
+dialog.modal.mxd[open]::after{animation:mxSweep 1.5s cubic-bezier(.4,0,.2,1) .45s}
+@keyframes mxSweep{from{opacity:1;background-position:0 0}to{opacity:1;background-position:100% 0}}
+.mxd[open] .mx-view{animation:mxZoom 1.2s cubic-bezier(.16,1,.3,1) .12s backwards}
+@keyframes mxZoom{from{opacity:0;scale:1.08;filter:blur(16px)}}
+.mxd[open] .m-close{animation:mxPop .8s cubic-bezier(.34,1.56,.64,1) .4s backwards}
+@keyframes mxPop{from{opacity:0;scale:.3;rotate:-120deg}}
+.mxd[open] .mx-nav{animation:mxNav .8s cubic-bezier(.16,1,.3,1) .5s backwards}
+@keyframes mxNav{from{opacity:0;translate:calc(var(--s,1) * 18px) 0;scale:.8}}
+.mx-nav.prev{--s:-1}
+.mxd[open] .mx-th{animation:mxUp .7s cubic-bezier(.16,1,.3,1) backwards;animation-delay:calc(.45s + var(--k,0) * .04s)}
+.mxd[open] .mx-top{animation:mxFade .8s ease .4s backwards}
 
 .mxd .m-close{position:absolute;top:18px;right:18px;z-index:5;width:44px;height:44px;border:0;border-radius:50%;background:rgba(255,255,255,.06);color:var(--paper);box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);display:grid;place-items:center;cursor:pointer;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);transition:background .3s,color .3s,rotate .5s cubic-bezier(.2,.8,.2,1)}
 .mxd .m-close svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
@@ -13,11 +45,11 @@ dialog.modal.mxd[open]{animation:mxIn .8s cubic-bezier(.16,1,.3,1)}
 
 .mx{position:relative;isolation:isolate;display:grid;grid-template-columns:minmax(0,1fr) minmax(340px,410px);height:100%;background:radial-gradient(45% 55% at 36% 45%,rgba(255,255,255,.06),transparent 70%)}
 /* the glow and its vignette span the whole popup, so the colour carries on round the side panel */
-.mx::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(85% 90% at 36% 45%,transparent 35%,rgba(13,13,15,.8))}
+.mx::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(85% 90% at 36% 45%,transparent 35%,rgba(13,13,15,.45))}
 
 /* stage: the image, its ambient glow, counter, arrows and thumbnails */
 .mx-stage{position:relative;display:grid;grid-template-rows:minmax(0,1fr) auto;min-height:0}
-.mx-amb{position:absolute;inset:-15% calc(-15% - 440px) -15% -15%;z-index:-2;width:calc(130% + 440px);height:130%;object-fit:cover;filter:blur(80px) saturate(1.25);opacity:.42;pointer-events:none;transition:opacity .7s ease}
+.mx-amb{position:absolute;inset:-15% calc(-15% - 440px) -15% -15%;z-index:-2;width:calc(130% + 440px);height:130%;object-fit:cover;filter:blur(80px) saturate(1.3);opacity:.5;pointer-events:none;transition:opacity .7s ease}
 .mx-amb.out{opacity:0}
 .mx-view{position:relative;min-height:0;touch-action:pan-y}
 .mx-view>img,.mx-view>svg,.mx-view>video{position:absolute;inset:76px 88px 16px;width:calc(100% - 176px);height:calc(100% - 92px);object-fit:contain;filter:drop-shadow(0 30px 50px rgba(0,0,0,.5));transition:opacity .35s ease,translate .45s cubic-bezier(.2,.8,.2,1),filter .35s ease}
@@ -47,28 +79,35 @@ dialog.modal.mxd[open]{animation:mxIn .8s cubic-bezier(.16,1,.3,1)}
 .mx-th.on{opacity:1;translate:0 -4px;box-shadow:0 0 0 2px var(--paper),0 14px 26px -10px rgba(0,0,0,.8)}
 .mx-th img{width:100%;height:100%;object-fit:cover;display:block}
 
-/* info panel: a slowly moving gradient card in the colours of the project's cover (set as --mx-* by
+/* info panel: a slowly moving, see-through glass card (finished like the footer's violet card) in the colours of the project's cover (set as --mx-* by
    assets/viewer.js; the brand purples, lavender and ink when a cover has too little colour), with frosted glass pieces on it. The highlights
    fold away under a "What we did" toggle (assets/viewer.js builds it, and the word-by-word title and the
    counting numbers) so the panel stays light on text */
 .mx-info{position:relative;display:flex;flex-direction:column;gap:20px;min-height:0;overflow:auto;margin:12px 12px 12px 0;padding:80px 30px 28px;border-radius:22px;color:#fff;
   background:
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.09'/%3E%3C/svg%3E"),
-    radial-gradient(50% 40% at 85% 8%,var(--mx-lt,#b9a5ea),transparent 70%),
-    radial-gradient(55% 45% at 10% 95%,var(--mx-d0,#101010),transparent 70%),
-    radial-gradient(60% 50% at 0 30%,var(--mx-c1,#6d49ad),transparent 70%),
-    radial-gradient(45% 40% at 100% 70%,var(--mx-c2,#8a6cc9),transparent 70%),
-    linear-gradient(160deg,var(--mx-d0,#2a1b45),var(--mx-d1,#482e74) 45%,var(--mx-d2,#5d3f95));
-  background-size:160px 160px,170% 170%,170% 170%,170% 170%,170% 170%,100% 100%;
+    radial-gradient(circle 260px at var(--lx,90%) var(--ly,0%),rgba(255,255,255,.18),transparent 70%),
+    linear-gradient(135deg,rgba(255,255,255,.26),rgba(255,255,255,0) 42%),
+    linear-gradient(315deg,rgba(255,255,255,.1),rgba(255,255,255,0) 30%),
+    radial-gradient(50% 40% at 85% 8%,color-mix(in srgb,var(--mx-lt,#b9a5ea) 70%,transparent),transparent 70%),
+    radial-gradient(55% 45% at 10% 95%,color-mix(in srgb,var(--mx-d0,#101010) 60%,transparent),transparent 70%),
+    radial-gradient(60% 50% at 0 30%,color-mix(in srgb,var(--mx-c1,#6d49ad) 65%,transparent),transparent 70%),
+    radial-gradient(45% 40% at 100% 70%,color-mix(in srgb,var(--mx-c2,#8a6cc9) 65%,transparent),transparent 70%),
+    linear-gradient(160deg,color-mix(in srgb,var(--mx-d0,#2a1b45) 62%,transparent),color-mix(in srgb,var(--mx-d1,#3f1c8c) 52%,transparent) 45%,color-mix(in srgb,var(--mx-d2,#5d3f95) 46%,transparent));
+  background-size:160px 160px,100% 100%,100% 100%,100% 100%,170% 170%,170% 170%,170% 170%,170% 170%,100% 100%;
+  -webkit-backdrop-filter:blur(26px) saturate(1.6);backdrop-filter:blur(26px) saturate(1.6);
   animation:mxMesh 18s ease-in-out infinite alternate;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 30px 70px -30px color-mix(in srgb,var(--mx-d1,#482e74) 70%,transparent);scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.35) transparent}
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.34),inset 0 0 0 1px rgba(255,255,255,.12),0 30px 70px -30px color-mix(in srgb,var(--mx-d1,#482e74) 70%,transparent);scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.35) transparent}
+/* the panel glides in from the side (from below on phones) once the sheet has landed */
+.mxd[open] .mx-info{animation:mxMesh 18s ease-in-out infinite alternate,mxPanel 1s cubic-bezier(.16,1,.3,1) .14s backwards}
+@keyframes mxPanel{from{opacity:0;translate:var(--pfx,56px) var(--pfy,0);scale:.96}}
 @keyframes mxMesh{
-  0%{background-position:0 0,100% 0,0 100%,0 0,100% 100%,0 0}
-  50%{background-position:0 0,60% 30%,40% 60%,30% 40%,60% 50%,0 0}
-  100%{background-position:0 0,20% 60%,90% 40%,70% 10%,10% 30%,0 0}}
-.mx-info>*{animation:mxUp .8s cubic-bezier(.16,1,.3,1) both}
-.mx-info>:nth-child(2){animation-delay:.05s}.mx-info>:nth-child(3){animation-delay:.12s}.mx-info>:nth-child(4){animation-delay:.18s}
-.mx-info>:nth-child(5){animation-delay:.24s}.mx-info>:nth-child(6){animation-delay:.3s}.mx-info>:nth-child(7){animation-delay:.36s}
+  0%{background-position:0 0,0 0,0 0,0 0,100% 0,0 100%,0 0,100% 100%,0 0}
+  50%{background-position:0 0,0 0,0 0,0 0,60% 30%,40% 60%,30% 40%,60% 50%,0 0}
+  100%{background-position:0 0,0 0,0 0,0 0,20% 60%,90% 40%,70% 10%,10% 30%,0 0}}
+.mx-info>*{animation:mxUp .8s cubic-bezier(.16,1,.3,1) .3s both}
+.mx-info>:nth-child(2){animation-delay:.36s}.mx-info>:nth-child(3){animation-delay:.43s}.mx-info>:nth-child(4){animation-delay:.5s}
+.mx-info>:nth-child(5){animation-delay:.56s}.mx-info>:nth-child(6){animation-delay:.62s}.mx-info>:nth-child(7){animation-delay:.68s}
 @keyframes mxUp{from{opacity:0;translate:0 18px}}
 
 /* glass: the shared look of the pill, stats, toggle and tags */
@@ -81,7 +120,7 @@ dialog.modal.mxd[open]{animation:mxIn .8s cubic-bezier(.16,1,.3,1)}
 .mx-info h3{margin:-4px 0 0;font-family:var(--font);font-weight:700;text-transform:uppercase;font-size:clamp(2rem,3vw,2.9rem);line-height:.95;letter-spacing:-.025em;color:#fff}
 .mx-info h3.split{animation:none}
 .mx-w{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.04em;margin-bottom:-.04em}
-.mx-w>span{display:inline-block;animation:mxWord .9s cubic-bezier(.16,1,.3,1) both;animation-delay:calc(.1s + var(--i,0) * .07s)}
+.mx-w>span{display:inline-block;animation:mxWord .9s cubic-bezier(.16,1,.3,1) both;animation-delay:calc(.4s + var(--i,0) * .07s)}
 @keyframes mxWord{from{translate:0 105%;rotate:4deg}}
 .mx-desc{font-size:.96rem;line-height:1.6;color:rgba(255,255,255,.82)}
 
@@ -132,8 +171,7 @@ dialog.modal.mxd[open]{animation:mxIn .8s cubic-bezier(.16,1,.3,1)}
   .mxd .m-close:hover,.mxd .m-close:focus-visible{background:#fff;color:var(--purple);outline-color:#fff}
 }
 @media (max-width:900px){
-  dialog.modal.mxd{width:calc(100vw - 16px);height:calc(100dvh - 16px);border-radius:20px}
-  @keyframes mxIn{from{opacity:0;clip-path:inset(4% 3% 4% 3% round 32px);translate:0 22px}to{opacity:1;clip-path:inset(0 round 20px);translate:0 0}}
+  dialog.modal.mxd{--mr:20px;width:calc(100vw - 16px);height:calc(100dvh - 16px)}
   .mx{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(340px,60%) auto;overflow:auto;overscroll-behavior:contain;background:none}
   .mx::after{background:radial-gradient(120% 70% at 50% 30%,transparent 35%,rgba(13,13,15,.8))}
   .mx-stage{overflow:hidden}
@@ -143,7 +181,7 @@ dialog.modal.mxd[open]{animation:mxIn .8s cubic-bezier(.16,1,.3,1)}
   .mx-prog{max-width:120px}
   .mx-nav{width:42px;height:42px;top:calc(50% - 30px);opacity:1}.mx-nav.prev{left:8px}.mx-nav.next{right:8px}
   .mx-strip{padding:12px 16px 16px}.mx-th{width:60px;height:46px;border-radius:10px}
-  .mx-info{overflow:visible;margin:0 8px 8px;padding:30px 20px 24px;border-radius:18px}
+  .mx-info{--pfx:0px;--pfy:48px;overflow:visible;margin:0 8px 8px;padding:30px 20px 24px;border-radius:18px}
   .mxd .m-close{top:14px;right:14px}
 }
 @media (pointer:coarse){
@@ -152,6 +190,6 @@ dialog.modal.mxd[open]{animation:mxIn .8s cubic-bezier(.16,1,.3,1)}
   .mx-tags span,.mx-meta small{font-size:.66rem}
 }
 @media (prefers-reduced-motion:reduce){
-  dialog.modal.mxd[open],.mx-info,.mx-info>*,.mx-view>img.in,.mx-eye::before,.mx-w>span,.mx-more[open] .mx-feats li{animation:none}
+  dialog.modal.mxd[open],dialog.modal.mxd[open]::backdrop,dialog.modal.mxd[open]::after,.mxd[open] .mx-view,.mxd[open] .m-close,.mxd[open] .mx-nav,.mxd[open] .mx-th,.mxd[open] .mx-top,.mxd[open] .mx-info,.mx-info,.mx-info>*,.mx-view>img.in,.mx-eye::before,.mx-w>span,.mx-more[open] .mx-feats li{animation:none}
   .mx-view>img,.mx-amb,.mx-prog i{transition:none}
 }
