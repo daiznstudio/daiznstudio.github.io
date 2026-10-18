@@ -1,5 +1,6 @@
 /* Project viewer extras, shared by every page with the project popup: each time the popup gets new
-   content, the side panel takes its colours from the project's cover, the highlights fold under a
+   content, the side panel takes its colours from the project's cover (then from each image as you step
+   through the gallery), the highlights fold under a
    toggle, the title rises in word by word and the year and image count count up.
    Styles live in assets/viewer.css.
 
@@ -53,18 +54,61 @@
   const esc = s => s.replace(/[&<>"]/g, c => "&#" + c.charCodeAt(0) + ";");
   const known = window.MX_PALETTES || {}, live = {};
 
-  function paint(mx, p) {
-    if (!p) return;
-    Object.keys(p).forEach(k => mx.style.setProperty("--mx-" + k, p[k]));
+  // the accent for buttons: the cover's vivid colour, pulled toward its darkest shade until white text on it
+  // reaches a 4.5:1 contrast (WCAG AA), then a deeper step of it for the bottom of the gloss
+  const rgb = h => [1, 3, 5].map(i => parseInt(h.substr(i, 2), 16));
+  const mix = (a, b, t) => "#" + rgb(a).map((v, i) => Math.round(v + (rgb(b)[i] - v) * t).toString(16).padStart(2, "0")).join("");
+  const lum = h => { const [r, g, b] = rgb(h).map(v => (v /= 255) <= .03928 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4); return .2126 * r + .7152 * g + .0722 * b; };
+  function accent(p) {
+    let ac = p.c1, t = 0;
+    while (1.05 / (lum(ac) + .05) < 4.5 && t < 1) ac = mix(p.c1, p.d0, t += .05);
+    return { ac, acd: mix(ac, p.d0, .3) };
   }
-  function colour(mx) {
-    const src = mx.dataset.cover; if (!src) return;
-    if (src in known) return paint(mx, known[src]);
-    if (src in live) return paint(mx, live[src]);
-    if (!/^https?:/.test(location.protocol)) return;
+
+  // colours go on the popup itself so the close button (outside .mx) gets them too; cleared when a project
+  // has no palette so it doesn't keep the last one's. A new image fades the panel from the shades on show
+  const KEYS = ["d0", "d1", "d2", "c1", "c2", "lt", "ac", "acd"];
+  let shown = null, raf = 0;
+  function paint(p, fade) {
+    cancelAnimationFrame(raf);
+    if (!p) { shown = null; KEYS.forEach(k => m.style.removeProperty("--mx-" + k)); return; }
+    p = Object.assign({}, p, accent(p));
+    const from = shown; shown = {};
+    const set = t => KEYS.forEach(k => m.style.setProperty("--mx-" + k, shown[k] = from ? mix(from[k], p[k], t) : p[k]));
+    if (!fade || !from || reduce) return set(1);
+    let t0 = null;
+    const step = now => {
+      if (t0 === null) t0 = now;
+      const t = Math.min(1, (now - t0) / 700);
+      set(1 - Math.pow(1 - t, 3));
+      if (t < 1) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+  }
+  // an image's palette: from assets/palettes.js, else read live on the published site (null: none)
+  function look(src, done) {
+    if (!src) return done(null);
+    if (src in known) return done(known[src]);
+    if (src in live) return done(live[src]);
+    if (!/^https?:/.test(location.protocol)) return done(null);
     const img = new Image();
-    img.onload = () => { try { live[src] = palette(img); } catch (e) { live[src] = null; } if (mx.isConnected) paint(mx, live[src]); };
+    img.onload = () => { try { live[src] = palette(img); } catch (e) { live[src] = null; } done(live[src]); };
+    img.onerror = () => done(null);
     img.src = src;
+  }
+  // the project's colours on open, then each gallery image's own as the viewer steps through them
+  // (the project's when an image has none)
+  const watch = new MutationObserver(() => {
+    const mx = m.querySelector(".mx"), img = mx && mx.querySelector(".mx-view>img"); if (!img) return;
+    const src = img.getAttribute("src");
+    look(mx.dataset.cover, base => look(src, p => { if (img.isConnected && img.getAttribute("src") === src) paint(p || base, true); }));
+  });
+  function colour(mx) {
+    paint(null);
+    look(mx.dataset.cover, p => { if (mx.isConnected) paint(p); });
+    const img = mx.querySelector(".mx-view>img");
+    watch.disconnect();
+    if (img) watch.observe(img, { attributes: true, attributeFilter: ["src"] });
   }
 
   function count(b, delay) {
@@ -80,45 +124,9 @@
     requestAnimationFrame(step);
   }
 
-  // closing waits for the drop-away animation (mxOut in assets/viewer.css); Esc goes the same way
-  const close0 = m.close && m.close.bind(m);
-  let stop = null;
-  if (close0 && !reduce) {
-    m.close = v => {
-      if (!m.open || !m.classList.contains("mxd")) return close0(v);
-      if (stop) return;
-      const end = e => { if (e.target === m && e.animationName === "mxOut") done(); };
-      const t = setTimeout(() => done(), 600);
-      stop = () => { clearTimeout(t); m.removeEventListener("animationend", end); m.classList.remove("mx-out"); stop = null; };
-      const done = () => { stop(); close0(v); };
-      m.addEventListener("animationend", end);
-      m.classList.add("mx-out");
-    };
-    m.addEventListener("cancel", e => { if (m.classList.contains("mxd")) { e.preventDefault(); m.close(); } });
-  }
-
-  // the glass catches a soft light where the pointer is
-  if (matchMedia("(hover: hover)").matches) {
-    let q = 0, ev;
-    m.addEventListener("pointermove", e => {
-      ev = e;
-      if (q) return;
-      q = requestAnimationFrame(() => {
-        q = 0;
-        const r = m.getBoundingClientRect(), info = m.querySelector(".mx-info");
-        m.style.setProperty("--gx", ev.clientX - r.left + "px"); m.style.setProperty("--gy", ev.clientY - r.top + "px");
-        if (!info) return;
-        const b = info.getBoundingClientRect();
-        info.style.setProperty("--lx", ev.clientX - b.left + "px"); info.style.setProperty("--ly", ev.clientY - b.top + "px");
-      });
-    });
-  }
-
   function run() {
     const info = m.querySelector(".mx-info"); if (!info || info.dataset.fx) return;
     info.dataset.fx = "1";
-    if (stop) stop();
-    m.querySelectorAll(".mx-th").forEach((t, k) => t.style.setProperty("--k", Math.min(k, 12)));
     colour(m.querySelector(".mx"));
     // highlights fold away under a "What we did" toggle
     const feats = info.querySelector(".mx-feats");

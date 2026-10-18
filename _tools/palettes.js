@@ -44,6 +44,8 @@ function serve() {
 
 // each project's popup is coloured from its cover (else its first gallery image, else its video poster);
 // the rest of its images (gallery and hover) are the fallback when that one is grey. Projects are one per line.
+// Every gallery image also gets its own colours, so the panel changes as you step through (gal: image -> cover).
+const gal = new Map();
 function projects() {
   const map = new Map(), ok = p => fs.existsSync(path.join(ROOT, p));
   for (const page of PAGES) {
@@ -56,6 +58,7 @@ function projects() {
       const others = [...line.matchAll(/"(assets\/work\/[^"]+\.(?:webp|jpe?g|png))"/g)].map(m => m[1]).filter(p => p !== key && ok(p));
       // a project shown first by its gallery image is also keyed by it, in case its cover is left out
       for (const k of [key, first].filter(Boolean)) map.set(k, [...new Set([...(map.get(k) || []), ...others])]);
+      for (const m of line.matchAll(/\["(assets\/work\/[^"]+)", \d+, \d+\]/g)) if (!gal.has(m[1]) && ok(m[1])) gal.set(m[1], key);
     }
   }
   return map;
@@ -88,7 +91,14 @@ function projects() {
     out[src] = p;
     console.log((p ? "colour " : "plain  ") + src + from);
   }
+  // the other gallery images: their own colours, or the project's when the image is grey
+  let n = 0;
+  for (const [src, key] of [...gal].sort((x, y) => x[0] < y[0] ? -1 : 1)) {
+    if (src in out) continue;
+    const { p } = await read(src);
+    out[src] = p || out[key] || null; n++;
+  }
   await browser.close(); server.close();
   fs.writeFileSync(OUT, "/* project cover colours for the popup, made by _tools/palettes.js; don't edit by hand */\nwindow.MX_PALETTES = " + JSON.stringify(out, null, 0).replace(/\},"/g, '},\n"') + ";\n");
-  console.log(`\nSaved ${list.size} palettes to assets/palettes.js`);
+  console.log(`\nSaved ${list.size} project and ${n} image palettes to assets/palettes.js`);
 })();
