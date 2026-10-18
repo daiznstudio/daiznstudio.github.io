@@ -259,7 +259,7 @@ const CALENDLY = "https://calendly.com/daiznstudio/30min";
 
 /* the footer logo in the hero folder's frosted glass, kept clear (styles in assets/footer.css): the mark and word are redrawn as
    one SVG, 200 units to the em, laid out like the original (mark .74em tall on the baseline, .14em gap, word at
-   1em). The glass is pure white, kept clear: a brighter top and highlight over a faint wash. An SVG filter adds a soft
+   1em). The glass is pure white, frosted enough to read over the footer glow: a brighter top and highlight over the wash. An SVG filter adds a soft
    frost on the face, a faint white halo outside and a bright white rim. It stays still */
 (() => {
   const NS = "http://www.w3.org/2000/svg", P = 48;
@@ -271,8 +271,8 @@ const CALENDLY = "https://calendly.com/daiznstudio/30min";
     const shape = `<rect y="-148" width="92.5" height="99.9" rx="42.55"/><path d="M0 0A46.25 44.4 0 0 1 92.5 0Z"/><text x="120.5" y="0"><tspan class="th">dai</tspan><tspan class="bd">zn</tspan></text>`;
     s.innerHTML = `<defs>
       <linearGradient id="sfg-wash" gradientUnits="userSpaceOnUse" x1="0" y1="-150" x2="0" y2="0">
-        <stop offset="0" stop-color="#fff" stop-opacity=".5"/><stop offset=".45" stop-color="#fff" stop-opacity=".26"/>
-        <stop offset=".8" stop-color="#fff" stop-opacity=".2"/><stop offset="1" stop-color="#fff" stop-opacity=".34"/></linearGradient>
+        <stop offset="0" stop-color="#fff" stop-opacity=".86"/><stop offset=".45" stop-color="#fff" stop-opacity=".66"/>
+        <stop offset=".8" stop-color="#fff" stop-opacity=".58"/><stop offset="1" stop-color="#fff" stop-opacity=".72"/></linearGradient>
       <radialGradient id="sfg-hi" gradientUnits="userSpaceOnUse" cx="0" cy="-130" r="520" gradientTransform="translate(0 -130) scale(1 .3) translate(0 130)">
         <stop offset="0" stop-color="#fff" stop-opacity=".3"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
       <filter id="sfg-frost" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">

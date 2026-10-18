@@ -5,7 +5,7 @@
 
 :root{--sf-mono:"Chivo Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
 /* see footer.js: the page background behind everything turns black at the end, so phone toolbars tint black */
-html.end-dark{background:#000}
+html.end-dark{background:#0b0616}
 .sf{position:relative;z-index:1;background:#000;color:var(--paper);padding-bottom:env(safe-area-inset-bottom,0px);
   font-family:var(--font-body);font-weight:500}
 .sf a{color:inherit;text-decoration:none}
@@ -57,16 +57,20 @@ html.end-dark{background:#000}
 .sf .sf-logo .wm{font-size:1em;display:inline-flex;align-items:baseline;font-family:var(--font);letter-spacing:-.04em}
 .sf-logo .th{font-weight:300}.sf-logo .bd{font-weight:700}
 .sf-logo:focus-visible{outline:2px solid var(--tint);outline-offset:6px}
-/* the footer logo is clear frosted glass like the hero folder (see .sf-glass below). A few still, round purple glows sit
-   along the bottom of the footer and show through the glass */
-.sf{overflow-x:clip}
-.sf::before{content:"";position:absolute;left:0;right:0;bottom:0;height:min(70%,640px);z-index:0;pointer-events:none;
-  background:radial-gradient(circle 280px at 14% 82%,rgba(109,73,173,.5),transparent 70%),radial-gradient(circle 170px at 37% 96%,rgba(185,165,234,.28),transparent 70%),radial-gradient(circle 320px at 62% 104%,rgba(63,28,140,.55),transparent 70%),radial-gradient(circle 190px at 88% 78%,rgba(138,99,216,.34),transparent 70%)}
+/* the footer logo is clear frosted glass like the hero folder (see .sf-glass below). Behind it the footer is a dark
+   purple "planet": a huge ellipse hangs from the top edge, and round its rim a violet glow fades out to pale lilac
+   in the bottom corners, which shows through the glass */
+.sf{overflow:clip;background:#0b0616}
+.sf::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;transform-origin:50% 0;
+  background:radial-gradient(ellipse var(--gw,68%) var(--gh,106%) at 50% 0%,#0b0616 0,#0b0616 70%,#160a31 77%,#2a1360 84%,#45269a 90%,#7656c8 95%,#9178d6 100%,#b3a0e8 110%,#d6cbf5 124%);
+  animation:sf-glow 16s ease-in-out infinite alternate}
+/* the dome breathes and sways a touch, slow enough to read as light rather than motion */
+@keyframes sf-glow{0%{transform:none}50%{transform:translateX(-1%) scale(1.04,1.03)}100%{transform:translateX(1%) scale(1.03,1.06)}}
 .sf-in{position:relative;z-index:1}
 /* assets/footer.js redraws the mark and word as one SVG (.sf-glass); the original mark and word stay in the link for
    when scripts don't run */
 .sf-logo.is-glass>:not(.sf-glass){display:none}
-.sf-logo .sf-glass{display:block;flex:none;height:var(--h);width:auto;margin:var(--m);overflow:visible;filter:drop-shadow(0 30px 40px rgba(0,0,0,.35))}
+.sf-logo .sf-glass{display:block;flex:none;height:var(--h);width:auto;margin:var(--m);overflow:visible;filter:drop-shadow(0 10px 22px rgba(11,6,22,.3)) drop-shadow(0 30px 40px rgba(0,0,0,.25))}
 .sf-glass text{font-family:var(--font);font-size:200px;letter-spacing:-8px}
 .sf-glass .th{font-weight:300}.sf-glass .bd{font-weight:700}
 .sf-copy{grid-column:7/13;grid-row:4;align-self:end;display:flex;justify-content:space-between;align-items:flex-end;gap:1rem;flex-wrap:wrap}
@@ -74,6 +78,8 @@ html.end-dark{background:#000}
 .sf-copy{display:contents}
 .sf-copy p{grid-column:1/-1;grid-row:5;order:1;justify-self:center;align-self:end;margin:-2rem 0 -1.35rem;text-align:center;font-size:.6rem;letter-spacing:.08em}
 .sf-copy a{grid-column:7/13;grid-row:4;justify-self:end;align-self:end}
+/* these sit on the glow, so they get brighter than the other dim captions and a soft dark lift */
+.sf .sf-copy .sf-dim{color:rgba(255,255,255,.82);text-shadow:0 1px 8px rgba(11,6,22,.45)}
 
 @media (max-width:991px){
   .sf-in{grid-template-columns:repeat(6,minmax(0,1fr));grid-template-rows:none;min-height:0;gap:3rem 1rem}
@@ -87,6 +93,8 @@ html.end-dark{background:#000}
   .sf-copy p{grid-row:auto;margin-top:-1rem}
 }
 @media (max-width:640px){
+  /* phones are tall and narrow: a wider, flatter dome keeps the glow along the bottom instead of up the sides */
+  .sf::before{--gw:112%;--gh:100%}
   .sf-in{padding:1rem;gap:2.5rem 1rem}
   .sf-cards{flex-direction:column}
   .sf-card{gap:4rem}
@@ -97,6 +105,7 @@ html.end-dark{background:#000}
   .sf-copy p{margin-bottom:-.5rem}
 }
 @media (prefers-reduced-motion:reduce){
+  .sf::before{animation:none}
   .sf-card,.sf-ic,.sf-line{transition:none}
   .sf-card:hover{transform:none}
 }
