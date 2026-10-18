@@ -366,19 +366,37 @@ svg{display:block}
 .row .thm{display:none}
 .row:hover,.row:focus-visible{padding-left:clamp(12px,2vw,26px);padding-right:clamp(12px,2vw,26px);background:var(--purple);color:var(--paper);outline:none}
 
-/* ---------- services (pill cards) ---------- */
+/* ---------- services: a white rounded panel like the reviews, with three cards in the studio colours
+   (violet, light grey, black). Each card shows a fanned stack of real project covers that spreads on hover ---------- */
+.sec.svc{overflow:hidden;isolation:isolate;background:#fff;margin-inline:10px;border-radius:22px;padding-top:clamp(40px,6vw,84px);padding-bottom:clamp(40px,5vw,72px)}
 .svc h2.gt{margin-bottom:0}
-.stack{margin-top:clamp(34px,5vw,74px);display:grid;gap:22px}
-.pcard{position:sticky;top:calc(env(safe-area-inset-top,0px) + 84px + var(--i)*16px);display:grid;grid-template-columns:auto minmax(0,1fr) minmax(0,38%);align-items:center;gap:clamp(16px,3vw,44px);min-height:clamp(210px,24vw,290px);padding:clamp(18px,2.2vw,28px) clamp(18px,2.2vw,28px) clamp(18px,2.2vw,28px) clamp(26px,4vw,64px);border:1px solid var(--line-d);border-radius:999px;background:var(--ink)}
-.pcard .no{width:clamp(38px,4vw,54px);aspect-ratio:1;border:1px solid var(--line-d);border-radius:50%;display:grid;place-items:center;font:700 .8rem var(--font)}
-.pcard h3{font-size:clamp(1.3rem,3vw,2.7rem);line-height:1.05;font-weight:700;text-transform:uppercase;letter-spacing:-.01em;color:var(--tint)}
-.pcard:nth-child(even) h3{color:var(--paper)}
-.dots{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:16px;font:700 .68rem var(--font);text-transform:uppercase;letter-spacing:.06em}
-.dots li{display:flex;align-items:center;gap:8px}
-.dots li::before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor}
-.pcard p{margin-top:14px;font-size:.92rem;opacity:.75;max-width:44ch}
-.pa{aspect-ratio:16/10;border-radius:999px;overflow:hidden}
-.pa svg{width:100%;height:100%}
+.sv-bar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:clamp(18px,2.4vw,30px)}
+.sv-ct{font:500 .72rem/1 "Chivo Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.04em;color:rgba(16,16,16,.5)}
+.sv-lead{margin-top:clamp(14px,1.6vw,22px);max-width:52ch;color:rgba(16,16,16,.7)}
+.sv-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(10px,1.2vw,16px);margin-top:clamp(36px,5vw,70px)}
+.sv-card{--bg:var(--ink);--fg:var(--paper);--sub:rgba(240,240,240,.62);--chip:rgba(255,255,255,.12);position:relative;display:flex;flex-direction:column;gap:clamp(18px,1.8vw,24px);padding:clamp(12px,1.1vw,14px) clamp(12px,1.1vw,14px) clamp(20px,2vw,26px);border-radius:22px;background:var(--bg);color:var(--fg);box-shadow:0 1px 2px rgba(0,0,0,.06),0 10px 20px -8px rgba(0,0,0,.14),0 28px 50px -20px rgba(0,0,0,.24);opacity:0;translate:0 40px;transition:opacity .8s cubic-bezier(.2,.8,.2,1) calc(var(--i)*110ms),translate .9s cubic-bezier(.2,.8,.2,1) calc(var(--i)*110ms),transform .45s cubic-bezier(.2,.8,.2,1)}
+.sv-card:nth-child(1){--bg:var(--violet);--sub:rgba(236,228,255,.72);--chip:rgba(255,255,255,.14)}
+.sv-card:nth-child(2){--bg:#f0f0f0;--fg:var(--ink);--sub:rgba(16,16,16,.62);--chip:rgba(16,16,16,.07)}
+.sv-grid.in .sv-card{opacity:1;translate:0 0}
+@media (hover:hover){.sv-card:hover{transform:translateY(-6px)}}
+.sv-media{position:relative;aspect-ratio:5/4;border-radius:14px;overflow:hidden;background:var(--chip)}
+.sv-media img{--x:0%;--r:0deg;position:absolute;top:50%;left:50%;width:46%;aspect-ratio:1;object-fit:cover;border-radius:12px;box-shadow:0 18px 30px -14px rgba(0,0,0,.55);translate:calc(-50% + var(--x)) -50%;rotate:var(--r);transition:translate .7s cubic-bezier(.2,.8,.2,1),rotate .7s cubic-bezier(.2,.8,.2,1),scale .7s cubic-bezier(.2,.8,.2,1)}
+.sv-media img:nth-child(1){--x:-26%;--r:-9deg}
+.sv-media img:nth-child(2){--x:26%;--r:9deg}
+.sv-media img:nth-child(3){z-index:1}
+@media (hover:hover){.sv-card:hover .sv-media img:nth-child(1){--x:-58%;--r:-13deg}.sv-card:hover .sv-media img:nth-child(2){--x:58%;--r:13deg}.sv-card:hover .sv-media img:nth-child(3){scale:1.08}}
+.sv-tx{display:flex;flex-direction:column;gap:14px;flex:1;padding-inline:clamp(8px,1vw,12px)}
+.sv-no{font:500 .72rem/1 "Chivo Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.04em;color:var(--sub)}
+.sv-card h3{font:700 clamp(1.3rem,1.9vw,1.9rem)/1 var(--font);text-transform:uppercase;letter-spacing:-.02em;max-width:14ch}
+.sv-card p{max-width:36ch;font-size:.88rem;line-height:1.55;color:var(--sub)}
+.sv-tags{display:flex;flex-wrap:wrap;gap:6px}
+.sv-tags li{padding:.75em 1em .62em;border-radius:999px;background:var(--chip);font:700 .6rem/1 var(--font);text-transform:uppercase;letter-spacing:.07em}
+.sv-go{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:auto;padding-top:8px;color:inherit;text-decoration:none;font:700 .68rem/1 var(--font);text-transform:uppercase;letter-spacing:.07em}
+.sv-go .hw-go{flex:none;background:var(--fg);color:var(--bg)}
+@media (hover:hover){.sv-go:hover .hw-go,.sv-card:hover .hw-go{transform:rotate(45deg);background:var(--tint);color:var(--ink)}}
+@media (max-width:980px){.sv-grid{grid-template-columns:minmax(0,1fr)}.sv-card{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1fr);align-items:stretch;padding:12px}.sv-tx{padding:10px 8px 8px}.sv-media{aspect-ratio:auto;min-height:240px}}
+@media (max-width:620px){.sv-card{display:flex}.sv-media{aspect-ratio:5/4;min-height:0}.sv-tx{padding:0 8px 10px}}
+@media (prefers-reduced-motion:reduce){.sv-card{opacity:1;translate:0 0;transition:none}.sv-media img{transition:none}}
 
 /* ---------- experience ---------- */
 .xp{margin-top:clamp(26px,4vw,50px);border-bottom:1px solid var(--line)}
@@ -427,7 +445,10 @@ svg{display:block}
 .hw-sub{display:flex;justify-content:space-between;align-items:flex-end;gap:24px 40px;flex-wrap:wrap;margin-top:22px}
 
 /* ---------- how we work: centred statement, then four cards (photo, grey, purple, and a black pill under the purple one) ---------- */
-.sec.hw{overflow:hidden;background:#fff;margin-inline:10px;border-radius:22px;padding-top:clamp(110px,13vw,200px);padding-bottom:clamp(110px,12vw,190px)}
+/* how we work sits between the black arc band and the black contact curtain, so the section itself is black and the
+   white rounded panel is drawn inset on ::before: its corners and gutters show black, never the grey page */
+.sec.hw{overflow:hidden;isolation:isolate;background:#000;padding-top:calc(clamp(110px,13vw,200px) + 10px);padding-bottom:calc(clamp(110px,12vw,190px) + 10px)}
+.sec.hw::before{content:"";position:absolute;inset:10px;z-index:-1;border-radius:22px;background:#fff}
 .hw-hd{display:flex;flex-direction:column;align-items:center;text-align:center;gap:clamp(22px,2.4vw,32px)}
 .hw-h{display:flex;flex-direction:column;align-items:center;gap:.1em;margin:0;font:300 clamp(1.5rem,3.3vw,3rem)/1.12 var(--font);letter-spacing:-.02em;color:var(--ink)}
 .hw-ln{display:inline-flex;align-items:center;flex-wrap:wrap;justify-content:center;gap:0 .3em}
@@ -437,11 +458,11 @@ svg{display:block}
 .hw-ic svg{width:46%;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
 .hw-ic1{background:var(--tint)}
 .hw-ic1 svg{width:34%;fill:var(--purple);stroke:none}
-.bn{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:minmax(0,1fr) auto;grid-template-areas:"ph gy pu" "ph gy pl";gap:clamp(10px,1vw,14px);max-width:1120px;min-height:clamp(290px,23.5vw,330px);margin:clamp(64px,8vw,120px) auto 0}
+.bn{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:minmax(0,1fr) auto;grid-template-areas:"ph gy pu" "ph gy pl";gap:clamp(10px,1vw,14px);max-width:1120px;min-height:clamp(290px,23.5vw,330px);margin:clamp(64px,8vw,120px) auto 0;-webkit-text-size-adjust:100%;text-size-adjust:100%}
 .hw-c{--fg:var(--ink);--sub:rgba(16,16,16,.6);position:relative;isolation:isolate;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.06),0 10px 20px -8px rgba(0,0,0,.14),0 28px 50px -20px rgba(0,0,0,.24);display:flex;flex-direction:column;justify-content:space-between;gap:20px;padding:clamp(18px,1.7vw,24px);border-radius:18px;color:var(--fg);text-decoration:none;opacity:0;translate:0 26px;transition:opacity .8s cubic-bezier(.2,.8,.2,1) calc(var(--i,0)*100ms),translate .9s cubic-bezier(.2,.8,.2,1) calc(var(--i,0)*100ms),background .4s,transform .45s cubic-bezier(.2,.8,.2,1)}
 .bn.in .hw-c{opacity:1;translate:0 0}
 @media (hover:hover){.hw-c:hover{transform:translateY(-4px)}}
-.hw-l{font-size:.84rem;line-height:1.3;color:var(--sub)}
+.hw-l{display:block;font-size:.84rem;line-height:1.3;color:var(--sub)}
 .hw-n{display:block;margin-top:10px;font:700 clamp(1.4rem,2.1vw,2rem)/1 var(--font);text-transform:uppercase;letter-spacing:-.02em}
 .hw-c p{max-width:32ch;font-size:.86rem;line-height:1.5;color:var(--sub)}
 /* first card: the daizn mark as a glossy purple glass figure on near-black, its body tucked behind a frosted white panel at the bottom */
@@ -499,15 +520,13 @@ svg{display:block}
 @keyframes hwS1{0%,25%{transform:scaleX(0)}50%,96%{transform:scaleX(1);opacity:1}100%{transform:scaleX(1);opacity:0}}
 @keyframes hwS2{0%,50%{transform:scaleX(0)}75%,96%{transform:scaleX(1);opacity:1}100%{transform:scaleX(1);opacity:0}}
 @keyframes hwS3{0%,75%{transform:scaleX(0)}96%{transform:scaleX(1);opacity:1}100%{transform:scaleX(1);opacity:0}}
-.hw-pl{grid-area:pl;--i:3;--fg:var(--paper);--sub:rgba(240,240,240,.6);flex-direction:row;align-items:center;justify-content:space-between;gap:16px;min-height:clamp(62px,5.2vw,78px);padding-block:12px;background:var(--ink)}
-.hw-pl>span:first-child{display:flex;flex-direction:column;gap:4px}
-.hw-pl .hw-l{font:500 .56rem/1 "Chivo Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-transform:uppercase;letter-spacing:.08em;color:rgba(240,240,240,.38)}
-.hw-pl b{font:700 clamp(1.1rem,1.6vw,1.45rem)/1 var(--font);text-transform:uppercase;letter-spacing:-.01em}
+.hw-pl{grid-area:pl;--i:3;--fg:var(--paper);--sub:rgba(240,240,240,.6);flex-direction:row;align-items:center;justify-content:space-between;gap:16px;container-type:inline-size;min-height:clamp(86px,7vw,100px);background:var(--ink)}
+.hw-pl b{margin-bottom:-.2em;white-space:pre-line;font:700 1.5rem/1 var(--font);font-size:clamp(1.1rem,calc((100cqi - 64px)/7),1.75rem);text-transform:uppercase;letter-spacing:-.01em}
 .hw-go{display:grid;place-items:center;width:clamp(36px,3vw,44px);aspect-ratio:1;border-radius:50%;background:var(--paper);color:var(--ink);transition:transform .6s cubic-bezier(.2,.8,.2,1),background .4s}
 .hw-go svg{width:40%;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 @media (hover:hover){.hw-pl:hover{background:var(--purple-2)}.hw-pl:hover .hw-go{transform:rotate(45deg);background:var(--tint)}}
 @media (max-width:900px){.bn{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:auto;grid-template-areas:"ph gy" "pu pu" "pl pl";min-height:0}.hw-ph,.hw-fb{min-height:320px}.hw-pu{min-height:200px}}
-@media (max-width:560px){.bn{grid-template-columns:minmax(0,1fr);grid-template-areas:"ph" "gy" "pu" "pl"}.hw-ph,.hw-fb{min-height:300px}}
+@media (max-width:560px){.bn{grid-template-columns:minmax(0,1fr);grid-template-areas:"ph" "gy" "pu" "pl"}.hw-ph,.hw-fb{min-height:300px}.hw-c .hw-l{font-size:.78rem}}
 @media (prefers-reduced-motion:reduce){.hw-c{opacity:1;translate:0 0;transition:none}.hw-img{transition:none}.hw-av,.hw-b,.hw-dl,.hw-typ,.hw-typ i{animation:none!important}.hw-wd b,.hw-seg i::after{animation:none}.hw-wd b:first-child{opacity:1;translate:0 0}.hw-seg i:first-child::after{transform:none}}
 /* numbered chip label, used on the review cards */
 .bn-k{display:flex;align-items:center;gap:10px;margin-bottom:12px;font:700 .6rem/1 var(--font);text-transform:uppercase;letter-spacing:.08em;opacity:.9}
@@ -819,9 +838,6 @@ dialog.modal[open]{animation:mIn .5s cubic-bezier(.2,.8,.2,1)}
   .row .y{grid-column:3;grid-row:1}
   .row .thm{display:block;grid-column:2/4;grid-row:3;aspect-ratio:16/8;border-radius:6px;overflow:hidden;margin-top:6px}
   .row .thm svg{width:100%;height:100%}
-  .pcard{grid-template-columns:1fr;border-radius:34px;padding:22px;position:relative;top:auto;gap:16px}
-  .pcard .no{display:none}
-  .pa{border-radius:22px}
   .xr{grid-template-columns:1fr;gap:4px}
   .fig{height:36%;top:32%;bottom:auto}
   .hword{top:25%}
@@ -867,6 +883,8 @@ dialog.modal[open]{animation:mIn .5s cubic-bezier(.2,.8,.2,1)}
 @media (prefers-reduced-motion:reduce){.br-rail .track{animation-duration:140s}}
 /* ---------- featured projects (works) ---------- */
 .fp{background:var(--page);color:var(--ink);border-top:1px solid var(--line)}
+/* after a rounded panel the grey gap is the divider, so the hairline would only cut under its corners */
+.svc+.fp{border-top:0}
 .fp-head{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:clamp(20px,4vw,64px);align-items:start;padding-bottom:clamp(28px,4vw,56px)}
 .fp-h{font:700 clamp(1.5rem,max(5.6vw,min(2.4rem,10.2vw - 4px)),5.8rem)/.92 var(--font);text-transform:uppercase;letter-spacing:-.03em;color:var(--ink)}
 .fp-h .ln{display:block;white-space:nowrap;font-size:min(1em,calc(100cqi / (var(--n,9) * 1.1)))}
@@ -918,6 +936,8 @@ dialog.modal[open]{animation:mIn .5s cubic-bezier(.2,.8,.2,1)}
 @media (prefers-reduced-motion:reduce){.fp-media{clip-path:none}.fp-media>img,.fp-media>svg{scale:1}.fp-h span span{color:var(--ink)}}
 /* ---------- client reviews: a pill and square arrows over a row of tilted square cards (black, grey, lavender, violet), a swipeable row ---------- */
 .sec.rv{overflow:hidden;isolation:isolate;background:#fff;margin-inline:10px;border-radius:22px;padding-top:clamp(40px,6vw,84px);padding-bottom:clamp(36px,4vw,60px)}
+/* back-to-back white panels keep the same 10px gutter between them as at their sides */
+.sec.rv+.sec.svc{margin-top:10px}
 .rv-bar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:clamp(18px,2.4vw,30px)}
 .rv-pill{padding:.8em 1.25em .7em;border-radius:999px;background:#f0f0f0;font:700 .68rem/1 var(--font);text-transform:uppercase;letter-spacing:.06em}
 .rv-lead{margin-top:clamp(14px,1.6vw,22px);max-width:52ch;color:rgba(16,16,16,.7)}
@@ -1045,7 +1065,7 @@ dialog.modal[open]{animation:mIn .5s cubic-bezier(.2,.8,.2,1)}
   .pk-sw button{font-size:.72rem}
   .menu-btn,.nbtn{font-size:.75rem}
   .br-lbl,.fd-eye{font-size:.75rem}
-  .dots,.hw-meta,.mx-eye,.fd-lbl,.pk-top,.pk-ct,.wk-ct{font-size:.72rem}
+  .hw-meta,.mx-eye,.fd-lbl,.pk-top,.pk-ct,.wk-ct{font-size:.72rem}
 }
 </style>
 <link rel="stylesheet" href="assets/footer.css">
@@ -1073,7 +1093,7 @@ dialog.modal[open]{animation:mIn .5s cubic-bezier(.2,.8,.2,1)}
   <div class="nav-r"><button class="menu-btn" id="menuBtn" aria-label="Menu" aria-expanded="false"><span class="mt-o">Menu</span><span class="mt-c">Close</span><svg class="mi-o" viewBox="0 0 24 24"><path d="M4 8h16M4 16h16"/></svg><svg class="mi-c" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
 </header>
 <div class="menu" id="menu"><a href="#about">About</a><a href="#services">Services</a><a href="projects.html">Projects</a><a href="team.html">Team</a><a href="#contact">Contact</a><button class="sub" data-share>Share this page</button></div>
-<main id="app"><!--pre:start--><div class="pre"><style>.pre{max-width:72ch;margin:0 auto;padding:120px 20px 64px}.pre img{display:block;max-width:100%;max-height:260px;width:auto;height:auto;margin:12px 0}.pre img[src*="/brands/"]{display:inline-block;height:26px;margin:8px 16px 8px 0;filter:brightness(0)}.pre ul{padding-left:1.2em}.pre h2,.pre h3{margin:1.6em 0 .4em}</style><section> <div><h1>We are a creative design and software studio for <b>ambitious brands</b> in business.</h1></div> </section><section><p>Brands we've worked with</p> <div><div><img src="assets/brands/trendhijacking.png" alt="TrendHijacking" loading="lazy" decoding="async"> <img src="assets/brands/weegummies.png" alt="WeeGummies" loading="lazy" decoding="async"> <img src="assets/brands/naturedrops.png" alt="NatureDrops" loading="lazy" decoding="async"> <img src="assets/brands/somniaa.png" alt="Somniaa" loading="lazy" decoding="async"> <img src="assets/brands/skinfusion.png" alt="Skinfusion" loading="lazy" decoding="async"> <img src="assets/brands/maximus.png" alt="Maximus" loading="lazy" decoding="async"> <img src="assets/brands/bebedrops.png" alt="BebeDrops" loading="lazy" decoding="async"> <img src="assets/brands/buttkarahi.png" alt="Butt Karahi" loading="lazy" decoding="async"> <img src="assets/brands/sparkclean.png" alt="Spark Clean" loading="lazy" decoding="async"> <img src="assets/brands/safeher.png" alt="SafeHer AI" loading="lazy" decoding="async"> </div></div></section><section><div><p>We design brands, run campaigns and build software, all under one roof. One studio, one brief, no hand-off gaps. Our work speaks louder than words. </p></div></section><section><div><div> <article><div><h3>One studio, every step</h3><p>Brand, campaign and product, built to fit together.</p></div> </article> <article><div><b>40+</b>Projects delivered </div> </article> <article> <div><b>25+</b>Clients served </div></article> <article> <div><b>5+</b>Years of experience </div></article> </div></div></section><section><div><h2>What clients say</h2> <div><p>Straight from the people we've worked with.</p></div> <ul><li> <blockquote>Daniyal worked with us at Trendhijacking for over three years as our Head of Design. He was always highly professional, diligent, and technically proficient in managing all graphic design operations and visual assets. He is an efficient professional to work with, and I wouldn’t hesitate to hire him again.</blockquote> <div> <div><b>Dolapo Adedayo</b>CEO, Trend Hijacking </div></div></li><li> <blockquote>I came to Daniyal with a pretty rough idea for the Amor Fati piece and he turned it into something way better than what I had in my head. It's brutalist but still feels clean and premium, which is exactly what I wanted for Unanswered Prayers. The files were print-ready, my printer had zero issues, and people still ask me about that shirt.</blockquote> <div> <div><b>Zachary</b>Founder, Unanswered Prayers </div></div></li><li> <blockquote>We needed a batch of story ads for BebeDrops and honestly didn't expect them to come back this polished. They got that parents need to trust what they're looking at, so everything felt soft and clean without being boring. Quick turnaround, easy to talk to, and they threw in a few extra variations for us to test.</blockquote> <div> <div><b>Ryan Mitchell</b>Founder, BebeDrops </div></div></li><li> <blockquote>The team did our logo, the bottle and box, and all the product images for Maximus. The before-and-after images made a real difference on our listing. They took feedback well, never made me feel like I was asking for too much, and kept everything consistent across the brand.</blockquote> <div> <div><b>Marcus Bell</b>Owner, Maximus </div></div></li><li> <blockquote>An anti-snoring mouthguard isn't the easiest product to make look good, but these guys pulled it off. The box looks premium and the listing images explain how it fits better than our old copy ever did. Customers actually understand the product now before they buy it.</blockquote> <div> <div><b>Daniel Hartley</b>Founder, Somniaa </div></div></li><li> <blockquote>Working with daizn on Skinfusion was really easy. They handled the logo, the tube packaging and the store images, and every round of changes came back fast. The whole thing looks calm and high-end, exactly the feel we wanted for an overnight mask. I'd happily work with them again.</blockquote> <div> <div><b>Olivia Grant</b>Founder, Skinfusion </div></div></li></ul> </div></section><section><div><h2>What we do</h2> <div><article>01 <div><h3>Brand and design</h3><ul><li>Branding</li><li>Posters</li><li>Motion graphics</li></ul><p>Logos, brand kits, posters and motion graphics that make a business easy to recognise.</p><div><a href="#contact">Start a project </a></div></div> </article><article>02 <div><h3>Social media ads and marketing</h3><ul><li>Social media</li><li>Campaigns</li><li>SEO and analytics</li></ul><p>Content and reporting that connect creative work to real goals.</p><div><a href="#contact">Plan your ads with us </a></div></div> </article><article>03 <div><h3>Web and app development</h3><ul><li>Websites</li><li>Web apps</li><li>APIs</li></ul><p>Websites, web apps and APIs, built from first sketch to deployment and ready to grow.</p><div><a href="#contact">Start a project </a></div></div> </article></div></div></section><section><div> <div><h2>Featured Projects</h2></div> <ul><li> <a href="#works"> <b>Somniaa</b>Logo, box packaging and product listing images for an anti-snoring mouthguard. Logo Packaging Listing images </a></li><li> <a href="#works"> <b>WeeGummies</b>Logo, jar packaging and product mockups for a kids' night-time gummy brand. Logo Packaging Product mockups </a></li><li> <a href="#works"> <img src="assets/work/spark-clean/thumb.webp" alt="SPARK CLEAN" loading="lazy" decoding="async"> <b>SPARK CLEAN</b>Booking platform for a cleaning service in Melbourne. Website Booking platform Admin dashboard </a></li><li> <a href="#works"> <img src="assets/work/maximus/thumb.webp" alt="Maximus" loading="lazy" decoding="async"> <b>Maximus</b>Logo, bottle and box packaging and product images for a batana oil hair serum. Logo Packaging Product images </a></li><li> <a href="#works"> <img src="assets/work/butt-karahi/thumb.webp" alt="BUTT KARAHI" loading="lazy" decoding="async"> <b>BUTT KARAHI</b>Online ordering site and admin dashboard for a Lahore restaurant. Website Online ordering Admin dashboard </a></li><li> <a href="#works"> <img src="assets/work/skinfusion/thumb.webp" alt="Skinfusion" loading="lazy" decoding="async"> <b>Skinfusion</b>Logo, tube packaging and online-store product images for an overnight skincare mask. Logo Packaging Product images </a></li><li> <a href="#works"> <img src="assets/work/bebedrops-ads/thumb.webp" alt="BebeDrops Ads" loading="lazy" decoding="async"> <b>BebeDrops Ads</b>Social media ads for an organic children's multivitamin drops brand. Social media ads Story ads </a></li></ul> <div><a href="projects.html">View all projects </a></div></div></section> <section><div><h2>How we work</h2> <div><p>Four clear steps from the first call to launch day, with one team the whole way through.</p> </div> <ol><li> <h3>Discover</h3><p>We learn your goals, your audience and what success looks like.</p> <div><ul><li>Kick-off call</li><li>Audience research</li><li>Clear brief</li></ul></div> </li><li> <h3>Design</h3><p>Brand, layouts and prototypes you can react to before anything is built.</p> <div><ul><li>Moodboards</li><li>Brand and layouts</li><li>Prototypes</li></ul></div> </li><li> <h3>Build</h3><p>Clean, tested code and finished creative, made to fit together.</p> <div><ul><li>Final artwork</li><li>Tested code</li><li>Review rounds</li></ul></div> </li><li> <h3>Launch</h3><p>We deploy, check everything works live, then keep improving from real feedback.</p> <div><ul><li>Go live</li><li>Launch checks</li><li>Ongoing support</li></ul></div> </li></ol></div></section><div><section><div> <div><p>/ contact us</p><h2>Let's create</h2></div> <div><p>Tell us about your project and we'll bring in the right specialist.</p> <a href="mailto:daiznstudio@gmail.com">Contact us </a></div> </div></section></div> <footer><div> <div> <a href="mailto:daiznstudio@gmail.com"><div><p>/ Copy mail</p><p>Prefer mail?</p></div> <div>daiznstudio@<wbr>gmail.com </div></a> <a href="team.html"><div><p>/ Navigation</p><p>Go to next page</p></div> <div>Meet the team </div></a></div> <div><p>Navigation</p><ul><li><a href="#about">About</a></li><li><a href="#services">Services</a></li><li><a href="#works">Works</a></li><li><a href="team.html">Team</a></li><li><a href="#contact">Contact</a></li></ul></div> <div><p>Socials</p><ul><li><a href="https://www.linkedin.com/company/daizn-studio">LinkedIn</a></li><li><a href="https://www.instagram.com/daiznstudio/">Instagram</a></li><li><a href="https://x.com/daiznstudio">X</a></li></ul></div> <div><p>Legal</p><ul><li><a href="legal.html">Legal</a></li><li><a href="privacy.html">Privacy policy</a></li><li><a href="terms.html">Terms and conditions</a></li></ul></div> <div><p>Connect</p><ul><li><a href="mailto:daiznstudio@gmail.com">daiznstudio@<wbr>gmail.com</a></li></ul></div> <a href="index.html"> daizn </a> <div><p>©2026 daizn studio, all rights reserved</p><a href="#home">Back to top</a></div> </div></footer></div><!--pre:end--></main>
+<main id="app"><!--pre:start--><div class="pre"><style>.pre{max-width:72ch;margin:0 auto;padding:120px 20px 64px}.pre img{display:block;max-width:100%;max-height:260px;width:auto;height:auto;margin:12px 0}.pre img[src*="/brands/"]{display:inline-block;height:26px;margin:8px 16px 8px 0;filter:brightness(0)}.pre ul{padding-left:1.2em}.pre h2,.pre h3{margin:1.6em 0 .4em}</style><section> <div><h1>We are a creative design and software studio for <b>ambitious brands</b> in business.</h1></div> </section><section><p>Brands we've worked with</p> <div><div><img src="assets/brands/trendhijacking.png" alt="TrendHijacking" loading="lazy" decoding="async"> <img src="assets/brands/weegummies.png" alt="WeeGummies" loading="lazy" decoding="async"> <img src="assets/brands/naturedrops.png" alt="NatureDrops" loading="lazy" decoding="async"> <img src="assets/brands/somniaa.png" alt="Somniaa" loading="lazy" decoding="async"> <img src="assets/brands/skinfusion.png" alt="Skinfusion" loading="lazy" decoding="async"> <img src="assets/brands/maximus.png" alt="Maximus" loading="lazy" decoding="async"> <img src="assets/brands/bebedrops.png" alt="BebeDrops" loading="lazy" decoding="async"> <img src="assets/brands/buttkarahi.png" alt="Butt Karahi" loading="lazy" decoding="async"> <img src="assets/brands/sparkclean.png" alt="Spark Clean" loading="lazy" decoding="async"> <img src="assets/brands/safeher.png" alt="SafeHer AI" loading="lazy" decoding="async"> </div></div></section><section><div><p>We design brands, run campaigns and build software, all under one roof. One studio, one brief, no hand-off gaps. Our work speaks louder than words. </p></div></section><section><div><div> <article><div><h3>One studio, every step</h3><p>Brand, campaign and product, built to fit together.</p></div> </article> <article><div><b>40+</b>Projects delivered </div> </article> <article> <div><b>25+</b>Clients served </div></article> <article> <div><b>5+</b>Years of experience </div></article> </div></div></section><section><div><h2>What clients say</h2> <div><p>Straight from the people we've worked with.</p></div> <ul><li> <blockquote>Daniyal worked with us at Trendhijacking for over three years as our Head of Design. He was always highly professional, diligent, and technically proficient in managing all graphic design operations and visual assets. He is an efficient professional to work with, and I wouldn’t hesitate to hire him again.</blockquote> <div> <div><b>Dolapo Adedayo</b>CEO, Trend Hijacking </div></div></li><li> <blockquote>I came to Daniyal with a pretty rough idea for the Amor Fati piece and he turned it into something way better than what I had in my head. It's brutalist but still feels clean and premium, which is exactly what I wanted for Unanswered Prayers. The files were print-ready, my printer had zero issues, and people still ask me about that shirt.</blockquote> <div> <div><b>Zachary</b>Founder, Unanswered Prayers </div></div></li><li> <blockquote>We needed a batch of story ads for BebeDrops and honestly didn't expect them to come back this polished. They got that parents need to trust what they're looking at, so everything felt soft and clean without being boring. Quick turnaround, easy to talk to, and they threw in a few extra variations for us to test.</blockquote> <div> <div><b>Ryan Mitchell</b>Founder, BebeDrops </div></div></li><li> <blockquote>The team did our logo, the bottle and box, and all the product images for Maximus. The before-and-after images made a real difference on our listing. They took feedback well, never made me feel like I was asking for too much, and kept everything consistent across the brand.</blockquote> <div> <div><b>Marcus Bell</b>Owner, Maximus </div></div></li><li> <blockquote>An anti-snoring mouthguard isn't the easiest product to make look good, but these guys pulled it off. The box looks premium and the listing images explain how it fits better than our old copy ever did. Customers actually understand the product now before they buy it.</blockquote> <div> <div><b>Daniel Hartley</b>Founder, Somniaa </div></div></li><li> <blockquote>Working with daizn on Skinfusion was really easy. They handled the logo, the tube packaging and the store images, and every round of changes came back fast. The whole thing looks calm and high-end, exactly the feel we wanted for an overnight mask. I'd happily work with them again.</blockquote> <div> <div><b>Olivia Grant</b>Founder, Skinfusion </div></div></li></ul> </div></section><section><div><h2>What we do</h2> <p>Three services under one roof, so your brand, your ads and your website all come from the same team.</p> <div><article>01 <div><h3>Brand and design</h3><ul><li>Branding</li><li>Packaging</li><li>Posters</li><li>Motion graphics</li></ul><p>Logos, brand kits, packaging, posters and motion graphics that make a business easy to recognise.</p><div><a href="#contact">Start a project </a></div></div> </article><article>02 <div><h3>Social media ads and marketing</h3><ul><li>Social media</li><li>Campaigns</li><li>SEO and analytics</li></ul><p>Scroll-stopping ads and content, with reporting that ties every campaign to real results.</p><div><a href="#contact">Plan your ads with us </a></div></div> </article><article>03 <div><h3>Web and app development</h3><ul><li>Websites</li><li>Web apps</li><li>APIs</li></ul><p>Websites, web apps and APIs, built from first sketch to deployment and ready to grow.</p><div><a href="#contact">Start a project </a></div></div> </article></div></div></section><section><div> <div><h2>Featured Projects</h2></div> <ul><li> <a href="#works"> <b>Somniaa</b>Logo, box packaging and product listing images for an anti-snoring mouthguard. Logo Packaging Listing images </a></li><li> <a href="#works"> <b>WeeGummies</b>Logo, jar packaging and product mockups for a kids' night-time gummy brand. Logo Packaging Product mockups </a></li><li> <a href="#works"> <img src="assets/work/spark-clean/thumb.webp" alt="SPARK CLEAN" loading="lazy" decoding="async"> <b>SPARK CLEAN</b>Booking platform for a cleaning service in Melbourne. Website Booking platform Admin dashboard </a></li><li> <a href="#works"> <img src="assets/work/maximus/thumb.webp" alt="Maximus" loading="lazy" decoding="async"> <b>Maximus</b>Logo, bottle and box packaging and product images for a batana oil hair serum. Logo Packaging Product images </a></li><li> <a href="#works"> <img src="assets/work/butt-karahi/thumb.webp" alt="BUTT KARAHI" loading="lazy" decoding="async"> <b>BUTT KARAHI</b>Online ordering site and admin dashboard for a Lahore restaurant. Website Online ordering Admin dashboard </a></li><li> <a href="#works"> <img src="assets/work/skinfusion/thumb.webp" alt="Skinfusion" loading="lazy" decoding="async"> <b>Skinfusion</b>Logo, tube packaging and online-store product images for an overnight skincare mask. Logo Packaging Product images </a></li><li> <a href="#works"> <img src="assets/work/bebedrops-ads/thumb.webp" alt="BebeDrops Ads" loading="lazy" decoding="async"> <b>BebeDrops Ads</b>Social media ads for an organic children's multivitamin drops brand. Social media ads Story ads </a></li></ul> <div><a href="projects.html">View all projects </a></div></div></section> <section><div><h2>How we work</h2> <div><p>Four clear steps from the first call to launch day, with one team the whole way through.</p> </div> <ol><li> <h3>Discover</h3><p>We learn your goals, your audience and what success looks like.</p> <div><ul><li>Kick-off call</li><li>Audience research</li><li>Clear brief</li></ul></div> </li><li> <h3>Design</h3><p>Brand, layouts and prototypes you can react to before anything is built.</p> <div><ul><li>Moodboards</li><li>Brand and layouts</li><li>Prototypes</li></ul></div> </li><li> <h3>Build</h3><p>Clean, tested code and finished creative, made to fit together.</p> <div><ul><li>Final artwork</li><li>Tested code</li><li>Review rounds</li></ul></div> </li><li> <h3>Launch</h3><p>We deploy, check everything works live, then keep improving from real feedback.</p> <div><ul><li>Go live</li><li>Launch checks</li><li>Ongoing support</li></ul></div> </li></ol></div></section><div><section><div> <div><p>/ contact us</p><h2>Let's create</h2></div> <div><p>Tell us about your project and we'll bring in the right specialist.</p> <a href="mailto:daiznstudio@gmail.com">Contact us </a></div> </div></section></div> <footer><div> <div> <a href="mailto:daiznstudio@gmail.com"><div><p>/ Copy mail</p><p>Prefer mail?</p></div> <div>daiznstudio@<wbr>gmail.com </div></a> <a href="team.html"><div><p>/ Navigation</p><p>Go to next page</p></div> <div>Meet the team </div></a></div> <div><p>Navigation</p><ul><li><a href="#about">About</a></li><li><a href="#services">Services</a></li><li><a href="#works">Works</a></li><li><a href="team.html">Team</a></li><li><a href="#contact">Contact</a></li></ul></div> <div><p>Socials</p><ul><li><a href="https://www.linkedin.com/company/daizn-studio">LinkedIn</a></li><li><a href="https://www.instagram.com/daiznstudio/">Instagram</a></li><li><a href="https://x.com/daiznstudio">X</a></li></ul></div> <div><p>Legal</p><ul><li><a href="legal.html">Legal</a></li><li><a href="privacy.html">Privacy policy</a></li><li><a href="terms.html">Terms and conditions</a></li></ul></div> <div><p>Connect</p><ul><li><a href="mailto:daiznstudio@gmail.com">daiznstudio@<wbr>gmail.com</a></li></ul></div> <a href="index.html"> daizn </a> <div><p>©2026 daizn studio, all rights reserved</p><a href="#home">Back to top</a></div> </div></footer></div><!--pre:end--></main>
 <dialog class="modal" id="modal" aria-label="Project details"></dialog>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
@@ -1680,10 +1700,18 @@ window.PF = (function () {
 
   P.services = D => {
     const S = D.services;
-    return `<section class="sec dark svc" id="services" data-nav="services"><div class="wrap">${P.heading(S.title)}
-      <div class="stack">${S.items.map((s, i) => `<article class="pcard" style="--i:${i}"><span class="no">${String(i + 1).padStart(2, "0")}</span>
-        <div><h3>${esc(s.t)}</h3><ul class="dots">${s.tags.map(t => `<li>${esc(t)}</li>`).join("")}</ul><p>${esc(s.d)}</p>${s.who ? `<div style="margin-top:18px"><a class="btn" ${s.href ? `href="${esc(s.href)}"` : P.linkAttrs(D, s.who)}>${esc(s.more)} ${IC.up}</a></div>` : ""}</div>
-        <div class="pa">${P.art(s.art, s.tone == null ? i : s.tone, i * 2 + 1)}</div></article>`).join("")}</div></div></section>`;
+    const arrow = `<svg viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></svg>`;
+    // shots are work folders; the middle cover (the first listed) sits on top
+    const shots = s => (s.shots || []).slice(0, 3).map((f, k, a) => a[(k + 1) % a.length]).map(f => `<img src="assets/work/${esc(f)}/thumb-sq.webp" alt="" loading="lazy" decoding="async">`).join("");
+    return `<section class="sec svc" id="services" data-nav="services"><div class="wrap">
+      <div class="sv-bar"><span class="rv-pill">Services</span><span class="sv-ct">${pad2(S.items.length)} services</span></div>
+      ${P.heading(S.title)}
+      ${S.lead ? `<p class="lead sv-lead">${esc(S.lead)}</p>` : ""}
+      <div class="sv-grid">${S.items.map((s, i) => `<article class="sv-card" style="--i:${i}">
+        <div class="sv-media" aria-hidden="true">${shots(s)}</div>
+        <div class="sv-tx"><span class="sv-no">${pad2(i + 1)}</span><h3>${esc(s.t)}</h3><p>${esc(s.d)}</p>
+          <ul class="sv-tags">${s.tags.map(t => `<li>${esc(t)}</li>`).join("")}</ul>
+          ${s.who ? `<a class="sv-go" ${s.href ? `href="${esc(s.href)}"` : P.linkAttrs(D, s.who)}><span>${esc(s.more)}</span><span class="hw-go" aria-hidden="true">${arrow}</span></a>` : ""}</div></article>`).join("")}</div></div></section>`;
   };
 
   P.experience = D => `<section class="sec" id="experience" data-nav="experience"><div class="wrap">${P.heading(D.experience.title)}
@@ -1717,7 +1745,7 @@ window.PF = (function () {
         <div class="hw-th" role="img" aria-label="${esc(rv.alt)}"><div class="hw-row"><img class="hw-av" src="${esc(rv.avatar)}" alt="" width="28" height="28" loading="lazy" decoding="async"><span class="hw-stk"><span class="hw-typ" aria-hidden="true"><i></i><i></i><i></i></span>${rv.chat[0] ? bub(rv.chat[0]) : ""}</span></div>${rv.chat.slice(1).map(bub).join("")}<span class="hw-dl">Delivered</span></div></article>` : ""}
       ${st ? `<article class="hw-c hw-pu"><div><span class="hw-l">${esc(st.l)}</span><b class="hw-n">${esc(st.n)}</b></div>
         <div class="hw-cy" role="img" aria-label="${esc((D.process || []).map(p => p.t).join(", "))}"><span class="hw-wd" aria-hidden="true">${(D.process || []).map((p, i) => `<b style="--k:${i}"><small>${pad2(i + 1)}</small>${esc(p.t)}</b>`).join("")}</span><span class="hw-seg" aria-hidden="true">${(D.process || []).map(() => "<i></i>").join("")}</span></div></article>` : ""}
-      ${cta ? `<a class="hw-c hw-pl" href="${esc(cta.h)}"><span><span class="hw-l">${esc(cta.l)}</span><b>${esc(cta.t)}</b></span><span class="hw-go" aria-hidden="true">${arrow}</span></a>` : ""}
+      ${cta ? `<a class="hw-c hw-pl" href="${esc(cta.h)}"${cta.cal ? " data-cal" : ""}><b>${esc(cta.t)}</b><span class="hw-go" aria-hidden="true">${arrow}</span></a>` : ""}
     </div></div></section>`;
   };
 
@@ -1726,9 +1754,9 @@ window.PF = (function () {
   /* "Let's create": black contact panel pinned under the section above (curtain reveal) with a colour-wave
      heading; the contact form sits in the left half. Styles and motion live in assets/footer.css and assets/footer.js. */
   P.contact = (D, self) => `<div class="lc" data-lc><span class="lc-anchor" id="contact"></span><section class="lc-panel dark" data-nav="contact" aria-labelledby="lc-h"><div class="lc-grid">
-      <div class="lc-head"><p class="sf-cap">/ contact us</p><h2 class="lc-h" id="lc-h" data-lc-wave aria-label="Let's create">Let's<br>create</h2></div>
+      <div class="lc-head"><h2 class="lc-h" id="lc-h" data-lc-wave aria-label="Let's create">Let's<br>create</h2></div>
       <div class="lc-body"><p class="lc-lead">${esc(D.contact.lead)}</p>
-        <a class="lc-btn" href="mailto:${esc(D.email)}"><span class="lc-btn-t">Contact us</span><span class="lc-btn-i" aria-hidden="true">${IC.up}</span></a></div>
+        <a class="lc-btn" href="#contact" data-cal-tab><span class="lc-btn-t">Schedule call</span><span class="lc-btn-i" aria-hidden="true">${IC.up}</span></a></div>
       <form class="lc-form" id="cform"><p class="sf-cap">/ send a message</p><div class="lc-art" aria-hidden="true">${P.mono()}</div>
         <label class="field"><span>First name</span><input name="fname" type="text" placeholder="Your name" autocomplete="given-name" required maxlength="80"></label>
         <label class="field"><span>Email address</span><input name="email" type="email" placeholder="you@example.com" autocomplete="email" required maxlength="120"></label>
@@ -1927,9 +1955,10 @@ window.PF = (function () {
       $$(".wk").forEach(el => io.observe(el));
       $$(".team").forEach(el => io.observe(el));
       $$(".rv-grid").forEach(el => io.observe(el));
+      $$(".sv-grid").forEach(el => io.observe(el));
       const cio = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { count(e.target); cio.unobserve(e.target); } }), { threshold: .5 });
       $$("[data-count]").forEach(el => cio.observe(el));
-    } else { $$(".split, .mz, .portrait, .wk, .bn, .team, .rv-grid").forEach(e => e.classList.add("in")); $$("[data-count]").forEach(count); }
+    } else { $$(".split, .mz, .portrait, .wk, .bn, .team, .rv-grid, .sv-grid").forEach(e => e.classList.add("in")); $$("[data-count]").forEach(count); }
 
     function count(el) {
       const end = +el.dataset.count, suf = el.dataset.suffix || ""; let t0 = null;
@@ -2103,10 +2132,12 @@ const DATA = {
   mosaic: { title: "One studio, every step", text: "Brand, campaign and product, built to fit together." },
   services: {
     title: "What we do",
+    lead: "Three services under one roof, so your brand, your ads and your website all come from the same team.",
+    // shots: three work folders (each with a thumb-sq.webp) fanned on the card; the first one sits on top
     items: [
-      { t: "Brand and design", art: "orbs", tags: ["Branding", "Posters", "Motion graphics"], d: "Logos, brand kits, posters and motion graphics that make a business easy to recognise.", who: "designer", href: "#contact", more: "Start a project" },
-      { t: "Social media ads and marketing", art: "pillars", tags: ["Social media", "Campaigns", "SEO and analytics"], d: "Content and reporting that connect creative work to real goals.", who: "designer", href: "#contact", more: "Plan your ads with us" },
-      { t: "Web and app development", art: "waves", tags: ["Websites", "Web apps", "APIs"], d: "Websites, web apps and APIs, built from first sketch to deployment and ready to grow.", who: "developer", href: "#contact", more: "Start a project" }
+      { t: "Brand and design", shots: ["weegummies", "somniaa", "maximus"], tags: ["Branding", "Packaging", "Posters", "Motion graphics"], d: "Logos, brand kits, packaging, posters and motion graphics that make a business easy to recognise.", who: "designer", href: "#contact", more: "Start a project" },
+      { t: "Social media ads and marketing", shots: ["bebedrops-ads", "business-ads", "youtube-thumbnails"], tags: ["Social media", "Campaigns", "SEO and analytics"], d: "Scroll-stopping ads and content, with reporting that ties every campaign to real results.", who: "designer", href: "#contact", more: "Plan your ads with us" },
+      { t: "Web and app development", shots: ["spark-clean", "butt-karahi", "safe-her"], tags: ["Websites", "Web apps", "APIs"], d: "Websites, web apps and APIs, built from first sketch to deployment and ready to grow.", who: "developer", href: "#contact", more: "Start a project" }
     ]
   },
   teamLead: "Open a portfolio to see the full work, or copy the link to share it on its own.",
@@ -2166,7 +2197,8 @@ const DATA = {
     team: { n: "1 team", d: "A designer and a developer, with you from the first call to launch day.", img: "assets/process/team-3d.webp", alt: "" },
     review: { l: "Feedback at every step", n: "In the loop", avatar: "assets/process/avatar.webp", chat: [{ img: "assets/process/msg-1.webp", w: 276, h: 51 }, { img: "assets/process/msg-2.webp", w: 83, h: 33, me: true }, { img: "assets/process/msg-3.webp", w: 136, h: 33, me: true }], alt: "A message thread. Daniyal: Round two is ready, have a look before we build. Reply: Love it! Let's build it." },
     steps: { l: "From first call to launch", n: "4 steps" },
-    cta: { l: "Free first call", t: "Let's talk", h: "#contact" }
+    // cal: true opens the Calendly popup (the link lives at the top of assets/footer.js); otherwise it scrolls to h
+    cta: { t: "Book a\nmeeting", h: "#contact", cal: true }
   },
   contact: { lead: "Tell us about your project and we'll bring in the right specialist." },
   socials: [

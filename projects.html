@@ -1910,9 +1910,9 @@ window.PF = (function () {
   /* "Let's create": black contact panel pinned under the section above (curtain reveal) with a colour-wave
      heading; the contact form sits in the left half. Styles and motion live in assets/footer.css and assets/footer.js. */
   P.contact = (D, self) => `<div class="lc" data-lc><span class="lc-anchor" id="contact"></span><section class="lc-panel dark" data-nav="contact" aria-labelledby="lc-h"><div class="lc-grid">
-      <div class="lc-head"><p class="sf-cap">/ contact us</p><h2 class="lc-h" id="lc-h" data-lc-wave aria-label="Let's create">Let's<br>create</h2></div>
+      <div class="lc-head"><h2 class="lc-h" id="lc-h" data-lc-wave aria-label="Let's create">Let's<br>create</h2></div>
       <div class="lc-body"><p class="lc-lead">${esc(D.contact.lead)}</p>
-        <a class="lc-btn" href="mailto:${esc(D.email)}"><span class="lc-btn-t">Contact us</span><span class="lc-btn-i" aria-hidden="true">${IC.up}</span></a></div>
+        <a class="lc-btn" href="#contact" data-cal-tab><span class="lc-btn-t">Schedule call</span><span class="lc-btn-i" aria-hidden="true">${IC.up}</span></a></div>
       <form class="lc-form" id="cform"><p class="sf-cap">/ send a message</p><div class="lc-art" aria-hidden="true">${P.mono()}</div>
         <label class="field"><span>First name</span><input name="fname" type="text" placeholder="Your name" autocomplete="given-name" required maxlength="80"></label>
         <label class="field"><span>Email address</span><input name="email" type="email" placeholder="you@example.com" autocomplete="email" required maxlength="120"></label>

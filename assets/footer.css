@@ -87,11 +87,13 @@
 .lc{position:relative;background:#000;color:var(--paper)}
 .lc-anchor{position:absolute;left:0;top:0;width:1px;height:1px;pointer-events:none}
 .lc-panel{position:relative;overflow:hidden;background:#000}
-.lc-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));grid-template-rows:auto minmax(2rem,1fr) auto;gap:1rem;height:100%;padding:6rem 2rem}
-.lc-head{grid-column:7/13;grid-row:1;display:flex;flex-direction:column;gap:2rem;margin-top:1rem}
+.lc-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));grid-template-rows:minmax(0,1fr) auto auto minmax(0,1fr);gap:1rem;height:100%;padding:6rem 2rem}
+/* the heading and its lead sit centred against the contact card; the extra top margin balances the card's
+   negative bottom margin so the centres line up */
+.lc-head{grid-column:7/13;grid-row:2;display:flex;flex-direction:column;gap:2rem;margin-top:3.5rem}
 .lc-h{margin:0;font-family:var(--font);font-weight:700;text-transform:uppercase;letter-spacing:-.02em;line-height:.9;font-size:clamp(3rem,6.5vw,7.4rem);color:var(--paper)}
 .lc-h .w{display:inline-block;white-space:nowrap}
-.lc-body{grid-column:7/11;grid-row:3;display:flex;flex-direction:column;align-items:flex-start;gap:3rem;padding-bottom:2rem}
+.lc-body{grid-column:7/11;grid-row:3;align-self:start;display:flex;flex-direction:column;align-items:flex-start;gap:2.25rem;margin-top:1.5rem}
 .lc-lead{margin:0;max-width:40ch;font-size:clamp(1.05rem,1.35vw,1.4rem);line-height:1.4;font-weight:500}
 
 /* button: text pill + square icon, 2px apart */
@@ -102,10 +104,13 @@
 .lc-btn:hover .lc-btn-t,.lc-btn:focus-visible .lc-btn-t{background:rgba(255,255,255,.26)}
 .lc-btn:hover .lc-btn-i,.lc-btn:focus-visible .lc-btn-i{background:var(--tint)}
 .lc-btn:hover .lc-btn-i svg,.lc-btn:focus-visible .lc-btn-i svg{transform:rotate(45deg)}
+/* "Schedule call" beside the heading: the text pill turns lilac on hover too */
+.lc-body .lc-btn-t{transition:background .35s,color .35s}
+.lc-body .lc-btn:hover .lc-btn-t,.lc-body .lc-btn:focus-visible .lc-btn-t{background:var(--tint);color:var(--ink)}
 .lc-btn:focus-visible{outline:2px solid var(--tint);outline-offset:4px;border-radius:.5rem}
 
 /* the form sits where their illustration is: the left half, full height */
-.lc-form{grid-column:1/7;grid-row:1/4;display:flex;flex-direction:column;justify-content:flex-end;padding:2rem;border-radius:1rem;background:rgba(255,255,255,.07);color:var(--paper)}
+.lc-form{grid-column:1/6;grid-row:1/5;margin-bottom:-3.5rem;display:flex;flex-direction:column;justify-content:flex-end;padding:2rem;border-radius:1rem;background:radial-gradient(70% 60% at 0% 0%,rgba(185,165,234,.22),transparent 70%),var(--violet,#3f1c8c);color:var(--paper)}
 .lc-form .sf-cap{color:rgba(240,240,240,.5)}
 .lc-art{flex:1;min-height:0;display:grid;place-items:center;padding:1.5rem 0}
 .lc-art svg{height:min(210px,80%);width:auto;fill:var(--tint);opacity:.16;animation:lcFloat 7s ease-in-out infinite}
@@ -117,6 +122,18 @@
 .lc-form .field ::placeholder{color:currentColor;opacity:.45}
 .lc-form .lc-btn{margin-top:1.75rem;align-self:flex-start}
 /* send state: a hidden spam trap, the button while sending, a field the visitor got wrong, and the result line */
+/* contact card tabs: "Send a message" / "Book a call"; the calendar fills the card in place of the form */
+.lc-tabs{display:inline-flex;align-self:flex-start;gap:4px;padding:4px;border-radius:999px;background:rgba(255,255,255,.08)}
+.lc-tabs button{padding:.65rem 1.05rem .6rem;border:0;border-radius:999px;background:none;color:rgba(240,240,240,.6);font:700 .72rem/1 var(--font);text-transform:uppercase;letter-spacing:.06em;cursor:pointer;transition:background .3s,color .3s}
+.lc-tabs button:hover{color:var(--paper)}
+.lc-tabs button[aria-selected="true"]{background:var(--paper);color:var(--ink)}
+.lc-tabs button:focus-visible{outline:2px solid var(--tint);outline-offset:2px}
+.lc-tabs + .sf-cap{display:none}
+.lc-form.is-cal>:not(.lc-tabs):not(.lc-cal){display:none}
+.lc-cal{position:relative;flex:1;min-height:0;margin-top:1.25rem;overflow:hidden;border-radius:.75rem;background:#fff}
+.lc-cal[hidden]{display:none}
+.lc-cal iframe{display:block;width:100%;height:100%;border:0}
+.lc-cal-ld{position:absolute;inset:0;display:grid;place-items:center;font-size:.9rem;color:rgba(16,16,16,.5);text-decoration:none}
 .lc-hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none}
 .lc-btn:disabled{cursor:wait;opacity:.6}
 .lc-form .field:has(:user-invalid){border-color:#ff9a9a}
@@ -135,18 +152,19 @@
   .lc-grid{grid-template-columns:1fr;grid-template-rows:none;gap:3rem;padding:5rem 1.5rem 3rem}
   .lc-head,.lc-body,.lc-form{grid-column:1;grid-row:auto}
   .lc-head{margin-top:0}
-  .lc-body{padding-bottom:0}
+  .lc-body{margin-top:0}
   .lc-h{font-size:clamp(2.6rem,13.4vw,7rem)}
-  .lc-form{padding:1.5rem}
+  .lc-form{padding:1.5rem;margin-bottom:0}
   .lc-art{display:none}
   .lc-form .sf-cap{margin-bottom:.5rem}
+  .lc-cal{flex:none;height:680px}
 }
 @media (max-width:640px){
   .lc-grid{padding:4.5rem 1rem 2.5rem;gap:2.5rem}
   .lc-body{gap:2rem}
 }
 @media (prefers-reduced-motion:reduce){
-  .lc-btn-t,.lc-btn-i,.lc-btn-i svg{transition:none}
+  .lc-btn-t,.lc-body .lc-btn-t,.lc-btn-i,.lc-btn-i svg{transition:none}
   .lc-art svg{animation:none}
 }
 /* touch screens: the footer links are short lines of text, so give each an invisible hit area of about
@@ -155,4 +173,5 @@
   .sf-col a,.sf-copy a{position:relative}
   .sf-col a::after,.sf-copy a::after{content:"";position:absolute;inset:-11px -12px}
   .lc-btn-t{min-height:44px}
+  .lc-tabs button{min-height:40px}
 }

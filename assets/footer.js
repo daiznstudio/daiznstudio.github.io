@@ -5,6 +5,9 @@
    ===================================================================== */
 const FORM_KEY = "c492e714-a3d7-417f-8dca-ae6232dffa34";
 
+/* CALENDLY LINK. The event every "Book a meeting" / "Schedule call" button and the homepage calendar books. */
+const CALENDLY = "https://calendly.com/daiznstudio/30min";
+
 /* "Send a message" form: checks the fields (the browser's own required / email checks), then sends
    through Web3Forms and reports back inside the form. A hidden checkbox catches spam bots. */
 (() => {
@@ -132,4 +135,68 @@ const FORM_KEY = "c492e714-a3d7-417f-8dca-ae6232dffa34";
   addEventListener("scroll", check, { passive: true });
   check();
   h.addEventListener("mouseenter", () => { if (ran) wave(false); });
+})();
+
+/* Calendly booking: [data-cal] links open the booking popup. The contact card gets two tabs, "Send a message"
+   and "Book a call"; the second embeds the calendar the first time it opens, and [data-cal-tab] links open the card
+   on that tab. A page load always starts on "Send a message". The widget files load only when first needed; if they can't, the
+   popup links fall back to their own href and the tab keeps its "open on Calendly" link. */
+(() => {
+  const url = CALENDLY + "?hide_gdpr_banner=1&background_color=ffffff&text_color=101010&primary_color=3f1c8c";
+  let load;
+  const ready = () => load = load || new Promise((ok, no) => {
+    const css = document.createElement("link"); css.rel = "stylesheet"; css.href = "https://assets.calendly.com/assets/external/widget.css"; document.head.append(css);
+    const js = document.createElement("script"); js.src = "https://assets.calendly.com/assets/external/widget.js"; js.async = true;
+    js.onload = ok; js.onerror = () => { load = null; no(); }; document.head.append(js);
+  });
+
+  document.addEventListener("click", e => {
+    const a = e.target.closest && e.target.closest("[data-cal]");
+    if (!a) return;
+    e.preventDefault();
+    ready().then(() => Calendly.initPopupWidget({ url })).catch(() => { location.href = a.href; });
+  });
+
+  const form = document.getElementById("cform");
+  if (!form) return;
+  const tabs = document.createElement("div");
+  tabs.className = "lc-tabs"; tabs.setAttribute("role", "tablist"); tabs.setAttribute("aria-label", "How to get in touch");
+  tabs.innerHTML = '<button type="button" role="tab" id="lc-tab-msg" aria-controls="cform" aria-selected="true">Send a message</button>'
+    + '<button type="button" role="tab" id="lc-tab-cal" aria-controls="lc-cal" aria-selected="false" tabindex="-1">Book a call</button>';
+  const cal = document.createElement("div");
+  cal.className = "lc-cal"; cal.id = "lc-cal"; cal.hidden = true;
+  cal.setAttribute("role", "tabpanel"); cal.setAttribute("aria-labelledby", "lc-tab-cal");
+  cal.innerHTML = `<a class="lc-cal-ld" href="${CALENDLY}" target="_blank" rel="noopener">Loading the calendar…</a>`;
+  form.prepend(tabs); form.append(cal);
+  const [tMsg, tCal] = tabs.querySelectorAll("button");
+
+  let embedded = false;
+  const show = book => {
+    form.classList.toggle("is-cal", book);
+    cal.hidden = !book;
+    tMsg.setAttribute("aria-selected", !book); tCal.setAttribute("aria-selected", book);
+    tMsg.tabIndex = book ? -1 : 0; tCal.tabIndex = book ? 0 : -1;
+    if (book && !embedded) {
+      embedded = true;
+      ready().then(() => {
+        cal.textContent = "";
+        Calendly.initInlineWidget({ url: url + "&hide_event_type_details=1&hide_landing_page_details=1", parentElement: cal });
+      }).catch(() => { embedded = false; });
+    }
+  };
+  tMsg.addEventListener("click", () => show(false));
+  tCal.addEventListener("click", () => show(true));
+  tabs.addEventListener("keydown", e => {
+    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+    const book = tMsg.getAttribute("aria-selected") === "true";
+    show(book); (book ? tCal : tMsg).focus();
+  });
+
+  const toContact = () => (document.getElementById("contact") || form).scrollIntoView({ block: "start" });
+  document.addEventListener("click", e => {
+    const a = e.target.closest && e.target.closest("[data-cal-tab]");
+    if (!a) return;
+    e.preventDefault();
+    show(true); toContact();
+  });
 })();
