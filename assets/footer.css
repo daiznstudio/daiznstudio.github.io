@@ -6,6 +6,9 @@
 :root{--sf-mono:"Chivo Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
 /* see footer.js: the page background behind everything turns black at the end, so phone toolbars tint black */
 html.end-dark{background:#0b0616}
+/* once the bottom of the footer is on screen, body takes the glow's bottom colour too: iOS Safari tints its toolbar
+   from body, and the bar then carries on from the footer instead of showing a light grey strip */
+html.end-glow,html.end-glow body{background:#7a63c3}
 .sf{position:relative;z-index:1;background:#000;color:var(--paper);padding-bottom:env(safe-area-inset-bottom,0px);
   font-family:var(--font-body);font-weight:500}
 .sf a{color:inherit;text-decoration:none}

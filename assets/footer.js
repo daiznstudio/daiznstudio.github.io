@@ -251,6 +251,9 @@ const CALENDLY = "https://calendly.com/daiznstudio/30min";
   const check = () => {
     q = 0;
     root.classList.toggle("end-dark", [...document.querySelectorAll(".lc, .sf")].some(e => e.getBoundingClientRect().top < innerHeight * .9));
+    // the footer's bottom edge is in view: match the toolbar to the glow there (see html.end-glow in footer.css)
+    const sf = document.querySelector(".sf");
+    root.classList.toggle("end-glow", !!sf && sf.getBoundingClientRect().bottom < innerHeight + 80);
   };
   addEventListener("scroll", () => { if (!q) q = requestAnimationFrame(check); }, { passive: true });
   addEventListener("resize", check);
