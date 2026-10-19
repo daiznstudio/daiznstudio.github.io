@@ -1,7 +1,6 @@
 /* Project viewer extras, shared by every page with the project popup: each time the popup gets new
    content, the side panel takes its colours from the project's cover (then from each image as you step
-   through the gallery), the highlights fold under a
-   toggle, the title rises in word by word and the year and image count count up.
+   through the gallery) and the highlights fold under a toggle. While it is open the page behind holds still.
    Styles live in assets/viewer.css.
 
    Cover colours come from assets/palettes.js (made by _tools/palettes.js, since browsers won't let a
@@ -51,11 +50,39 @@
 
   const m = document.getElementById("modal"); if (!m) return;
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const esc = s => s.replace(/[&<>"]/g, c => "&#" + c.charCodeAt(0) + ";");
   const known = window.MX_PALETTES || {}, live = {};
 
+  // While the popup is open the page behind it holds still: its CSS animations are frozen (playback rate 0,
+  // which leaves their own paused/running state alone), its playing videos pause, and its animation loops idle
+  // (they check MX_OPEN). All of it carries on where it was once the popup closes
+  let held = [], heldVideos = [];
+  function holdPage(on) {
+    if (on) {
+      held = document.getAnimations().filter(a => a.playbackRate && !(a.effect && a.effect.target && m.contains(a.effect.target)));
+      held.forEach(a => { a.playbackRate = 0; });
+      heldVideos = [...document.querySelectorAll("video")].filter(v => !v.paused && !m.contains(v));
+      heldVideos.forEach(v => v.pause());
+    } else {
+      held.forEach(a => { a.playbackRate = 1; });
+      heldVideos.forEach(v => { const p = v.play(); if (p) p.catch(() => { }); });
+      held = []; heldVideos = [];
+    }
+  }
+  // The first frame of an open (restyling the page for the modal, laying out the popup, the GPU setting up) is the
+  // slow one, so the popup is drawn but held invisible for it and fades in on the frames after
+  new MutationObserver(() => {
+    if (window.MX_OPEN === m.open) return;
+    window.MX_OPEN = m.open;
+    holdPage(m.open);
+    if (!m.open || reduce) return;
+    m.classList.add("mx-pre");
+    requestAnimationFrame(() => requestAnimationFrame(() => m.classList.remove("mx-pre")));
+  }).observe(m, { attributes: true, attributeFilter: ["open"] });
+  // the wheel over the backdrop doesn't scroll the page behind
+  m.addEventListener("wheel", e => { if (e.target === m) e.preventDefault(); }, { passive: false });
+
   // the accent for buttons: the cover's vivid colour, pulled toward its darkest shade until white text on it
-  // reaches a 4.5:1 contrast (WCAG AA), then a deeper step of it for the bottom of the gloss
+  // reaches a 4.5:1 contrast (WCAG AA), then a deeper step of it for hovers
   const rgb = h => [1, 3, 5].map(i => parseInt(h.substr(i, 2), 16));
   const mix = (a, b, t) => "#" + rgb(a).map((v, i) => Math.round(v + (rgb(b)[i] - v) * t).toString(16).padStart(2, "0")).join("");
   const lum = h => { const [r, g, b] = rgb(h).map(v => (v /= 255) <= .03928 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4); return .2126 * r + .7152 * g + .0722 * b; };
@@ -66,24 +93,12 @@
   }
 
   // colours go on the popup itself so the close button (outside .mx) gets them too; cleared when a project
-  // has no palette so it doesn't keep the last one's. A new image fades the panel from the shades on show
+  // has no palette so it doesn't keep the last one's. The panel's colour change is a CSS transition
   const KEYS = ["d0", "d1", "d2", "c1", "c2", "lt", "ac", "acd"];
-  let shown = null, raf = 0;
-  function paint(p, fade) {
-    cancelAnimationFrame(raf);
-    if (!p) { shown = null; KEYS.forEach(k => m.style.removeProperty("--mx-" + k)); return; }
+  function paint(p) {
+    if (!p) { KEYS.forEach(k => m.style.removeProperty("--mx-" + k)); return; }
     p = Object.assign({}, p, accent(p));
-    const from = shown; shown = {};
-    const set = t => KEYS.forEach(k => m.style.setProperty("--mx-" + k, shown[k] = from ? mix(from[k], p[k], t) : p[k]));
-    if (!fade || !from || reduce) return set(1);
-    let t0 = null;
-    const step = now => {
-      if (t0 === null) t0 = now;
-      const t = Math.min(1, (now - t0) / 700);
-      set(1 - Math.pow(1 - t, 3));
-      if (t < 1) raf = requestAnimationFrame(step);
-    };
-    raf = requestAnimationFrame(step);
+    KEYS.forEach(k => m.style.setProperty("--mx-" + k, p[k]));
   }
   // an image's palette: from assets/palettes.js, else read live on the published site (null: none)
   function look(src, done) {
@@ -101,7 +116,7 @@
   const watch = new MutationObserver(() => {
     const mx = m.querySelector(".mx"), img = mx && mx.querySelector(".mx-view>img"); if (!img) return;
     const src = img.getAttribute("src");
-    look(mx.dataset.cover, base => look(src, p => { if (img.isConnected && img.getAttribute("src") === src) paint(p || base, true); }));
+    look(mx.dataset.cover, base => look(src, p => { if (img.isConnected && img.getAttribute("src") === src) paint(p || base); }));
   });
   function colour(mx) {
     paint(null);
@@ -111,23 +126,12 @@
     if (img) watch.observe(img, { attributes: true, attributeFilter: ["src"] });
   }
 
-  function count(b, delay) {
-    const end = +b.textContent, start = end > 1000 ? end - 24 : 0, dur = 900;
-    let t0 = null;
-    b.textContent = start;
-    const step = now => {
-      if (t0 === null) t0 = now + delay;
-      const p = Math.min(1, Math.max(0, (now - t0) / dur));
-      b.textContent = Math.round(start + (end - start) * (1 - Math.pow(1 - p, 3)));
-      if (p < 1) requestAnimationFrame(step);
-    };
-    requestAnimationFrame(step);
-  }
-
   function run() {
     const info = m.querySelector(".mx-info"); if (!info || info.dataset.fx) return;
     info.dataset.fx = "1";
     colour(m.querySelector(".mx"));
+    // the hidden glow image the pages still build has nothing to show now
+    const amb = m.querySelector(".mx-amb"); if (amb) amb.remove();
     // highlights fold away under a "What we did" toggle
     const feats = info.querySelector(".mx-feats");
     if (feats && feats.children.length) {
@@ -135,15 +139,9 @@
       more.innerHTML = `<summary>What we did <em>${feats.children.length}</em><i aria-hidden="true"></i></summary>`;
       feats.before(more); more.appendChild(feats);
     } else if (feats) feats.remove();
-    const h = info.querySelector("h3");
-    if (h && !reduce) {
-      h.innerHTML = h.textContent.trim().split(/\s+/).map((w, i) => `<span class="mx-w"><span style="--i:${i}">${esc(w)}</span></span>`).join(" ");
-      h.classList.add("split");
-    }
-    info.querySelectorAll(".mx-meta span").forEach((s, j) => {
+    info.querySelectorAll(".mx-meta span").forEach(s => {
       const t = Array.from(s.childNodes).find(n => n.nodeType === 3 && n.textContent.trim()); if (!t) return;
       const b = document.createElement("b"); b.textContent = t.textContent.trim(); t.replaceWith(b);
-      if (!reduce && /^\d+$/.test(b.textContent)) count(b, 250 + j * 120);
     });
   }
   new MutationObserver(run).observe(m, { childList: true });

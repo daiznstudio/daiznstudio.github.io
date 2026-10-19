@@ -1,7 +1,8 @@
 /* Palettes: works out each project's colours from its cover image and saves them in assets/palettes.js,
-   which the project popup uses to colour its side panel.
+   which the project popup uses to colour its side panel. It also makes the small -t.webp thumbnail of each
+   gallery image for the popup's thumbnail strip.
 
-   Run it after adding or changing a project cover, before you push:
+   Run it after adding or changing a project cover or gallery image, before you push:
        node _tools/palettes.js
    (first time only: run "npm install" inside the _tools folder)
 
@@ -98,7 +99,23 @@ function projects() {
     const { p } = await read(src);
     out[src] = p || out[key] || null; n++;
   }
+  // gallery thumbnails for the popup's strip and glow: <image>-t.webp, 120px tall, remade when the image changes
+  // (the strip showed every full-size image at thumbnail size, decoding them all as the popup opened)
+  let t = 0;
+  for (const src of [...gal.keys()].sort()) {
+    const file = path.join(ROOT, src), thumb = file.replace(/\.\w+$/, "-t.webp");
+    if (fs.existsSync(thumb) && fs.statSync(thumb).mtimeMs >= fs.statSync(file).mtimeMs) continue;
+    const data = await page.evaluate(async src => {
+      const img = new Image(); img.src = src; await img.decode();
+      const h = Math.min(120, img.naturalHeight), w = Math.round(img.naturalWidth * h / img.naturalHeight), c = document.createElement("canvas");
+      c.width = w; c.height = h;
+      const x = c.getContext("2d"); x.imageSmoothingQuality = "high"; x.drawImage(img, 0, 0, w, h);
+      return c.toDataURL("image/webp", .8);
+    }, base + src);
+    fs.writeFileSync(thumb, Buffer.from(data.split(",")[1], "base64")); t++;
+  }
   await browser.close(); server.close();
   fs.writeFileSync(OUT, "/* project cover colours for the popup, made by _tools/palettes.js; don't edit by hand */\nwindow.MX_PALETTES = " + JSON.stringify(out, null, 0).replace(/\},"/g, '},\n"') + ";\n");
   console.log(`\nSaved ${list.size} project and ${n} image palettes to assets/palettes.js`);
+  console.log(`Made ${t} gallery thumbnails (-t.webp)`);
 })();
