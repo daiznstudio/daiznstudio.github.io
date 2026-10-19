@@ -124,13 +124,39 @@ svg{display:block}
 .nav .logo{grid-column:1;justify-self:start}.nav .links{grid-column:2}.nav .nav-r{grid-column:3;justify-self:end}
 .nav .links,.nav .menu-btn{border-color:rgba(255,255,255,.95);background:linear-gradient(180deg,rgba(255,255,255,.82),rgba(255,255,255,.5));box-shadow:0 0 0 1px rgba(72,46,116,.09),0 6px 14px -6px rgba(72,46,116,.3),0 16px 30px -18px rgba(72,46,116,.4),inset 0 1px 0 #fff,inset 0 -1px 0 rgba(72,46,116,.08)}
 .nav.inv .links,.nav.vio .links,.nav.inv .menu-btn,.nav.vio .menu-btn{border-color:rgba(255,255,255,.3);background:linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,.06));box-shadow:0 0 0 1px rgba(0,0,0,.25),0 8px 20px -8px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.3)}
+/* the bar is split in two: the logo sits on its own glass piece, the links pill on another (the menu button on phones) */
+.nav,.nav.inv,.nav.vio{align-items:stretch;padding:0;border-color:transparent;background:none;-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:none;pointer-events:none}
+.nav>*{pointer-events:auto}
+.nav .logo,.nav .nav-c,.nav .nav-r{padding:10px;border:1px solid rgba(255,255,255,.75);border-radius:999px;background:linear-gradient(160deg,rgba(255,255,255,.62),rgba(255,255,255,.3));-webkit-backdrop-filter:blur(20px) saturate(1.5);backdrop-filter:blur(20px) saturate(1.5);box-shadow:0 18px 40px -22px rgba(72,46,116,.45),inset 0 1px 0 rgba(255,255,255,.9),inset 0 -1px 0 rgba(72,46,116,.06);transition:color .3s,border-color .3s,background .3s,box-shadow .3s}
+.nav.inv .logo,.nav.vio .logo,.nav.inv .nav-c,.nav.vio .nav-c,.nav.inv .nav-r,.nav.vio .nav-r{border-color:rgba(255,255,255,.2);background:linear-gradient(160deg,rgba(255,255,255,.14),rgba(255,255,255,.04));box-shadow:0 18px 40px -22px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.22)}
+.nav .nav-c{grid-column:2;display:flex;align-items:center}
+.nav .logo{padding:0 clamp(22px,2.6vw,32px)}
+/* links: plain text sitting straight on the big glass pill, no chips: pure black on light sections, pure white on dark ones */
+.nav .nav-c{padding:7px}
+.nav .links,.nav.inv .links,.nav.vio .links{gap:6px;padding:0;border:0;background:none;box-shadow:none}
+.nav .nav-ind{display:none}
+.nav .links a{display:inline-flex;align-items:center;height:44px;padding:.2em 1.5em 0;font-size:.7rem;letter-spacing:.08em;color:#000;background:none;opacity:1;transition:color .25s ease}
+.nav .links a:active{scale:.97}
+/* hover: the whole word flips up and out of a small window while a copy of it tips up from below and settles in */
+.nav .links .nt{position:relative;display:inline-block;height:1.3em;line-height:1.3;overflow:hidden}
+.nav .links .nt b,.nav .links .nt::after{display:block;font-weight:inherit;transition:translate .5s cubic-bezier(.7,0,.2,1),rotate .5s cubic-bezier(.7,0,.2,1),opacity .4s ease}
+.nav .links .nt::after{content:attr(data-t);position:absolute;left:0;top:100%;transform-origin:left top;rotate:8deg;opacity:0}
+.nav .links a:hover .nt b,.nav .links a:focus-visible .nt b{translate:0 -100%;rotate:-6deg;opacity:0}
+.nav .links a:hover .nt::after,.nav .links a:focus-visible .nt::after{translate:0 -100%;rotate:0deg;opacity:1}
+.nav .links .nt b{transform-origin:right bottom}
+@media (prefers-reduced-motion:reduce){.nav .links .nt b,.nav .links .nt::after{transition:none}}
+.nav .links.js a.on,.nav .links:not(.js) a.active{color:#000;background:none;box-shadow:none;opacity:1}
+.nav.inv .links a,.nav.vio .links a{color:#fff}
+.nav.inv .nav-c .links a.on,.nav.vio .nav-c .links a.on,.nav.inv .nav-c .links a.active,.nav.vio .nav-c .links a.active{color:#fff}
+/* sizes: about 60px tall pieces, like most agency navs */
+.nav .logo svg{height:24px}.nav .logo .wm{font-size:1.25rem}
+.nav .nav-r{padding:7px}.nav .menu-btn{height:44px}
+@media (min-width:981px){.nav .nav-r{display:none}}
+@media (max-width:980px){.nav .nav-c{display:none}}
 /* hover and the current section get a lilac glass bubble instead of a solid fill */
 /* violet glass, like the footer card: see-through violet, a diagonal sheen and a bright top edge */
-.nav .nav-ind{background:linear-gradient(135deg,rgba(255,255,255,.34),rgba(255,255,255,0) 45%),linear-gradient(180deg,rgba(90,51,168,.62),rgba(63,28,140,.72));-webkit-backdrop-filter:blur(10px) saturate(1.6);backdrop-filter:blur(10px) saturate(1.6);box-shadow:0 0 0 1px rgba(63,28,140,.3),0 6px 16px -6px rgba(63,28,140,.55),0 0 20px rgba(185,165,234,.45),inset 0 1px 0 rgba(255,255,255,.55),inset 0 0 0 1px rgba(255,255,255,.18),inset 0 -3px 8px rgba(0,0,0,.12)}
-.nav .links.js a.on{color:#fff}
-.nav .links:not(.js) a.active{background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(214,201,247,.78));color:var(--purple);box-shadow:0 0 0 1px rgba(138,99,216,.28),inset 0 1px 0 #fff}
-.nav.inv .nav-ind,.nav.vio .nav-ind{background:linear-gradient(180deg,rgba(255,255,255,.34),rgba(185,165,234,.18));-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:0 0 0 1px rgba(255,255,255,.3),0 6px 16px -6px rgba(0,0,0,.5),0 0 18px rgba(185,165,234,.35),inset 0 1px 0 rgba(255,255,255,.55)}
-.nav.inv .links.js a.on,.nav.vio .links.js a.on{color:var(--paper)}
+.nav .nav-ind{background:linear-gradient(180deg,rgba(255,255,255,.4),rgba(255,255,255,.12) 46%,rgba(255,255,255,0) 50%),radial-gradient(90% 80% at 50% 115%,rgba(170,130,255,.45),rgba(170,130,255,0) 65%),linear-gradient(180deg,rgba(63,28,140,.86),rgba(38,13,94,.92));box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 0 0 1px rgba(255,255,255,.18),inset 0 -1px 0 rgba(200,180,255,.4),inset 0 -4px 10px rgba(10,2,30,.35)}
+.nav.inv .nav-ind,.nav.vio .nav-ind{background:linear-gradient(180deg,rgba(255,255,255,.34),rgba(185,165,234,.18));box-shadow:0 0 0 1px rgba(255,255,255,.3),0 6px 16px -6px rgba(0,0,0,.5),0 0 18px rgba(185,165,234,.35),inset 0 1px 0 rgba(255,255,255,.55)}
 .nav .menu-btn{--sw:rgba(138,99,216,.45);--swt:var(--purple)}
 .nav .menu-btn::before{background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(214,201,247,.8))}
 .nav.inv .menu-btn,.nav.vio .menu-btn{--sw:rgba(255,255,255,.4);--swt:var(--paper)}
@@ -145,7 +171,8 @@ svg{display:block}
 .links a{position:relative;z-index:1;padding:.8em 1.15em .44em;border-radius:999px;font:700 .7rem var(--font);text-transform:uppercase;letter-spacing:.06em;transition:color .3s}
 .links.js a.on{color:var(--paper)}
 .links:not(.js) a.active{background:var(--purple);color:var(--paper)}
-.nav-ind{position:absolute;z-index:0;top:4px;bottom:4px;left:0;width:0;border-radius:999px;background:linear-gradient(135deg,var(--purple),#6d49ad);box-shadow:0 8px 18px -6px rgba(72,46,116,.7);opacity:0;transition:transform .5s cubic-bezier(.34,1.35,.5,1),width .5s cubic-bezier(.34,1.35,.5,1),opacity .3s,background .3s}
+.nav-ind{position:absolute;z-index:0;top:4px;bottom:4px;left:0;width:0;border-radius:999px;background:linear-gradient(135deg,var(--purple),#6d49ad);box-shadow:0 8px 18px -6px rgba(72,46,116,.7);opacity:0;will-change:transform,width;transition:transform .36s cubic-bezier(.22,1,.36,1),width .36s cubic-bezier(.22,1,.36,1),opacity .22s ease,background .3s}
+.nav-ind.snap{transition:opacity .22s ease}
 .nav-ind.show{opacity:1}
 .nav.inv .nav-ind,.nav.vio .nav-ind{background:var(--paper);box-shadow:0 8px 18px -6px rgba(0,0,0,.45)}
 .nav.inv .links.js a.on,.nav.vio .links.js a.on{color:var(--ink)}
@@ -929,7 +956,7 @@ dialog.modal[open]{animation:mIn .5s cubic-bezier(.2,.8,.2,1)}
 <div class="peek" id="peek" aria-hidden="true"></div>
 <header class="nav">
   <a class="logo" id="logo" href="index.html" aria-label="daizn studio"><svg viewBox="0 0 100 160" aria-hidden="true"><rect width="100" height="108" rx="46"/><path d="M0 160A50 48 0 0 1 100 160Z"/></svg><span class="wm"><span class="th">dai</span><span class="bd">zn</span></span></a>
-  <nav class="links" aria-label="Sections"><a href="index.html#home">Home</a><a href="index.html#services">Services</a><a href="projects.html">Projects</a><a href="index.html#contact">Contact</a></nav>
+  <div class="nav-c"><nav class="links" aria-label="Sections"><a href="index.html#home">Home</a><a href="index.html#services">Services</a><a href="projects.html">Projects</a><a href="index.html#contact">Contact</a></nav></div>
   <div class="nav-r"><button class="menu-btn" id="menuBtn" aria-label="Menu" aria-expanded="false"><span class="mt-o">Menu</span><span class="mt-c">Close</span><svg class="mi-o" viewBox="0 0 24 24"><path d="M4 8h16M4 16h16"/></svg><svg class="mi-c" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
 </header>
 <div class="menu" id="menu"><a href="index.html#home">Home</a><a href="index.html#services">Services</a><a href="projects.html">Projects</a><a href="team.html" aria-current="page">Team</a><a href="#contact">Contact</a><button class="sub" data-share>Share this page</button></div>
@@ -1878,13 +1905,18 @@ const DATA = {
 (function () {
   const box = document.querySelector(".links"); if (!box) return;
   const links = Array.from(box.querySelectorAll("a")), ind = document.createElement("span");
+  // wrap each label for the hover flip (the copy that rolls in is drawn from data-t)
+  links.forEach(a => { const t = a.textContent, s = document.createElement("span"), b = document.createElement("b"); a.setAttribute("aria-label", t); s.className = "nt"; s.setAttribute("aria-hidden", "true"); s.dataset.t = t; b.textContent = t; s.append(b); a.replaceChildren(s); });
   ind.className = "nav-ind"; box.prepend(ind); box.classList.add("js");
   let hover = null, last = null;
   const cur = () => links.find(a => a.classList.contains("active")) || null;
   function place() {
     const a = hover || cur(); links.forEach(l => l.classList.toggle("on", l === a));
     if (!a) { ind.classList.remove("show"); return; }
-    ind.style.width = a.offsetWidth + "px"; ind.style.transform = "translateX(" + a.offsetLeft + "px)"; ind.classList.add("show");
+    const snap = !ind.classList.contains("show"); // appearing from hidden: jump into place and fade in, no slide from the left
+    if (snap) ind.classList.add("snap");
+    ind.style.width = a.offsetWidth + "px"; ind.style.transform = "translate3d(" + a.offsetLeft + "px,0,0)"; ind.classList.add("show");
+    if (snap) { void ind.offsetWidth; ind.classList.remove("snap"); }
   }
   links.forEach(a => {
     a.addEventListener("mouseenter", () => { hover = a; place(); });

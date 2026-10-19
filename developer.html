@@ -113,7 +113,8 @@ svg{display:block}
 .links a{position:relative;z-index:1;padding:.8em 1.15em .44em;border-radius:999px;font:700 .7rem var(--font);text-transform:uppercase;letter-spacing:.06em;transition:color .3s}
 .links.js a.on{color:var(--paper)}
 .links:not(.js) a.active{background:var(--purple);color:var(--paper)}
-.nav-ind{position:absolute;z-index:0;top:4px;bottom:4px;left:0;width:0;border-radius:999px;background:linear-gradient(135deg,var(--purple),#6d49ad);box-shadow:0 8px 18px -6px rgba(72,46,116,.7);opacity:0;transition:transform .5s cubic-bezier(.34,1.35,.5,1),width .5s cubic-bezier(.34,1.35,.5,1),opacity .3s,background .3s}
+.nav-ind{position:absolute;z-index:0;top:4px;bottom:4px;left:0;width:0;border-radius:999px;background:linear-gradient(135deg,var(--purple),#6d49ad);box-shadow:0 8px 18px -6px rgba(72,46,116,.7);opacity:0;will-change:transform,width;transition:transform .36s cubic-bezier(.22,1,.36,1),width .36s cubic-bezier(.22,1,.36,1),opacity .22s ease,background .3s}
+.nav-ind.snap{transition:opacity .22s ease}
 .nav-ind.show{opacity:1}
 .nav.inv .nav-ind,.nav.vio .nav-ind{background:var(--paper);box-shadow:0 8px 18px -6px rgba(0,0,0,.45)}
 .nav.inv .links.js a.on,.nav.vio .links.js a.on{color:var(--ink)}
@@ -1720,7 +1721,10 @@ const DATA = {
   function place() {
     const a = hover || cur(); links.forEach(l => l.classList.toggle("on", l === a));
     if (!a) { ind.classList.remove("show"); return; }
-    ind.style.width = a.offsetWidth + "px"; ind.style.transform = "translateX(" + a.offsetLeft + "px)"; ind.classList.add("show");
+    const snap = !ind.classList.contains("show"); // appearing from hidden: jump into place and fade in, no slide from the left
+    if (snap) ind.classList.add("snap");
+    ind.style.width = a.offsetWidth + "px"; ind.style.transform = "translate3d(" + a.offsetLeft + "px,0,0)"; ind.classList.add("show");
+    if (snap) { void ind.offsetWidth; ind.classList.remove("snap"); }
   }
   links.forEach(a => {
     a.addEventListener("mouseenter", () => { hover = a; place(); });
