@@ -39,6 +39,14 @@
 }
 html{scroll-behavior:smooth;overscroll-behavior-y:none;background:var(--page);scroll-padding-top:calc(env(safe-area-inset-top,0px) + 76px)}
 html.ld-on{background:var(--ink)}
+/* phones: the strip under the bottom toolbar shows the page, not the loader, so the page follows the loader's colour cuts until it leaves */
+@media (hover:none) and (pointer:coarse){
+  html.ld-on{animation:ldBg 2s step-end both}
+  html.ld-on:has(.loader.quick){animation:none}
+  html.ld-on body{background:transparent}
+  html.ld-on main{visibility:hidden}
+}
+@keyframes ldBg{0%{background:var(--ink)}68%{background:var(--purple)}79%{background:var(--tint)}90%,100%{background:var(--paper)}}
 *,*::before,*::after{box-sizing:border-box}
 body{margin:0;background:var(--page);color:var(--ink);font:400 clamp(.95rem,1.05vw,1.06rem)/1.65 var(--font-body);overflow-x:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 body.lock{overflow:hidden}
