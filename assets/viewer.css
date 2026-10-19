@@ -45,12 +45,10 @@ dialog.modal.mxd.mx-pre,dialog.modal.mxd.mx-pre::backdrop{opacity:.001;animation
 .mx-th img{width:100%;height:100%;object-fit:cover;display:block}
 
 /* info panel: one flat colour from the project (it changes with each gallery image as a plain colour transition) */
-.mx-info{display:flex;flex-direction:column;gap:18px;min-height:0;overflow:auto;padding:76px 30px 28px;color:#fff;background-color:var(--mx-d1,#482e74);transition:background-color .4s ease;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.35) transparent}
+.mx-info{display:flex;flex-direction:column;gap:18px;min-height:0;overflow:auto;padding:92px 30px 28px;color:#fff;background-color:var(--mx-d1,#482e74);transition:background-color .4s ease;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.35) transparent}
 .mx-info>*{flex-shrink:0}
 .mx-info :focus-visible{outline-color:#fff}
 
-.mx-eye{display:flex;align-items:center;gap:.6em;font:700 .64rem/1 var(--font);text-transform:uppercase;letter-spacing:.14em;color:rgba(255,255,255,.75)}
-.mx-eye::before{content:"";flex:none;width:7px;height:7px;margin-top:-.15em;border-radius:50%;background:var(--mx-lt,#b9a5ea)}
 .mx-info h3{margin:-2px 0 0;font-family:var(--font);font-weight:700;text-transform:uppercase;font-size:clamp(1.9rem,2.8vw,2.7rem);line-height:.95;letter-spacing:-.025em;color:#fff}
 .mx-desc{font-size:.95rem;line-height:1.6;color:rgba(255,255,255,.82)}
 
@@ -76,8 +74,9 @@ dialog.modal.mxd.mx-pre,dialog.modal.mxd.mx-pre::backdrop{opacity:.001;animation
 .mx-feats li+li{border-top:1px solid rgba(255,255,255,.14)}
 .mx-feats li::before{content:"";flex:none;width:18px;height:18px;margin:.05em 0 0;border-radius:50%;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23101010' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/10px no-repeat}
 
+/* the capsules grow to fill each row, so a wrapped row leaves no gap at the right */
 .mx-tags{display:flex;flex-wrap:wrap;gap:6px}
-.mx-tags span{padding:.7em 1.05em .55em;border:1px solid rgba(255,255,255,.3);border-radius:999px;font:700 .58rem/1 var(--font);text-transform:uppercase;letter-spacing:.08em;color:#fff;opacity:1}
+.mx-tags span{flex:1 1 auto;text-align:center;padding:.7em 1.05em .55em;border:1px solid rgba(255,255,255,.3);border-radius:999px;font:700 .58rem/1 var(--font);text-transform:uppercase;letter-spacing:.08em;color:#fff;opacity:1}
 
 /* buttons: the main one white with an arrow badge in the project accent, the rest solid accent pills */
 .mx-btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:auto;padding-top:6px}
@@ -125,7 +124,6 @@ dialog.modal.mxd.mx-pre,dialog.modal.mxd.mx-pre::backdrop{opacity:.001;animation
   .mx .mx-btns .btn.fill svg{width:38px;height:38px;padding:11px}
 }
 @media (pointer:coarse){
-  .mx-eye{font-size:.72rem}
   .mx-tags span,.mx-meta small{font-size:.66rem}
 }
 @media (prefers-reduced-motion:reduce){

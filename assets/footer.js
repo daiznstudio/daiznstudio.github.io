@@ -139,64 +139,106 @@ const CALENDLY = "https://calendly.com/daiznstudio/30min";
 
 /* Calendly booking: [data-cal] links open the booking popup. The contact card gets two tabs, "Send a message"
    and "Book a call"; the second embeds the calendar the first time it opens, and [data-cal-tab] links open the card
-   on that tab. A page load always starts on "Send a message". The widget files load only when first needed; if they can't, the
-   popup links fall back to their own href and the tab keeps its "open on Calendly" link. */
+   on that tab. A page load always starts on "Send a message". Both embed Calendly's page directly (no widget
+   script) behind a ghost calendar that fades out once Calendly says it has drawn. */
 (() => {
-  const url = CALENDLY + "?hide_gdpr_banner=1&background_color=ffffff&text_color=101010&primary_color=3f1c8c";
-  let load;
-  const ready = () => load = load || new Promise((ok, no) => {
-    const css = document.createElement("link"); css.rel = "stylesheet"; css.href = "https://assets.calendly.com/assets/external/widget.css"; document.head.append(css);
-    const js = document.createElement("script"); js.src = "https://assets.calendly.com/assets/external/widget.js"; js.async = true;
-    js.onload = ok; js.onerror = () => { load = null; no(); }; document.head.append(js);
-  });
+  const url = CALENDLY + "?hide_gdpr_banner=1&hide_event_type_details=1&hide_landing_page_details=1&background_color=ffffff&text_color=101010&primary_color=3f1c8c"
+    + "&embed_type=Inline&embed_domain=" + encodeURIComponent(location.host || "localhost");
+  const ghost = '<div class="cal-ghost" aria-hidden="true"><i class="g-t"></i><div class="g-m"><i></i><b><i></i><i></i></b></div>'
+    + '<div class="g-d">' + "<i></i>".repeat(7) + '</div><div class="g-g">'
+    + Array.from({ length: 35 }, (_, n) => n % 7 > 0 && n % 7 < 6 && n > 9 && n % 3 ? '<i class="on"></i>' : "<i></i>").join("")
+    + '</div><i class="g-z"></i></div>';
+  // fills host with the ghost and the calendar; onBooked runs when a meeting is booked
+  const embed = (host, onBooked) => {
+    host.classList.add("cal-host");
+    host.innerHTML = ghost;
+    const f = document.createElement("iframe");
+    f.title = "Book a meeting with Daizn Studio"; f.src = url;
+    let late;
+    const ready = () => { clearTimeout(late); host.classList.add("is-ready"); };
+    addEventListener("message", e => {
+      if (e.source !== f.contentWindow || !e.data || typeof e.data.event !== "string") return;
+      if (e.data.event === "calendly.event_type_viewed") ready();
+      if (e.data.event === "calendly.event_scheduled" && onBooked) onBooked();
+    });
+    // in case the message never comes, show the calendar a little after the frame loads
+    f.addEventListener("load", () => { late = setTimeout(ready, 2500); });
+    host.append(f);
+  };
 
-  document.addEventListener("click", e => {
-    const a = e.target.closest && e.target.closest("[data-cal]");
-    if (!a) return;
-    e.preventDefault();
-    ready().then(() => { Calendly.initPopupWidget({ url }); dress(); }).catch(() => { location.href = a.href; });
-  });
-
-  /* the popup gets the footer card's glass look (styles in assets/footer.css): a header with its own close button
-     takes the place of Calendly's, a soft light follows the pointer, and closing waits for the drop-away animation */
+  /* the popup gets the footer card's look (styles in assets/footer.css): a header with a close button, a soft
+     light that follows the pointer, and closing waits for the drop-away animation. It is built the first time a
+     booking link is hovered or focused, so the calendar is usually loaded by the time it opens */
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const X = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
-  let shutting = false;
-  const shut = () => {
-    const o = document.querySelector(".calendly-overlay");
-    if (!o || shutting) return;
-    if (reduce) return Calendly.closePopupWidget();
-    shutting = true;
-    const done = () => { shutting = false; Calendly.closePopupWidget(); };
-    const t = setTimeout(done, 600);
-    o.addEventListener("animationend", e => { if (e.animationName === "calOut") { clearTimeout(t); done(); } });
-    o.classList.add("dz-out");
-  };
-  const dress = () => {
-    const o = document.querySelector(".calendly-overlay"), pop = o && o.querySelector(".calendly-popup");
-    if (!pop || pop.querySelector(".cal-head")) return;
-    const head = document.createElement("div");
-    head.className = "cal-head";
-    head.innerHTML = `<div class="cal-top"><p class="sf-cap">/ Book a meeting</p><p class="cal-big">Pick a time</p></div><button type="button" class="cal-x" aria-label="Close">${X}</button>`;
-    pop.prepend(head);
-    head.querySelector(".cal-x").addEventListener("click", shut);
+  let box, from, shutting = false, booked = false;
+  const build = () => {
+    if (box) return;
+    box = document.createElement("div");
+    box.className = "dz-cal";
+    box.innerHTML = `<div class="dz-cal-pop" role="dialog" aria-modal="true" aria-label="Book a meeting"><i class="dz-cal-glow"></i>`
+      + `<div class="cal-head"><div class="cal-top"><p class="sf-cap">/ Book a meeting</p><p class="cal-big">Pick a time</p></div>`
+      + `<button type="button" class="cal-x" aria-label="Close">${X}</button></div><div class="dz-cal-body"></div></div>`;
+    const pop = box.firstChild, glow = pop.firstChild;
+    embed(box.querySelector(".dz-cal-body"), () => { booked = true; });
+    box.querySelector(".cal-x").addEventListener("click", shut);
+    box.addEventListener("click", e => { if (e.target === box) shut(); });
     if (matchMedia("(hover: hover)").matches) {
       let q = 0, ev;
-      o.addEventListener("pointermove", e => {
+      box.addEventListener("pointermove", e => {
         ev = e;
         if (!q) q = requestAnimationFrame(() => {
           q = 0;
           const r = pop.getBoundingClientRect();
-          pop.style.setProperty("--lx", ev.clientX - r.left + "px"); pop.style.setProperty("--ly", ev.clientY - r.top + "px");
+          glow.style.transform = `translate(${ev.clientX - r.left}px,${ev.clientY - r.top}px)`;
         });
       });
     }
+    document.body.append(box);
   };
-  // Calendly closes on a click outside the card: catch it first so it animates out the same way; Esc too
+  const open = () => {
+    build();
+    if (box.classList.contains("is-open")) return;
+    from = document.activeElement;
+    box.firstChild.firstChild.style.transform = `translate(${box.firstChild.offsetWidth * .85}px,0)`;
+    box.classList.add("is-open");
+    document.documentElement.classList.add("cal-open");
+    box.querySelector(".cal-x").focus({ preventScroll: true });
+  };
+  const closed = () => {
+    shutting = false;
+    box.classList.remove("is-open", "dz-out");
+    document.documentElement.classList.remove("cal-open");
+    if (from && from.focus) from.focus({ preventScroll: true });
+    // after a booking the calendar shows its confirmation: start fresh next time
+    if (booked) { box.remove(); box = null; booked = false; }
+  };
+  function shut() {
+    if (!box || !box.classList.contains("is-open") || shutting) return;
+    if (reduce) return closed();
+    shutting = true;
+    const t = setTimeout(closed, 500);
+    box.addEventListener("animationend", function end(e) {
+      if (e.animationName !== "calOut") return;
+      box.removeEventListener("animationend", end); clearTimeout(t); closed();
+    });
+    box.classList.add("dz-out");
+  }
+  const warm = e => { if (e.target.closest && e.target.closest("[data-cal]")) build(); };
+  document.addEventListener("pointerover", warm, { passive: true });
+  document.addEventListener("focusin", warm);
   document.addEventListener("click", e => {
-    if (e.target.closest && e.target.closest(".calendly-close-overlay, .calendly-popup-close")) { e.stopPropagation(); e.preventDefault(); shut(); }
-  }, true);
-  document.addEventListener("keydown", e => { if (e.key === "Escape" && document.querySelector(".calendly-overlay")) shut(); });
+    const a = e.target.closest && e.target.closest("[data-cal]");
+    if (!a) return;
+    e.preventDefault();
+    open();
+  });
+  document.addEventListener("keydown", e => {
+    if (!box || !box.classList.contains("is-open")) return;
+    if (e.key === "Escape") shut();
+    // keep Tab inside the popup: the close button is its only control outside the calendar frame
+    if (e.key === "Tab" && !box.contains(document.activeElement)) { e.preventDefault(); box.querySelector(".cal-x").focus(); }
+  });
 
   const form = document.getElementById("cform");
   if (!form) return;
@@ -207,7 +249,6 @@ const CALENDLY = "https://calendly.com/daiznstudio/30min";
   const cal = document.createElement("div");
   cal.className = "lc-cal"; cal.id = "lc-cal"; cal.hidden = true;
   cal.setAttribute("role", "tabpanel"); cal.setAttribute("aria-labelledby", "lc-tab-cal");
-  cal.innerHTML = `<a class="lc-cal-ld" href="${CALENDLY}" target="_blank" rel="noopener">Loading the calendar…</a>`;
   form.prepend(tabs); form.append(cal);
   const [tMsg, tCal] = tabs.querySelectorAll("button");
 
@@ -217,13 +258,7 @@ const CALENDLY = "https://calendly.com/daiznstudio/30min";
     cal.hidden = !book;
     tMsg.setAttribute("aria-selected", !book); tCal.setAttribute("aria-selected", book);
     tMsg.tabIndex = book ? -1 : 0; tCal.tabIndex = book ? 0 : -1;
-    if (book && !embedded) {
-      embedded = true;
-      ready().then(() => {
-        cal.textContent = "";
-        Calendly.initInlineWidget({ url: url + "&hide_event_type_details=1&hide_landing_page_details=1", parentElement: cal });
-      }).catch(() => { embedded = false; });
-    }
+    if (book && !embedded) { embedded = true; embed(cal); }
   };
   tMsg.addEventListener("click", () => show(false));
   tCal.addEventListener("click", () => show(true));
