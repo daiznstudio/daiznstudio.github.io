@@ -1175,8 +1175,8 @@ body:has(.fp-bento:is([data-mood="youtube-thumbnails"],[data-mood="branding-and-
 .fp-bento:is([data-mood="youtube-thumbnails"],[data-mood="social-and-ads"]) .chip:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
 .fp-bento:is([data-mood="youtube-thumbnails"],[data-mood="social-and-ads"],[data-mood="books"]) .px-tr{display:none}
 @media (max-width:760px){.yt-mark{display:none}}
-.fp-bento:is([data-mood="artworks"],[data-mood="books"]) .chip:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
-.fp-bento:is([data-mood="artworks"],[data-mood="books"]) .wgrid{--ink:#101010;--paper:#f0f0f0;--line:rgba(16,16,16,.18)}
+.fp-bento:is([data-mood="artworks"],[data-mood="books"],[data-mood="motion-graphics"]) .chip:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.fp-bento:is([data-mood="artworks"],[data-mood="books"],[data-mood="motion-graphics"]) .wgrid{--ink:#101010;--paper:#f0f0f0;--line:rgba(16,16,16,.18)}
 /* Books: dark like Artworks, with its yellow as the accent: the selected chip, piles of book spines in the corners
    and, at the right of the heading, a faint open book whose page turns over every few seconds */
 .fp-bento[data-mood="books"]{--ink:#f0f0f0;--paper:#101010;--line:rgba(240,240,240,.18);background:#101010;border-top-color:transparent}
@@ -1186,6 +1186,31 @@ body:has(.fp-bento:is([data-mood="youtube-thumbnails"],[data-mood="branding-and-
 .fp-bento[data-mood="books"] .bk-in{animation:bkBob 6s ease-in-out infinite alternate}
 @keyframes bkBob{to{translate:0 -6px}}
 @media (prefers-reduced-motion:reduce){.bk-in{animation:none!important}}
+/* Motion graphics: dark like Artworks. Under the chips runs an editor timeline (a ruler and two layer bars with keyframes)
+   that a playhead sweeps across, lighting each keyframe as it passes; at the right of the heading an easing curve with a
+   ball gliding to its beat */
+.fp-bento[data-mood="motion-graphics"]{--ink:#f0f0f0;--paper:#0c0c0c;--line:rgba(240,240,240,.18);background:#0c0c0c;border-top-color:transparent}
+.fp-bento[data-mood="motion-graphics"] .chip.on{background:#f26b1d;border-color:#f26b1d;color:#101010}
+.mg{--T:9s;position:absolute;left:0;right:0;top:0;z-index:0;height:calc(var(--split,0px) + 40px);overflow:hidden;container-type:inline-size;opacity:0;transition:opacity .6s ease;pointer-events:none}
+.fp-bento[data-mood="motion-graphics"] .mg{opacity:1}
+/* the timeline sits in the gap under the chips, which the mood widens to make room for it */
+.fp-bento[data-side="designer"][data-mood="motion-graphics"] .fb-bar{margin-bottom:78px}
+.mg-tl{position:absolute;left:0;right:0;top:calc(var(--split,0px) - 6px);height:40px}
+.mg-ru{position:absolute;left:0;right:0;top:0;height:10px;background:linear-gradient(90deg,rgba(240,240,240,.3) 1px,transparent 1px) 0 0/60px 100% repeat-x,linear-gradient(90deg,rgba(240,240,240,.16) 1px,transparent 1px) 0 100%/12px 50% repeat-x;border-bottom:1px solid rgba(240,240,240,.1)}
+.mg-ly{position:absolute;left:var(--l);width:var(--w);height:8px;border-radius:3px;background:rgba(242,107,29,.16);box-shadow:inset 0 0 0 1px rgba(242,107,29,.42)}
+.mg-ly:nth-of-type(2){top:18px}
+.mg-ly:nth-of-type(3){top:32px}
+.mg-k{position:absolute;left:var(--x);top:var(--y);width:9px;height:9px;margin:-4.5px 0 0 -4.5px;background:#f26b1d;rotate:45deg;border-radius:1px}
+.fp-bento[data-mood="motion-graphics"] .mg-k{animation:mgK var(--T) linear calc(var(--T) * var(--p)) infinite}
+@keyframes mgK{0%{background:#fff;scale:1.7;box-shadow:0 0 12px 2px rgba(242,107,29,.9)}7%,100%{background:#f26b1d;scale:1;box-shadow:none}}
+/* the playhead: an orange tab on the ruler and a line falling through the layers, fading out up the banner */
+.mg-ph{position:absolute;left:0;top:0;height:calc(var(--split,0px) + 34px);width:2px;margin-left:-1px;background:linear-gradient(180deg,transparent,rgba(242,107,29,.35) 60%,#f26b1d calc(100% - 40px))}
+.mg-ph::before{content:"";position:absolute;left:50%;bottom:28px;width:12px;height:14px;translate:-50% 0;background:#f26b1d;clip-path:polygon(0 0,100% 0,100% 60%,50% 100%,0 60%);border-radius:2px}
+.fp-bento[data-mood="motion-graphics"] .mg-ph{animation:mgPh var(--T) linear infinite}
+@keyframes mgPh{from{translate:0 0}to{translate:100cqw 0}}
+.yt-mark.m-mg{top:calc(var(--split,0px) * .46);height:calc(var(--split,0px) * .5)}
+.fp-bento[data-mood="motion-graphics"] .m-mg{opacity:1;scale:1}
+@media (prefers-reduced-motion:reduce){.fp-bento[data-mood="motion-graphics"] :is(.mg-k,.mg-ph){animation:none}.mg-ph{translate:38cqw 0}}
 .px>*{opacity:0;transition:opacity .25s ease calc(var(--d) * 1ms)}
 .fp-bento[data-mood="artworks"] .px-art>*,.fp-bento[data-mood="youtube-thumbnails"] .px-yt>*,.fp-bento[data-mood="social-and-ads"] .px-so>*,.fp-bento[data-mood="books"] .px-bk>*{opacity:1}
 .fp-bento:not([data-mood="artworks"]) .px-art>*,.fp-bento:not([data-mood="youtube-thumbnails"]) .px-yt>*,.fp-bento:not([data-mood="social-and-ads"]) .px-so>*,.fp-bento:not([data-mood="books"]) .px-bk>*{transition-delay:0s}
@@ -1952,6 +1977,21 @@ window.PF = (function () {
         `<animateTransform attributeName="transform" type="scale" values="1 1;1 1;-1 1;-1 1" keyTimes="0;.04;.34;1" keySplines="0 0 1 1;.5 0 .25 1;0 0 1 1" calcMode="spline" dur="4.8s" begin="${(.6 + k * .32).toFixed(2)}s" repeatCount="indefinite"/>` +
         `<animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;.04;.88;.96;1" dur="4.8s" begin="${(.6 + k * .32).toFixed(2)}s" repeatCount="indefinite"/></path></g>`).join("")) +
       '</g></svg>' +
+      // Motion graphics: a graph editor's ease-in-out curve, its handles drawn out, and under it a ball gliding between two
+      // keyframes on that same ease and back. The dot on the curve moves steadily across while it rises with the ease,
+      // so it traces the curve in step with the ball
+      '<svg class="yt-mark m-mg" viewBox="0 0 200 140" aria-hidden="true">' +
+      '<path d="M20 10V84H184" fill="none" stroke="#f0f0f0" stroke-opacity=".14" stroke-width="1.5"/>' +
+      '<path d="M20 84H124M180 14H76" stroke="#f0f0f0" stroke-opacity=".3" stroke-width="1.2"/><g fill="#f0f0f0" fill-opacity=".55"><circle cx="124" cy="84" r="3"/><circle cx="76" cy="14" r="3"/></g>' +
+      '<path d="M20 84C124 84 76 14 180 14" fill="none" stroke="#f26b1d" stroke-width="2.5" stroke-linecap="round"/>' +
+      '<path d="M20 118H180" stroke="#f0f0f0" stroke-opacity=".14" stroke-width="1.5"/>' +
+      [[20, 84], [180, 14], [20, 118], [180, 118]].map(([x, y]) => `<path d="M${x} ${y - 6}l6 6-6 6-6-6Z" fill="#0c0c0c" stroke="#f26b1d" stroke-width="1.8"/>`).join("") +
+      (reduce ? '<circle cx="100" cy="49" r="4.5" fill="#fff"/><circle cx="100" cy="118" r="9" fill="#f26b1d"/>'
+        : (() => { const at = ' keyTimes="0;.14;.5;.64;1" calcMode="spline" dur="4.4s" repeatCount="indefinite"', lin = "0 0 1 1", ease = ".65 0 .35 1";
+            const go = (v, s) => `<animateTransform attributeName="transform" type="translate" values="${v}"${at} keySplines="${s.join(";")}"/>`;
+            return `<g>${go("0 0;0 0;160 0;160 0;0 0", [lin, lin, lin, lin])}<g>${go("0 0;0 0;0 -70;0 -70;0 0", [lin, ease, lin, ease])}<circle cx="20" cy="84" r="4.5" fill="#fff"/></g></g>` +
+              `<g>${go("0 0;0 0;160 0;160 0;0 0", [lin, ease, lin, ease])}<circle cx="20" cy="118" r="9" fill="#f26b1d"/></g>`; })()) +
+      '</svg>' +
       '<svg class="yt-mark m-yt" viewBox="0 0 140 100" aria-hidden="true"><path fill="#fff" fill-rule="evenodd" d="M24 0h92a24 24 0 0 1 24 24v52a24 24 0 0 1-24 24H24A24 24 0 0 1 0 76V24A24 24 0 0 1 24 0ZM56 28v44l38-22Z"/></svg>';
     // Branding and packaging: the banner is a brand guide's colour scale, tall overlapping capsules from near-black to
     // bright green across the full width; their rounded ends make the banner's bottom edge
@@ -1967,7 +2007,12 @@ window.PF = (function () {
       <div class="bt-row"><span class="bt-mono">H1 · 46px</span><span class="bt-h1">Brand identity</span></div>
       <div class="bt-row"><span class="bt-mono">H2 · 22px</span><span class="bt-h2">Brand identity</span></div>
       <div class="bt-sw"><span class="bt-mono">02 / Colour</span><span class="bt-dots">${greens.map(c => `<i style="background:${c}"></i>`).join("")}</span></div></div></div>`;
-    return `<section class="sec fp fp-all fp-bento" id="works" data-nav="works">${flow + mood + mark}<div class="wrap">
+    // Motion graphics' banner: the timeline along its bottom. Each keyframe sits at a fraction p of the width, so it lights
+    // up p of the way through the playhead's sweep
+    const keys = [[6, 14, 30, 52], [22, 40, 68, 92]];
+    const tl = `<div class="mg" aria-hidden="true"><div class="mg-tl"><i class="mg-ru"></i>${keys.map(k => { const l = k[0] - 2, w = k[k.length - 1] - l + 2;
+        return `<i class="mg-ly" style="--l:${l}%;--w:${w}%"></i>`; }).join("")}${keys.flatMap((k, r) => k.map(x => `<i class="mg-k" style="--x:${x}%;--y:${r ? 36 : 22}px;--p:${x / 100}"></i>`)).join("")}</div><i class="mg-ph"></i></div>`;
+    return `<section class="sec fp fp-all fp-bento" id="works" data-nav="works">${flow + tl + mood + mark}<div class="wrap">
       <div class="fp-head"><h1 class="fp-h" aria-label="All Projects"><span class="ln" aria-hidden="true" style="--n:${[..."All"].length}">${chars("All")}</span><span class="ln" aria-hidden="true" style="--n:${[..."Projects"].length}">${chars("Projects")}</span></h1>
         <div class="fb-side"><p class="lead fb-lead">${esc(W.lead)}</p>
           <div class="pk-sw" role="group" aria-label="Show projects by"><a class="pk-back" href="projects.html" aria-label="Back to the choice" title="Back to the choice">${IC.right}</a>
@@ -2466,7 +2511,8 @@ window.PF = (function () {
         });
         P.layoutWorks();
       };
-      if (document.startViewTransition && !reduce) document.startViewTransition(apply); else apply();
+      // mid-transition the nav can't see the page under it, so it looks again once the new mood is showing
+      if (document.startViewTransition && !reduce) document.startViewTransition(apply).finished.then(() => dispatchEvent(new Event("scroll"))); else apply();
     }));
     P.worksFx();
     P.featuredFx();
@@ -2538,7 +2584,7 @@ window.PF = (function () {
       const open = menu.classList.contains("open");
       // only the topmost thing under the nav counts: on a short page the contact panel waits underneath, out of sight
       const top = document.elementsFromPoint(innerWidth / 2, 60).find(e => e.closest && !e.closest(".nav, .menu, .loader"));
-      const inv = open || !!(top && top.closest(".dark, .violet, .fp-bento[data-mood=artworks], .fp-bento[data-mood=books]"));
+      const inv = open || !!(top && top.closest(".dark, .violet, .fp-bento[data-mood=artworks], .fp-bento[data-mood=books], .fp-bento[data-mood=motion-graphics]"));
       const vio = !open && !!(top && top.closest(".violet"));
       navEl.classList.toggle("inv", inv);
       navEl.classList.toggle("vio", vio);
