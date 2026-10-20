@@ -963,6 +963,8 @@ dialog.modal[open]{animation:mIn .5s cubic-bezier(.2,.8,.2,1)}
 .wgrid .wk[hidden]{display:none}
 @media (max-width:900px){.fb-lead{justify-self:start;padding-bottom:0}}
 @media (max-width:640px){.fp-bento .filters{flex-wrap:nowrap;overflow-x:auto;margin:0 -16px;padding:0 16px;scrollbar-width:none}.fp-bento .filters::-webkit-scrollbar{display:none}}
+/* phones: smaller chips; an invisible margin keeps the tap area near 44px */
+@media (max-width:640px){.fp-bento .filters{gap:6px;padding-top:6px;padding-bottom:6px}.fp-bento .chip{position:relative;min-height:32px;padding:.7em 1.05em .45em;font-size:.62rem}.fp-bento .chip::after{content:"";position:absolute;inset:-6px -3px}}
 @media (prefers-reduced-motion:reduce){.fp-media{clip-path:none}.fp-media>img,.fp-media>svg{scale:1}.fp-h span span{color:var(--ink)}}
 /* ---------- client reviews: three cards in the studio palette, a swipeable row on phones ---------- */
 .rv{padding-top:clamp(40px,6vw,84px);padding-bottom:clamp(48px,6vw,90px)}
