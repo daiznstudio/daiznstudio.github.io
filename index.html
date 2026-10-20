@@ -441,8 +441,6 @@ svg{display:block}
 @media (max-width:760px){.sec.svc{--ax:95vw}}
 .svc h2.gt{margin-bottom:0}
 .svc .rv-pill{background:rgba(240,240,240,.1);color:var(--paper)}
-.sv-bar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:clamp(18px,2.4vw,30px)}
-.sv-ct{font:500 .72rem/1 "Chivo Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.04em;color:rgba(240,240,240,.5)}
 .sv-lead{margin-top:clamp(14px,1.6vw,22px);max-width:52ch;color:rgba(240,240,240,.7)}
 /* the bowl is drawn from the grid: it reaches well above it (past the panel's top, clipped) and its lower edge
    stops 30% up from the bottom of the cards */
@@ -1837,7 +1835,6 @@ window.PF = (function () {
     // shots are work folders; the middle cover (the first listed) sits on top
     const shots = s => (s.shots || []).slice(0, 3).map((f, k, a) => a[(k + 1) % a.length]).map(f => `<img src="assets/work/${esc(f)}/thumb-sq.webp" alt="" loading="lazy" decoding="async">`).join("");
     return `<section class="sec svc" id="services" data-nav="services"><div class="wrap">
-      <div class="sv-bar"><span class="rv-pill">Services</span><span class="sv-ct">${pad2(S.items.length)} services</span></div>
       ${P.heading(S.title)}
       ${S.lead ? `<p class="lead sv-lead">${esc(S.lead)}</p>` : ""}
       <div class="sv-grid">${S.items.map((s, i) => `<article class="sv-card" style="--i:${i}">
