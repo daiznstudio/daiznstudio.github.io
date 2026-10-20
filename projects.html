@@ -789,6 +789,13 @@ dialog.modal.gal{width:min(1240px,calc(100vw - 24px))}
 /* motion work rendered as video: a light 720p loop on the card, 1080p in the viewer */
 .wk-media>video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:scale 1s cubic-bezier(.2,.8,.2,1)}
 .wgrid .wk.in:hover .wk-media>video,.wgrid .wk.in:focus-visible .wk-media>video{scale:1.03}
+/* works: the cover fills the tile; the hover slides are shown whole on a solid canvas with rounded corners,
+   as on the homepage's featured cards */
+.wgrid .wk.fr .wk-media{--fp:clamp(12px,2.4vw,34px)}
+.wgrid .wk.fr .wk-slide>.sl-fg{inset:auto;left:50%;top:50%;width:auto;height:auto;max-width:calc(100% - var(--fp) * 2);max-height:calc(100% - var(--fp) * 2);translate:-50% -50%;object-fit:contain;border-radius:clamp(6px,.8vw,10px);box-shadow:0 22px 44px -24px rgba(16,16,16,.5),0 0 0 1px rgba(16,16,16,.04)}
+.wgrid .wk.fr .wk-slide{background:var(--cv,#ebebed)}
+.wgrid .wk.fr .wk-slide>.sl-bg{display:none}
+@media (max-width:760px){.wgrid .wk.fr .wk-media{--fp:10px}}
 /* smaller cursor bubble */
 .cur.big{width:58px;height:58px;margin:-29px 0 0 -29px}
 .cur span{font-size:.52rem;letter-spacing:.08em}
@@ -1112,6 +1119,63 @@ section[hidden],.fp-bento [hidden]{display:none!important}
 .pk-back:hover svg{translate:-3px 0}
 
 @media (max-width:900px){.fb-side{justify-self:start;justify-items:start}}
+/* category moods: Artworks turns the page near-black and builds lilac pixel piles in the corners; YouTube thumbnails
+   puts a red banner over the top and piles play buttons in the corners below. The layer behind the grid is fixed to the screen and clipped to the section,
+   so the piles stay in view while the grid scrolls */
+.mood{position:absolute;inset:0;z-index:0;clip-path:inset(0);pointer-events:none}
+.mood-in{position:fixed;inset:0}
+.fp-bento>.wrap{position:relative;z-index:1}
+.px{position:absolute;height:auto;display:block}
+.px-art{shape-rendering:crispEdges}
+.px-bl{left:0;bottom:0;width:min(22vw,340px)}
+.px-br{right:0;bottom:0;width:min(16vw,250px)}
+.px-tr{right:0;top:0;width:min(13vw,200px)}
+/* the colour tokens flip inside the section, and back again inside the grid so the cards stay as they are */
+.fp-bento{transition:background-color .6s ease,color .6s ease,border-color .6s ease}
+.fp-bento[data-mood="artworks"]{--ink:#f0f0f0;--paper:#101010;--line:rgba(240,240,240,.18);background:#101010;border-top-color:transparent}
+/* YouTube thumbnails splits the page: a YouTube-red banner behind the heading and filters, ending on a straight edge with rounded corners just below
+   the chips (--split, measured by P.split), with a large play-button mark at its right; the grid sits on the original
+   light page, with red play buttons piled in the bottom corners */
+.fp-bento::before{content:"";position:absolute;left:0;right:0;top:0;z-index:0;height:calc(var(--split,0px) + clamp(48px,7vw,110px));background:linear-gradient(180deg,#e00000 55%,#c90000);border-radius:0 0 clamp(28px,4vw,64px) clamp(28px,4vw,64px);box-shadow:0 10px 18px -8px rgba(150,0,0,.5),0 4px 8px -4px rgba(0,0,0,.25),inset 0 -1px 0 rgba(255,255,255,.12);opacity:0;transition:opacity .6s ease;pointer-events:none}
+.fp-bento[data-mood="youtube-thumbnails"]::before{opacity:1}
+/* further down, wide red bands repeat behind the grid on the same slant as the banner's edge, every 1180px; the
+   pattern is offset so the first one that shows starts about 1450px down, well clear of the banner (the one at 270px hides under it) */
+.fp-bento[data-mood="youtube-thumbnails"]{background-image:repeating-linear-gradient(176deg,transparent 0 270px,#e00000 270px 550px,transparent 550px 1180px)}
+/* the nav keeps its glass bar; only its logo and text turn white */
+body:has(.fp-bento[data-mood="youtube-thumbnails"]:not([hidden])) .nav :is(.logo,.logo *,.links a,.links a *,.links a.on,.menu-btn),
+body:has(.fp-bento[data-mood="youtube-thumbnails"]:not([hidden])) .nav .links .nt::after{color:#fff!important}
+.yt-mark{position:absolute;z-index:0;right:clamp(16px,6vw,110px);top:calc(var(--split,0px) * .42);height:calc(var(--split,0px) * .34);width:auto;translate:0 -40%;opacity:0;transition:opacity .6s ease,scale .8s cubic-bezier(.2,.8,.2,1);scale:.85;pointer-events:none}
+.fp-bento[data-mood="youtube-thumbnails"] .yt-mark{opacity:.14;scale:1}
+.fp-bento[data-mood="youtube-thumbnails"] :is(.fp-head,.fb-bar){--ink:#ffffff;--paper:#e00000;--line:rgba(255,255,255,.35);color:var(--ink)}
+.fp-bento[data-mood="youtube-thumbnails"] .chip:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.fp-bento[data-mood="youtube-thumbnails"] .px-tr{display:none}
+@media (max-width:760px){.yt-mark{display:none}}
+.fp-bento[data-mood="artworks"] .chip:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.fp-bento[data-mood="artworks"] .wgrid{--ink:#101010;--paper:#f0f0f0;--line:rgba(16,16,16,.18)}
+.px>*{opacity:0;transition:opacity .25s ease calc(var(--d) * 1ms)}
+.fp-bento[data-mood="artworks"] .px-art>*,.fp-bento[data-mood="youtube-thumbnails"] .px-yt>*{opacity:1}
+.fp-bento:not([data-mood="artworks"]) .px-art>*,.fp-bento:not([data-mood="youtube-thumbnails"]) .px-yt>*{transition-delay:0s}
+@media (max-width:760px){.px-bl{width:38vw}.px-br{width:28vw}.px-tr{display:none}}
+@media (prefers-reduced-motion:reduce){.px>*{transition:none}}
+
+/* each category chip takes its own colour on hover, whichever category is selected (declared after the mood hovers, so it wins) */
+.fp-bento .chip[data-f="YouTube thumbnails"]{--cc:#e00000}
+.fp-bento .chip[data-f="Artworks"]{--cc:#3f1c8c}
+.fp-bento .chip[data-f="Books"]{--cc:#f5c518;--cc-t:#101010}
+.fp-bento .chip[data-f="Branding and packaging"]{--cc:#1e5631}
+.fp-bento .chip[data-f="Motion graphics"]{--cc:#f26b1d}
+.fp-bento .chip[data-f="Social and ads"]{--cc:#1f5fd6}
+.fp-bento .chip:not(.on):not([data-f="All"]):hover{background:var(--cc,#101010);border-color:var(--cc,#101010);color:var(--cc-t,#fff)}
+
+/* designer side: no switch, the lead sits under the heading */
+.fp-bento[data-side="designer"] .fp-head{grid-template-columns:1fr;gap:clamp(12px,1.4vw,20px)}
+.fp-bento[data-side="designer"] .fb-side{justify-self:start;justify-items:start}
+.fp-bento[data-side="designer"] .fb-lead{max-width:none;padding-bottom:0}
+.fp-bento[data-side="designer"] .pk-sw{display:none}
+/* designer side: nothing beside the heading, so the chips sit right under it with no rule between */
+.fp-bento[data-side="designer"] .fb-side{display:none}
+.fp-bento[data-side="designer"] .fp-head{padding-bottom:clamp(22px,2.6vw,36px)}
+.fp-bento[data-side="designer"] .fb-bar{border-top:0;padding-top:0;margin-bottom:clamp(24px,3vw,44px)}
 @media (max-width:760px){
   .pk-grid{flex-direction:column;height:auto}
   .pk-card{flex:none;height:clamp(460px,128vw,580px);border-radius:20px}
@@ -1530,7 +1594,7 @@ window.PF = (function () {
     return `<section class="sec ${dark ? "dark" : ""}" id="works" data-nav="works"><div class="wrap">
       <div class="w-head">${P.heading(W.title)}<div class="w-lead"><p class="lead">${esc(W.lead)}</p>
       <div class="filters">${["All"].concat(W.filters).map((f, i) => `<button class="chip${i ? "" : " on"}" data-f="${esc(f)}">${esc(f)}<sup>${W.items.filter(x => P.inCat(x, f)).length}</sup></button>`).join("")}</div></div></div>
-      <ul class="wgrid" id="rows">${W.items.map((p, i) => `<li class="wk" tabindex="0" role="button" aria-label="Open ${esc(p.t)}" data-open="${i}" data-cat="${esc(p.cat)}"${p.anim ? " data-anim" : ""} data-cursor="View" data-tile="${esc(p.tile || "s")}" data-ink="${esc(p.ink || "lll")}" data-ar="${P.aspect(p)}" style="view-transition-name:wk${i}"${P.hover(p).length > 1 ? ` data-gal="${esc(JSON.stringify(P.hover(p)))}"` : ""}>
+      <ul class="wgrid" id="rows">${W.items.map((p, i) => `<li class="wk${!p.video && p.cover ? " fr" : ""}"${p.cover && (W.canvas || {})[p.cover.split("/")[2]] ? ` data-cv="${W.canvas[p.cover.split("/")[2]]}"` : ""} tabindex="0" role="button" aria-label="Open ${esc(p.t)}" data-open="${i}" data-cat="${esc(p.cat)}"${p.anim ? " data-anim" : ""} data-cursor="View" data-tile="${esc(p.tile || "s")}" data-ink="${esc(p.ink || "lll")}" data-ar="${P.aspect(p)}" style="view-transition-name:wk${i}"${P.hover(p).length > 1 ? ` data-gal="${esc(JSON.stringify(P.hover(p)))}"` : ""}>
         <span class="wk-media">${p.video ? P.video(p.video, "-720") : p.motion && window.COVERS && COVERS.has(p.motion) ? COVERS.html(p.motion) : p.cover ? `<img data-md="${esc(p.cover)}" data-sq="${esc(p.cover.replace(/thumb\.webp$/, "thumb-sq.webp"))}" data-wd="${esc(p.cover.replace(/thumb\.webp$/, "thumb-wd.webp"))}" data-tl="${esc(p.cover.replace(/thumb\.webp$/, "thumb-tl.webp"))}" alt="" loading="lazy">` : P.art(p.kind, p.tone == null ? i : p.tone, i)}${p.gallery && p.gallery.length > 1 ? `<span class="wk-ct">${stack}${p.gallery.length}</span>` : ""}<span class="wk-scrim"></span><span class="wk-glare"></span><span class="wk-ring"></span>${P.hover(p).length > 1 ? `<span class="wk-bars">${P.hover(p).map(() => "<i></i>").join("")}</span>` : ""}
         <span class="wk-cap"><span><span class="wk-t">${esc(p.t)}</span><span class="wk-c">${esc(p.cat)}</span></span></span></span></li>`).join("")}</ul></div></section>`;
   };
@@ -1655,6 +1719,27 @@ window.PF = (function () {
     } catch (e) {}
     return v;
   };
+  /* framed hover slides: the canvas colour (from DATA, or the average of the cover's edges) and a caption tone to match */
+  const edgeCv = document.createElement("canvas");
+  P.edge = img => {
+    try {
+      const x = edgeCv.getContext("2d", { willReadFrequently: true }), n = 20;
+      edgeCv.width = edgeCv.height = n; x.drawImage(img, 0, 0, n, n);
+      const d = x.getImageData(0, 0, n, n).data, s = [0, 0, 0]; let c = 0;
+      for (let y = 0; y < n; y++) for (let k = 0; k < n; k++) if (!y || !k || y === n - 1 || k === n - 1) { const i = (y * n + k) * 4; s[0] += d[i]; s[1] += d[i + 1]; s[2] += d[i + 2]; c++; }
+      return s.map(v => Math.round(v / c));
+    } catch (e) { return null; }
+  };
+  P.paint = (card, rgb) => {
+    card.style.setProperty("--cv", `rgb(${rgb})`);
+    card.dataset.cvt = (.2126 * rgb[0] + .7152 * rgb[1] + .0722 * rgb[2]) / 255 > .6 ? "d" : "l";
+  };
+  P.frames = () => $$("#rows .wk.fr").forEach(c => {
+    if (c.dataset.cv) return P.paint(c, c.dataset.cv.match(/\w\w/g).map(h => parseInt(h, 16)));
+    const im = $(".wk-media>img", c); if (!im) return;
+    const go = () => { if (!c.dataset.cvt && im.naturalWidth) { const rgb = P.edge(im); if (rgb) P.paint(c, rgb); } };
+    if (im.complete && im.naturalWidth) go(); else im.addEventListener("load", go, { once: true });
+  });
   const SLIDE = 1500;
   function slideshow(card) {
     const media = $(".wk-media", card), urls = JSON.parse(card.dataset.gal), bars = $$(".wk-bars i", card);
@@ -1672,7 +1757,9 @@ window.PF = (function () {
           if (v != null) card.dataset.tone = v * (im.classList.contains("fit") ? .92 : 1) > .6 ? "d" : "l";
           return v;
         };
-        if (tone() == null) fg.addEventListener("load", () => { if (timer && im.classList.contains("on")) tone(); }, { once: true });
+        // framed slides take the caption colour of their canvas
+        if (card.dataset.cvt) card.dataset.tone = card.dataset.cvt;
+        else if (tone() == null) fg.addEventListener("load", () => { if (timer && im.classList.contains("on")) tone(); }, { once: true });
         bars.forEach((b, j) => { b.classList.toggle("done", j < idx); b.classList.remove("run"); });
         if (bars[idx]) { void bars[idx].offsetWidth; bars[idx].classList.add("run"); }
       };
@@ -1715,12 +1802,38 @@ window.PF = (function () {
       ${all ? "" : `<div class="fp-foot"><a class="fp-btn" href="projects.html"><span class="fp-btn-t">View all projects</span><span class="fp-btn-i" aria-hidden="true">${IC.right}</span></a></div>`}</div></section>`;
   };
 
+  P.slug = f => f.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+  // where the YouTube banner ends: just below the filter chips, measured from the top of the section
+  P.split = sec => { const bar = $(".fb-bar", sec); if (bar && !bar.hidden) sec.style.setProperty("--split", Math.round(bar.getBoundingClientRect().bottom - sec.getBoundingClientRect().top + 24) + "px"); };
   /* all projects page: the featured heading over category chips and the bento grid of every project */
   P.bento = D => {
     const W = D.works, chars = w => [...w].map((c, k) => `<span style="--c:${k}">${esc(c)}</span>`).join("");
     const grid = P.works(D, false).match(/<ul class="wgrid"[\s\S]*<\/ul>/)[0];
     const chips = ["All"].concat(W.filters).map((f, i) => `<button class="chip${i ? "" : " on"}" data-f="${esc(f)}">${esc(f)}<sup>${W.items.filter(x => P.inCat(x, f)).length}</sup></button>`).join("");
-    return `<section class="sec fp fp-all fp-bento" id="works" data-nav="works"><div class="wrap">
+    // category backdrops: stepped piles, each high at its corner and falling away, with a few loose cells above
+    // the edge (seeded, so they are the same every visit). Artworks piles up lilac pixels, YouTube thumbnails play buttons.
+    // fx / fy mirror a pile into the right or top corners, cell by cell, so the play buttons still point right
+    const pile = (kind, seed, C, R, cls, fx, fy) => {
+      let t = seed; const rnd = () => { t = (t + 0x6d2b79f5) | 0; let x = Math.imul(t ^ (t >>> 15), 1 | t); x ^= x + Math.imul(x ^ (x >>> 7), 61 | x); return ((x ^ (x >>> 14)) >>> 0) / 4294967296; };
+      const ink = kind === "art" ? ["#b9a5ea", "#b9a5ea", "#a893e2", "#c8b8f0", "#d6caf4", "#e4ddf8", "#9a84d6"] : ["#e00000", "#e00000", "#e00000", "#ffc9c9", "#a80000", "#ff4d4d"], cells = [];
+      const cell = (c, r) => {
+        const x = fx ? C - 1 - c : c, y = fy ? R - 1 - r : r, col = ink[Math.floor(rnd() * ink.length)], d = Math.round((c + R - r) * 22 + rnd() * 120);
+        cells.push(kind === "art" ? `<rect x="${x}" y="${y}" width="1.02" height="1.02" fill="${col}" style="--d:${d}"/>`
+          : `<g style="--d:${d}"><rect x="${x + .1}" y="${y + .2}" width=".8" height=".6" rx=".17" fill="${col}"/><path d="M${x + .42} ${y + .36}l.2 .14-.2 .14Z" fill="${col === "#ffc9c9" ? "#e00000" : "#ffffff"}"/></g>`);
+      };
+      for (let c = 0; c < C; c++) {
+        const h = Math.max(0, Math.round(R * Math.pow(1 - c / C, 1.15) + (rnd() - .5) * 3));
+        for (let r = R - 1; r >= R - h; r--) if (rnd() > .05) cell(c, r);
+        if (rnd() < .4 && h + 2 < R) cell(c, Math.max(0, R - h - 2 - Math.floor(rnd() * 3)));
+      }
+      return `<svg class="px px-${kind} ${cls}" viewBox="0 0 ${C} ${R}">${cells.join("")}</svg>`;
+    };
+    // bottom left (the largest), bottom right and top right; play buttons come in half as many cells, so each reads as an icon
+    const piles = kind => { const k = kind === "art" ? 1 : .5, n = v => Math.round(v * k);
+      return pile(kind, 7, n(24), n(18), "px-bl") + pile(kind, 23, n(20), n(16), "px-br", true) + pile(kind, 41, n(16), n(13), "px-tr", true, true); };
+    const mood = `<div class="mood" aria-hidden="true"><div class="mood-in">${piles("art") + piles("yt")}</div></div>`;
+    const mark = '<svg class="yt-mark" viewBox="0 0 140 100" aria-hidden="true"><path fill="#fff" fill-rule="evenodd" d="M24 0h92a24 24 0 0 1 24 24v52a24 24 0 0 1-24 24H24A24 24 0 0 1 0 76V24A24 24 0 0 1 24 0ZM56 28v44l38-22Z"/></svg>';
+    return `<section class="sec fp fp-all fp-bento" id="works" data-nav="works">${mood + mark}<div class="wrap">
       <div class="fp-head"><h1 class="fp-h" aria-label="All Projects"><span class="ln" aria-hidden="true" style="--n:${[..."All"].length}">${chars("All")}</span><span class="ln" aria-hidden="true" style="--n:${[..."Projects"].length}">${chars("Projects")}</span></h1>
         <div class="fb-side"><p class="lead fb-lead">${esc(W.lead)}</p>
           <div class="pk-sw" role="group" aria-label="Show projects by"><a class="pk-back" href="projects.html" aria-label="Back to the choice" title="Back to the choice">${IC.right}</a>
@@ -1774,7 +1887,7 @@ window.PF = (function () {
     const show = (side, push, jump) => {
       P.side = S[side] && S[side].t ? side : null;
       if (push) history.pushState({ side: P.side }, "", P.side ? "?view=" + P.side : location.pathname);
-      pk.hidden = !!P.side; fb.hidden = !P.side;
+      pk.hidden = !!P.side; fb.hidden = !P.side; fb.dataset.side = P.side || ""; fb.dataset.mood = "";
       grid.classList.remove("going"); $$(".pk-card", grid).forEach(c => c.classList.remove("go"));
       if (jump) scrollTo(0, 0);
       if (!P.side) { document.title = title0; return; }
@@ -1783,7 +1896,7 @@ window.PF = (function () {
       h.setAttribute("aria-label", s.t + " Projects");
       h.innerHTML = [s.t, "Projects"].map(w => `<span class="ln" aria-hidden="true" style="--n:${[...w].length}">${chars(w)}</span>`).join("");
       h.classList.remove("in"); void h.offsetWidth; h.classList.add("in");
-      lead.textContent = s.lead;
+      lead.textContent = s.lead || ""; lead.hidden = !s.lead;   // a side without a lead shows none
       $$("button", sw).forEach(b => b.setAttribute("aria-pressed", b.dataset.side === P.side)); sw.dataset.on = P.side;
       // chips count only this side, any with nothing in it is hidden, and the filter goes back to All
       let n = 0;
@@ -1803,7 +1916,7 @@ window.PF = (function () {
     $$("button", sw).forEach(b => b.addEventListener("click", () => { if (b.dataset.side !== P.side) show(b.dataset.side, true); }));
     $(".pk-back", sw).addEventListener("click", e => { e.preventDefault(); show(null, true, true); });
     addEventListener("popstate", () => show(new URLSearchParams(location.search).get("view"), false, true));
-    addEventListener("resize", place);
+    addEventListener("resize", () => { place(); P.split(fb); });
     show(new URLSearchParams(location.search).get("view"), false);
 
     // the cards rise in once the heading is in view
@@ -1872,6 +1985,7 @@ window.PF = (function () {
   P.worksFx = () => {
     if (window.COVERS) COVERS.watch();
     P.layoutWorks();
+    P.frames();
     P.playVideos(document);
     let rz; addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(P.layoutWorks, 100); });
     if (!fine || reduce) return;
@@ -2208,6 +2322,9 @@ window.PF = (function () {
       if (c.classList.contains("on")) return;
       const apply = () => {
         $$(".filters .chip").forEach(x => x.classList.toggle("on", x === c));
+        // the all projects page takes on the category's mood; All stays plain
+        const sec = c.closest(".fp-bento"); if (sec) { sec.dataset.mood = c.dataset.f === "All" ? "" : P.slug(c.dataset.f); P.split(sec); }
+        dispatchEvent(new Event("scroll"));   // the nav re-reads the colour under it
         $$("#rows .wk").forEach(r => {
           const p = D.works.items[+r.dataset.open], f = c.dataset.f;
           r.hidden = !P.inCat(p, f); if (!r.hidden) r.classList.add("in");
@@ -2286,7 +2403,7 @@ window.PF = (function () {
     const navTone = () => {
       const open = menu.classList.contains("open");
       const els = document.elementsFromPoint(innerWidth / 2, 60);
-      const inv = open || els.some(e => e.closest && e.closest(".dark, .violet") && !e.closest(".nav, .menu, .loader"));
+      const inv = open || els.some(e => e.closest && e.closest(".dark, .violet, .fp-bento[data-mood=artworks]") && !e.closest(".nav, .menu, .loader"));
       const vio = !open && els.some(e => e.closest && e.closest(".violet") && !e.closest(".nav, .menu, .loader"));
       navEl.classList.toggle("inv", inv);
       navEl.classList.toggle("vio", vio);
@@ -2385,11 +2502,13 @@ const DATA = {
     title: "Works", lead: "Selected projects from our design, marketing and development work.",
     filters: ["Branding and packaging", "Social and ads", "YouTube thumbnails", "Artworks", "Books", "Motion graphics", "Development"],
     featured: ["Somniaa", "SPARK CLEAN", "Maximus", "BUTT KARAHI", "WeeGummies", "Skinfusion", "BebeDrops Ads"],
+    // canvas colour behind a cover shown whole, keyed by work folder (same as the homepage); any other cover takes the colour of its own edges
+    canvas: { "somniaa": "#1f2a5e", "weegummies": "#a8db8a", "spark-clean": "#dde6e1", "maximus": "#2f5a27", "butt-karahi": "#d8231c", "skinfusion": "#e7adad" },
     // the all projects page opens on these two cards. picks: the projects whose images show on each card
     // (designer: up to five covers, the middle one on top; developer: the sites in the browser and phone)
     sides: {
       title: ["Pick a", "side"], lead: "Two crafts under one roof. Choose the work you came to see.",
-      designer: { t: "Designer", note: "Design and marketing", lead: "Brands, packaging, ads, cover art, books and motion.", picks: ["WeeGummies", "Ghosted", "On My Mind", "Love Letter", "Somniaa"] },
+      designer: { t: "Designer", note: "Design and marketing", picks: ["WeeGummies", "Ghosted", "On My Mind", "Love Letter", "Somniaa"] },
       developer: { t: "Developer", note: "Web and app development", lead: "Websites, booking platforms, dashboards and databases, built end to end.", picks: ["BUTT KARAHI", "SPARK CLEAN"], url: "daizn.studio/build", term: ["npm run build", "supabase db push", "vercel --prod", "git push origin main"] }
     },
     items: [
