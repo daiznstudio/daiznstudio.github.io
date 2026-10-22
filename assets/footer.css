@@ -1,7 +1,12 @@
 /* site footer: full-height black panel with two big cards (copy mail / next page), link columns,
    large contact links and a giant wordmark. Shared by every page.
    Also the "Let's create" contact panel above it on the main pages (bottom of this file). */
-@import url("https://fonts.googleapis.com/css2?family=Chivo+Mono:wght@400;500&display=swap");
+/* Inter (body text) and Chivo Mono (captions), served from assets/fonts so no page waits on another site to render.
+   Each comes in a latin and a latin-ext file; the browser only downloads latin-ext if a page uses those letters */
+@font-face{font-family:"Inter";font-style:normal;font-weight:300 700;font-display:swap;src:url(fonts/inter-latin.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Inter";font-style:normal;font-weight:300 700;font-display:swap;src:url(fonts/inter-latin-ext.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"Chivo Mono";font-style:normal;font-weight:500;font-display:swap;src:url(fonts/chivo-mono-500-latin.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Chivo Mono";font-style:normal;font-weight:500;font-display:swap;src:url(fonts/chivo-mono-500-latin-ext.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
 
 :root{--sf-mono:"Chivo Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
 /* see footer.js: the page background behind everything turns black at the end, so phone toolbars tint black */
@@ -172,6 +177,9 @@ html.end-glow,html.end-glow body{background:#7a63c3}
 .lc-status[data-kind="ok"]{color:var(--tint)}
 .lc-status[data-kind="err"]{color:#ff9a9a}
 
+/* pages write data-pin into the panel's markup, so it is laid out pinned from the first frame instead of jumping when
+   footer.js runs. The section above is the curtain, as footer.js sets it: on top, and opaque unless it has its own background */
+:where(:has(+ .lc[data-pin])){position:relative;z-index:1;background-color:var(--page,#f2f2f2)}
 @media (min-width:992px){
   .lc[data-pin]{z-index:0;height:350vh;margin-top:-100vh}
   .lc[data-pin] .lc-panel{position:sticky;top:0;height:100vh;height:100svh}

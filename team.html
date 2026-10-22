@@ -19,9 +19,7 @@
 <meta property="og:image:alt" content="daizn studio: a creative design and software studio for ambitious brands">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23482e74'/%3E%3Cg fill='%23f0f0f0'%3E%3Crect x='34' y='16' width='32' height='36' rx='15'/%3E%3Cpath d='M34 82A16 15 0 0 1 66 82Z' transform='translate(0 -2)'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preload" href="assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/timun-700.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/timun-300.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -213,7 +211,8 @@ svg{display:block}
 .nbtn:hover .na.dn{transform:translateY(3px)}
 .nav.inv .nbtn,.nav.vio .nbtn{--sw:var(--paper);--swt:var(--ink)}
 @keyframes navIn{from{opacity:0;translate:0 -10px;scale:.96}}
-@keyframes nbShine{0%,60%{left:-70%}100%{left:140%}}
+/* moved with translate (525% of its own 40% width = the old left -70% to 140%), so it never relays out the nav */
+@keyframes nbShine{0%,60%{translate:0}100%{translate:525% 0}}
 @media (prefers-reduced-motion:reduce){.links{animation:none}.nav-ind,.nbtn,.nbtn::before,.nbtn .na{transition:none}.nbtn::after{animation:none;display:none}}
 .nav.vio .links{--fg:var(--paper)}
 .nav-r{display:flex;align-items:center;gap:10px}
@@ -1491,7 +1490,7 @@ window.PF = (function () {
 
   /* "Let's create": black contact panel pinned under the section above (curtain reveal) with a colour-wave
      heading; the contact form sits in the left half. Styles and motion live in assets/footer.css and assets/footer.js. */
-  P.contact = (D, self) => `<div class="lc" data-lc><span class="lc-anchor" id="contact"></span><section class="lc-panel dark" data-nav="contact" aria-labelledby="lc-h"><div class="lc-grid">
+  P.contact = (D, self) => `<div class="lc" data-lc data-pin><span class="lc-anchor" id="contact"></span><section class="lc-panel dark" data-nav="contact" aria-labelledby="lc-h"><div class="lc-grid">
       <div class="lc-head"><h2 class="lc-h" id="lc-h" data-lc-wave aria-label="Let's create">Let's<br>create</h2></div>
       <div class="lc-body"><p class="lc-lead">${esc(D.contact.lead)}</p>
         <a class="lc-btn" href="#contact" data-cal-tab><span class="lc-btn-t">Schedule call</span><span class="lc-btn-i" aria-hidden="true">${IC.up}</span></a></div>
@@ -1837,7 +1836,7 @@ const DATA = {
   // Client reviews. Fields: q (the review), n (name), role (role and company),
   // rating (1 to 5, or leave it out to hide the stars), photo (optional image path; initials show without one)
   reviews: [
-    { q: "Daniyal worked with us at Trendhijacking for over three years as our Head of Design. He was always highly professional, diligent, and technically proficient in managing all graphic design operations and visual assets. He is an efficient professional to work with, and I wouldn’t hesitate to hire him again.", n: "Dolapo Adedayo", role: "CEO, Trend Hijacking" },
+    { q: "Daniyal worked with us at Trendhijacking for over three years as our Head of Design. He was always highly professional, diligent, and technically proficient in managing all graphic design operations and visual assets. He is an efficient professional to work with, and I wouldn’t hesitate to hire him again.", n: "Dolapo Adedayo", role: "CEO, TrendHijacking" },
     { q: "I came to Daniyal with a pretty rough idea for the Amor Fati piece and he turned it into something way better than what I had in my head. It's brutalist but still feels clean and premium, which is exactly what I wanted for Unanswered Prayers. The files were print-ready, my printer had zero issues, and people still ask me about that shirt.", n: "Zachary", role: "Founder, Unanswered Prayers", rating: 5 },
     { q: "We needed a batch of story ads for BebeDrops and honestly didn't expect them to come back this polished. They got that parents need to trust what they're looking at, so everything felt soft and clean without being boring. Quick turnaround, easy to talk to, and they threw in a few extra variations for us to test.", n: "Ryan Mitchell", role: "Founder, BebeDrops", rating: 5 },
     { q: "The team did our logo, the bottle and box, and all the product images for Maximus. The before-and-after images made a real difference on our listing. They took feedback well, never made me feel like I was asking for too much, and kept everything consistent across the brand.", n: "Marcus Bell", role: "Owner, Maximus", rating: 5 },
@@ -1876,16 +1875,16 @@ const DATA = {
       ] }
   ],
   brands: [
-    { n: "TrendHijacking", src: "assets/brands/trendhijacking.png", h: 27 },
-    { n: "WeeGummies", src: "assets/brands/weegummies.png", h: 26 },
-    { n: "NatureDrops", src: "assets/brands/naturedrops.png", h: 41 },
-    { n: "Somniaa", src: "assets/brands/somniaa.png", h: 33 },
-    { n: "Skinfusion", src: "assets/brands/skinfusion.png", h: 33 },
-    { n: "Maximus", src: "assets/brands/maximus.png", h: 29 },
-    { n: "BebeDrops", src: "assets/brands/bebedrops.png", h: 45 },
-    { n: "Butt Karahi", src: "assets/brands/buttkarahi.png", h: 48 },
-    { n: "Spark Clean", src: "assets/brands/sparkclean.png", h: 44 },
-    { n: "SafeHer AI", src: "assets/brands/safeher.png", h: 52 }
+    { n: "TrendHijacking", src: "assets/brands/trendhijacking.webp", h: 27 },
+    { n: "WeeGummies", src: "assets/brands/weegummies.webp", h: 26 },
+    { n: "NatureDrops", src: "assets/brands/naturedrops.webp", h: 41 },
+    { n: "Somniaa", src: "assets/brands/somniaa.webp", h: 33 },
+    { n: "Skinfusion", src: "assets/brands/skinfusion.webp", h: 33 },
+    { n: "Maximus", src: "assets/brands/maximus.webp", h: 29 },
+    { n: "BebeDrops", src: "assets/brands/bebedrops.webp", h: 45 },
+    { n: "Butt Karahi", src: "assets/brands/buttkarahi.webp", h: 48 },
+    { n: "Spark Clean", src: "assets/brands/sparkclean.webp", h: 44 },
+    { n: "SafeHer AI", src: "assets/brands/safeher.webp", h: 52 }
   ],
   marquee: ["Branding", "Social media", "Posters", "Motion", "Campaigns", "Websites", "Web apps", "APIs"],
   works: {

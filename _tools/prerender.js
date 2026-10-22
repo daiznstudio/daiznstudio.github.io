@@ -71,7 +71,7 @@ function snapshot() {
   }
 
   clone.querySelectorAll("img").forEach(img => {
-    const src = img.getAttribute("src") || img.dataset.md || img.dataset.sq;
+    const src = img.getAttribute("src") || img.dataset.src || img.dataset.md || img.dataset.sq;
     if (!src || src.startsWith("data:")) return img.remove();
     img.setAttribute("src", src); img.setAttribute("loading", "lazy"); img.setAttribute("decoding", "async");
   });
