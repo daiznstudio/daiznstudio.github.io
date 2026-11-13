@@ -1,0 +1,9 @@
+# Dependabot: GitHub checks the local build tools in _tools/ (not part of the live site) for
+# known security problems and opens a pull request when an update is available.
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/_tools"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 3

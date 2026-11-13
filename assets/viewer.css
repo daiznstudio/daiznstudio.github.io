@@ -43,6 +43,8 @@ dialog.modal.mxd.mx-pre,dialog.modal.mxd.mx-pre::backdrop{opacity:.001;animation
 .mx-th:hover{opacity:.8}
 .mx-th.on{opacity:1;outline:2px solid var(--paper);outline-offset:-2px}
 .mx-th img{width:100%;height:100%;object-fit:cover;display:block}
+.mx-thv{position:relative}
+.mx-thv::after{content:"";position:absolute;inset:0;margin:auto;width:0;height:0;border-left:13px solid #fff;border-top:8px solid transparent;border-bottom:8px solid transparent;transform:translateX(2px);filter:drop-shadow(0 1px 3px rgba(0,0,0,.6))}
 
 /* info panel: one flat colour from the project (it changes with each gallery image as a plain colour transition) */
 .mx-info{display:flex;flex-direction:column;gap:18px;min-height:0;overflow:auto;padding:92px 30px 28px;color:#fff;background-color:var(--mx-d1,#482e74);transition:background-color .4s ease;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.35) transparent}
